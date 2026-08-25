@@ -1,1 +1,0 @@
-La presente tesi descrive lo sviluppo di un firmware per la gestione del sistema di riscaldamento e umidificazione e la verifica del corretto funzionamento dei singoli componenti del prototipo di incubatrice neonatale costruita da Vanni Bincoletto per la sua tesi magistrale.

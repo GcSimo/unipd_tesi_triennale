@@ -77,3 +77,8 @@ ehthumbs.db
 ehthumbs_vista.db
 thumbs.db
 Thumbs.db
+
+# ---- fritzing app ---
+Fritzing.app
+!fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.mojave.10.2.dmg
+!fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.mojave.10.2.zip

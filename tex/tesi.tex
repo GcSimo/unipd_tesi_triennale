@@ -1,0 +1,110 @@
+% --- tesi triennale di Giacomo Simonetto ---
+
+% indicazioni sull'impaginazione della tesi richieste dall'università di Padova:
+% - https://stem.elearning.unipd.it/mod/book/view.php?id=234&chapterid=46
+% - carattere Times New Roman 12
+% - interlinea 1,5
+% - margini superiore e inferiore di cm. 2, margine esterno di cm. 2, margine interno di cm. 3
+% - utilizzare il fac-simile di frontespizio (che è possibile modificare purché vengano mantenute tutte le informazioni
+%   presenti nel fac-simile stesso). Il Frontespizio sarà rispettivamente in lingua italiana o lingua inglese in funzione
+%   della stesura della tesi.
+
+% documentclass:
+% - report: per tesi di laurea con capitoli
+% - a4paper: formato A4
+% - twoside: i margini interni ed esterni sono scambiati per le pagine "a sinistra" e "a destra"
+% - openright: i capitoli cominciano in pagine dispari ("a destra")
+
+\documentclass[12pt,a4paper,twoside,openright]{report}
+\usepackage[italian]{babel} % corretta sillabazione in inglese
+\usepackage[a-1a]{pdfx}     % formato richiesto dall'università
+
+\usepackage{fontspec} % per font richiesti dall'università
+\setmainfont{Times New Roman}
+
+\usepackage{geometry} % per margini richiesti dall'università
+\geometry{a4paper,top=2cm, bottom=2cm, outer=2cm, inner=3cm, includeheadfoot}
+
+\usepackage{setspace} % per interlinea richiesta dall'università
+\onehalfspacing
+
+\usepackage{amsmath} % per l'ambiente matematico
+\usepackage{amssymb} % per l'ambiente matematico
+\usepackage{enumitem} % per elenchi puntati
+\usepackage{multirow} % per celle che si espandono su più righe
+\usepackage{tabularx} % per tabelle con larghezza flessibile
+\usepackage{booktabs} % per linee orizzontali tabelle
+\usepackage{graphicx} % per immagini
+\usepackage{caption} % per le didascalie
+\usepackage{csquotes} % per le citazioni
+
+%\usepackage{minted}                             % per il codice con la colorazione della sintassi
+%\usepackage[output-decimal-marker={,}]{siunitx} % per le unità di misura
+%\usepackage{subcaption}                         % per le sottodidascalie
+%\usepackage{svg}                                % per inserire file SVG
+
+\usepackage[backend=biber,style=ieee]{biblatex} % per la bibliografia
+\addbibresource{bibliografia.bib}
+
+
+% per centrare testo nelle tabelleX
+\renewcommand\tabularxcolumn[1]{m{#1}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+
+% per elenchi puntati
+\setlist[itemize]{label=-, topsep=0pt, noitemsep}
+\setlist[enumerate]{topsep=0pt, itemsep=0pt}
+
+% percorso delle immagini da inserire
+\graphicspath{{./}}
+
+\title{Sviluppo firmware per la gestione del sistema di riscaldamento e umidificazione di un prototipo di incubatrice neonatale}
+\author{Giacomo Simonetto}
+\date{22/09/2026}
+\newcommand{\supervisor}{Prof. Rampazzo Mirco}
+\newcommand{\assistantsupervisor}{Cognome Nome}
+\newcommand{\matricola}{2109923}
+
+\begin{document}
+    \pagenumbering{roman}
+    \pagestyle{empty} % per le prime pagine, non mostrare il numero di pagina
+
+    \input{capitoli/0_frontespizio}
+    \cleardoublepage
+
+    \input{capitoli/1_dedica}
+    \cleardoublepage
+
+    \pagestyle{plain} % comincia a mostrare il numero di pagina
+
+    % NOTA: l'ambiente \abstract rimuove il numero della pagina e resetta il contatore delle pagine.
+	\include{capitoli/2_abstract}
+    \cleardoublepage
+
+    \tableofcontents
+    \cleardoublepage
+
+    \listoffigures
+    \cleardoublepage
+
+    \pagenumbering{arabic}
+
+    \input{capitoli/3_introduzione}
+    \cleardoublepage
+
+	\input{capitoli/4_hardware}
+    \cleardoublepage
+
+	\input{capitoli/5_software}
+    \cleardoublepage
+
+	\input{capitoli/6_controllore}
+    \cleardoublepage
+
+	\input{capitoli/7_appendice}
+    \cleardoublepage
+
+    \printbibliography[heading=bibintoc]
+\end{document}

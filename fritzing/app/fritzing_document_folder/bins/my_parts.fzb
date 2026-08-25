@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.5d.2020-02-07.CD-548-0-3d61c58" icon="Mine.png">
+    <title>My Parts</title>
+    <instances>
+        <instance moduleIdRef="jst_xh_2a_female_1a838d862990077ec1304fc9087d453a_1" modelIndex="5772" path="/Users/giacomo/Documents/Fritzing/parts/user/jst_xh_2a_female_1a838d862990077ec1304fc9087d453a_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="jst_xh_2a_male_7d6e06774c77578e54a2f533eaac8d5c_1" modelIndex="5775" path="/Users/giacomo/Documents/Fritzing/parts/user/jst_xh_2a_male_7d6e06774c77578e54a2f533eaac8d5c_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="jst_xh_4a_female_ae88987b0940208e8cc21f2b3033a470_3" modelIndex="5778" path="/Users/giacomo/Documents/Fritzing/parts/user/jst_xh_4a_female_ae88987b0940208e8cc21f2b3033a470_3.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="jst_xh_4a_male_8def358304ad6744e4a9cf8aa697ad06_1" modelIndex="5781" path="/Users/giacomo/Documents/Fritzing/parts/user/jst_xh_4a_male_8def358304ad6744e4a9cf8aa697ad06_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="lcd1602_i2c_651f23fd16ce1bc620562555616d304b_1" modelIndex="5784" path="/Users/giacomo/Documents/Fritzing/parts/user/lcd1602_i2c_651f23fd16ce1bc620562555616d304b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="lcd2004_i2c_c2fb2add1b5a5b4955689af72259caa6_1" modelIndex="5787" path="/Users/giacomo/Documents/Fritzing/parts/user/lcd2004_i2c_c2fb2add1b5a5b4955689af72259caa6_1.fzp" flippedSMD="true">
+            <views/>
+        </instance>
+        <instance moduleIdRef="relay_module_7875cddb3926bec151baa808b7c39538_1" modelIndex="5796" path="/Users/giacomo/Documents/Fritzing/parts/user/relay_module_7875cddb3926bec151baa808b7c39538_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="sht3x_4fdfe43b05d4f3ee6f5441df444142f2_6" modelIndex="5799" path="/Users/giacomo/Documents/Fritzing/parts/user/sht3x_4fdfe43b05d4f3ee6f5441df444142f2_6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="stepper_down_8b3a72ab61c99ab9dc7364e5d87734d9_1" modelIndex="5802" path="/Users/giacomo/Documents/Fritzing/parts/user/stepper_down_8b3a72ab61c99ab9dc7364e5d87734d9_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

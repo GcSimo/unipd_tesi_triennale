@@ -1,0 +1,439 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns="http://www.w3.org/2000/svg" height="0.67000002in" viewBox="0 0 879.99391 669.99998" id="svg2"  gorn="0" version="1.2" width="0.87999392in">
+    <metadata id="metadata30" >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <cc:Work xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="" xmlns:cc="http://creativecommons.org/ns#">
+                <dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format>
+                <dc:type xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+                <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <defs id="defs28" />
+    <desc id="desc4" >
+        <referenceFile >dsun_773629999eb9789162f063db90289f2f_1_breadboard.svg</referenceFile>
+    </desc>
+    <desc id="desc6" >Fritzing
+    footprint
+    SVG</desc>
+    <g id="breadboard"  gorn="0.4">
+        <rect x="4.9938879" height="652.12598" y="4.5624852" id="rect77" fill="#008000" stroke-width="10.41666317"  gorn="0.4.0" width="870"/>
+        <line x2="876.06299" stroke="#000000" id="line11" stroke-width="10.00000095"  gorn="0.4.1" y1="665" x1="6.0629854" y2="665"/>
+        <line x2="874.9939" stroke="#000000" id="line13" stroke-width="10"  gorn="0.4.2" x1="874.9939" y1="664.5625" y2="4.5625"/>
+        <line x2="6.0569429" stroke="#000000" id="line15" stroke-width="10"  gorn="0.4.3" x1="876.05701" y1="5" y2="5"/>
+        <line x2="4.9999971" stroke="#000000" id="line9" stroke-width="9.99999428"  gorn="0.4.4" x1="4.9999971" y1="4.5625" y2="664.5625"/>
+        <circle stroke="#ffbf00" id="connector0pin" cy="80.021095" fill="none" stroke-width="20"  gorn="0.4.5" r="29" cx="76.047249"/>
+        <circle stroke="#ffbf00" id="connector2pin" cy="500.02109" fill="none" stroke-width="20"  gorn="0.4.6" r="29" cx="76.047249"/>
+        <circle stroke="#ffbf00" id="connector7pin" cy="80.021095" fill="none" stroke-width="20"  gorn="0.4.7" r="29" cx="806.61707"/>
+        <circle stroke="#ffbf00" id="connector6pin" cy="180.02109" fill="none" stroke-width="20"  gorn="0.4.8" r="29" cx="806.61719"/>
+        <rect x="778" height="57.999996" y="151.0186" stroke="#ffbf00" id="rect83" fill="none" stroke-width="20"  gorn="0.4.9" width="57.999996"/>
+        <circle stroke="#ffbf00" id="connector5pin" cy="500.02109" fill="none" stroke-width="20"  gorn="0.4.10" r="29" cx="806.04504"/>
+        <circle stroke="#ffbf00" cy="180.02109" id="connector1pin" fill="none" stroke-width="20"  gorn="0.4.11" r="29" cx="76.047249"/>
+        <rect height="57.999996" x="47.000015" y="151.0186" stroke="#ffbf00" id="rect81" fill="none" stroke-width="20"  gorn="0.4.12" width="57.999996"/>
+        <circle stroke="#ffbf00" cy="600.02112" id="connector3pin" fill="none" stroke-width="20"  gorn="0.4.13" r="29" cx="76.047249"/>
+        <rect x="47.000015" height="57.999996" y="571.01862" stroke="#ffbf00" id="rect79" fill="none" stroke-width="20"  gorn="0.4.14" width="57.999996"/>
+        <circle stroke="#ffbf00" cy="600.02112" id="connector4pin" fill="none" stroke-width="20"  gorn="0.4.15" r="29" cx="806.04504"/>
+        <rect height="57.999996" x="778" y="571.01862" stroke="#ffbf00" id="rect85" fill="none" stroke-width="20"  gorn="0.4.16" width="57.999996"/>
+        <g  transform="translate(-80.351317,879.7535)">
+            <g id="inductor"  gorn="0.4.17.0">
+                <path d="m 517.2535,-829.82389 h 250 v 249.99999 h -250 z" id="middle-3" fill="#3d3d3d" stroke-width="1"  gorn="0.4.17.0.0"/>
+                <path d="m 554.9757,-818.76833 c -15.1878,0 -27.6045,12.24278 -27.6045,27.43055 0,12.52278 8.514,22.89223 19.9656,26.21556 -11.1106,17.44111 -17.7084,38.03111 -17.7084,60.24444 0,21.85666 6.4023,42.28388 17.1878,59.55 -11.1821,3.48916 -19.4444,13.71 -19.4444,26.04166 0,15.18777 12.4161,27.43056 27.6044,27.43056 12.0817,0 22.1761,-7.74445 25.8679,-18.57668 17.6438,11.49945 38.6532,18.05555 61.2832,18.05555 22.4028,0 43.2295,-6.595 60.7667,-17.88221 3.74189,10.74221 13.8505,18.40278 25.8678,18.40278 15.1877,0 27.4305,-12.24278 27.4305,-27.43055 0,-12.14 -8.01,-22.22168 -18.9233,-25.86779 10.90439,-17.33 17.3611,-37.73444 17.3611,-59.72221 0,-22.26444 -6.54941,-42.95 -17.7083,-60.41667 11.1005,-3.53771 19.27109,-13.76833 19.27109,-26.04166 0,-15.18778 -12.24279,-27.43055 -27.43059,-27.43055 -12.2833,0 -22.6855,7.98277 -26.2155,19.09722 -17.4667,-11.15889 -38.1523,-17.70834 -60.4167,-17.70834 -22.4889,0 -43.3616,6.68889 -60.9389,18.05556 -3.4247,-11.28834 -13.8083,-19.44444 -26.2155,-19.44444 z m 87.1555,13.88888 c 55.2283,0 99.99999,44.77167 99.99999,100 0,55.22833 -44.77169,99.99999 -99.99999,99.99999 -55.2283,0 -100,-44.77166 -100,-99.99999 0,-55.22833 44.7717,-100 100,-100 z" color="#000000" id="path13556" fill="#666666" stroke-width="0.5"  gorn="0.4.17.0.1"/>
+            </g>
+        </g>
+        <g  transform="translate(414.78872,80.281685)">
+            <g id="g184"  gorn="0.4.18.0">
+                <rect x="-147.345" height="26.288706" y="263.78171" stroke-linecap="round" stroke="none" id="rect20" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.0" width="17.981417" connectorname="1"/>
+                <rect x="-118.83784" height="26.288706" y="263.78171" stroke-linecap="round" stroke="none" id="rect22" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.1" width="17.981417" connectorname="2"/>
+                <rect x="-90.330772" height="26.288706" y="263.78171" stroke-linecap="round" stroke="none" id="rect24" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.2" width="17.981417" connectorname="3"/>
+                <rect x="-61.823395" height="26.288706" y="263.78171" stroke-linecap="round" stroke="none" id="rect26" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.3" width="17.981417" connectorname="4"/>
+                <rect x="-61.823395" height="26.288706" y="140.07047" stroke-linecap="round" stroke="none" id="rect28" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.4" width="17.981417" connectorname="5"/>
+                <rect x="-90.330772" height="26.288706" y="140.07047" stroke-linecap="round" stroke="none" id="rect30" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.5" width="17.981417" connectorname="6"/>
+                <rect x="-118.83784" height="26.288706" y="140.07047" stroke-linecap="round" stroke="none" id="rect32" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.6" width="17.981417" connectorname="7"/>
+                <rect x="-147.345" height="26.288706" y="140.07047" stroke-linecap="round" stroke="none" id="rect34" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.7" width="17.981417" connectorname="8"/>
+                <rect x="-152.60782" height="67.010254" y="181.56541" stroke-linecap="round" stroke="none" id="rect36" fill="#8c8c8c" stroke-width="0"  gorn="0.4.18.0.8" width="114.02889" connectorname="EP"/>
+                <rect x="-175.35213" height="88.593086" y="170.77412" stroke="none" id="rect38" fill="#303030" stroke-width="0"  gorn="0.4.18.0.9" width="150"/>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-175.35206,140.07056)">
+                    <polygon points="134.654,46.9016 124.654,56.9016 10,56.9016 0,46.9016 " id="polygon40" fill="#1f1f1f"  gorn="0.4.18.0.10.0"/>
+                </g>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-175.35206,140.07056)">
+                    <polygon points="134.654,182.232 124.654,172.232 10,172.232 0,182.232 " id="polygon42" fill="#1f1f1f"  gorn="0.4.18.0.11.0"/>
+                </g>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-175.35206,140.07056)">
+                    <polygon points="0,182.232 10,172.232 10,56.9016 0,46.9016 " id="polygon44" fill="#000000"  gorn="0.4.18.0.12.0"/>
+                </g>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-175.35206,140.07056)">
+                    <polygon points="134.654,182.232 124.654,172.232 124.654,56.9016 134.654,46.9016 " id="polygon46" fill="#3d3d3d"  gorn="0.4.18.0.13.0"/>
+                </g>
+                <ellipse rx="11.13966" ry="6.5463996" stroke="none" id="circle48" cy="239.7276" fill="#1f1f1f" stroke-width="0"  gorn="0.4.18.0.14" cx="-141.93315"/>
+            </g>
+        </g>
+        <g  transform="translate(183.97887,153.87324)">
+            <g id="cap1"  gorn="0.4.19.0">
+                <g  transform="rotate(-90)">
+                    <rect x="-263.30991" height="73.788918" y="-152.73239" id="rect20-9" fill="#4d4d4d" stroke-width="1.63909853"  gorn="0.4.19.0.0.0" width="150.00005"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " x="-263.30991" height="1.2660543" opacity="0.2" y="-152.73239" id="rect22-1" fill="#ffffff" stroke-width="1.63909853"  gorn="0.4.19.0.1.0" width="150.00005"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect x="-263.30991" height="21.990767" y="-96.86097" id="rect24-6" fill="#333333" stroke-width="1.63909853"  gorn="0.4.19.0.2.0" width="150.00005"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " x="-263.30991" height="0.88073242" opacity="0.2" y="-75.613121" id="rect26-1" stroke-width="1.63909853"  gorn="0.4.19.0.3.0" width="150.00005"/>
+                </g>
+                <path d="m -152.7324,135.09628 v 0 0 1.75123 0 c 6.90825,1.50639 21.90833,2.54206 29.58723,2.54206 8.00917,0 19.07338,-0.90385 26.284404,-2.54206 v 0 0 l -1.99e-4,-23.02909 H -152.7324 Z" id="path30" fill="#dcdcdc" stroke-width="1.63909853"  gorn="0.4.19.0.4"/>
+                <path d="m -149.87002,239.86651 h -2.86238 v 23.01031 h 55.871435 v -23.0291 c -7.238375,-1.65707 -18.137445,-3.63417 -26.256865,-3.63417 -9.52282,0 -18.46779,1.41216 -26.75219,3.65296 z" id="path32" fill="#dcdcdc" stroke-width="1.63909853"  gorn="0.4.19.0.5"/>
+                <path d="m -93.943381,113.68691 v 23.02883 l -2.917584,0.13178 v -23.0291 z" id="path34" fill="#999999" stroke-width="1.63909853"  gorn="0.4.19.0.6"/>
+                <path d="m -93.88849,262.76384 v -23.0291 l -2.972475,0.13177 v 23.01032 l 2.972475,-0.11292 z" id="path36" fill="#999999" stroke-width="1.63909853"  gorn="0.4.19.0.7"/>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " x="-262.8768" height="1.2660543" opacity="0.15" y="-75.998558" id="rect38-7" stroke-width="1.63909853"  gorn="0.4.19.0.8.0" width="23.029091"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " x="-262.8768" height="1.2660543" opacity="0.5" y="-152.73239" id="rect40" fill="#ffffff" stroke-width="1.63909853"  gorn="0.4.19.0.9.0" width="23.029091"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " x="-136.82866" height="1.2660543" opacity="0.15" y="-75.998558" id="rect42" stroke-width="1.63909853"  gorn="0.4.19.0.10.0" width="23.047939"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " x="-136.82866" height="1.2660543" opacity="0.5" y="-152.73239" id="rect44" fill="#ffffff" stroke-width="1.63909853"  gorn="0.4.19.0.11.0" width="23.047939"/>
+                </g>
+                <line x2="-74.732475" id="line46" fill="none" stroke-width="1.63909853"  gorn="0.4.19.0.12" y1="248.9615" x1="-74.732475" y2="248.9615"/>
+                <g  transform="rotate(-90)">
+                    <rect x="-115.55107" height="19.045856" y="-93.943375" id="rect48" fill="#999999" stroke-width="1.63909853"  gorn="0.4.19.0.13.0" width="2.2219431"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect x="-262.8768" height="19.045856" y="-93.943375" id="rect50" fill="#999999" stroke-width="1.63909853"  gorn="0.4.19.0.14.0" width="2.2407749"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="translate(939.96476,153.87324)">
+            <g id="g267"  gorn="0.4.20.0">
+                <g  transform="rotate(-90)">
+                    <rect height="73.788918" x="-263.30991" y="-152.73239" id="rect237" fill="#4d4d4d" stroke-width="1.63909853"  gorn="0.4.20.0.0.0" width="150.00005"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " height="1.2660543" x="-263.30991" opacity="0.2" y="-152.73239" id="rect239" fill="#ffffff" stroke-width="1.63909853"  gorn="0.4.20.0.1.0" width="150.00005"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect height="21.990767" x="-263.30991" y="-96.86097" id="rect241" fill="#333333" stroke-width="1.63909853"  gorn="0.4.20.0.2.0" width="150.00005"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " height="0.88073242" x="-263.30991" opacity="0.2" y="-75.613121" id="rect243" stroke-width="1.63909853"  gorn="0.4.20.0.3.0" width="150.00005"/>
+                </g>
+                <path d="m -152.7324,135.09628 v 0 0 1.75123 0 c 6.90825,1.50639 21.90833,2.54206 29.58723,2.54206 8.00917,0 19.07338,-0.90385 26.284404,-2.54206 v 0 0 l -1.99e-4,-23.02909 H -152.7324 Z" id="path245" fill="#dcdcdc" stroke-width="1.63909853"  gorn="0.4.20.0.4"/>
+                <path d="m -149.87002,239.86651 h -2.86238 v 23.01031 h 55.871435 v -23.0291 c -7.238375,-1.65707 -18.137445,-3.63417 -26.256865,-3.63417 -9.52282,0 -18.46779,1.41216 -26.75219,3.65296 z" id="path247" fill="#dcdcdc" stroke-width="1.63909853"  gorn="0.4.20.0.5"/>
+                <path d="m -93.943381,113.68691 v 23.02883 l -2.917584,0.13178 v -23.0291 z" id="path249" fill="#999999" stroke-width="1.63909853"  gorn="0.4.20.0.6"/>
+                <path d="m -93.88849,262.76384 v -23.0291 l -2.972475,0.13177 v 23.01032 l 2.972475,-0.11292 z" id="path251" fill="#999999" stroke-width="1.63909853"  gorn="0.4.20.0.7"/>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " height="1.2660543" x="-262.8768" opacity="0.15" y="-75.998558" id="rect253" stroke-width="1.63909853"  gorn="0.4.20.0.8.0" width="23.029091"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " height="1.2660543" x="-262.8768" opacity="0.5" y="-152.73239" id="rect255" fill="#ffffff" stroke-width="1.63909853"  gorn="0.4.20.0.9.0" width="23.029091"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " height="1.2660543" x="-136.82866" opacity="0.15" y="-75.998558" id="rect257" stroke-width="1.63909853"  gorn="0.4.20.0.10.0" width="23.047939"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect enable-background="new    " height="1.2660543" x="-136.82866" opacity="0.5" y="-152.73239" id="rect259" fill="#ffffff" stroke-width="1.63909853"  gorn="0.4.20.0.11.0" width="23.047939"/>
+                </g>
+                <line x2="-74.732475" id="line261" fill="none" stroke-width="1.63909853"  gorn="0.4.20.0.12" x1="-74.732475" y1="248.9615" y2="248.9615"/>
+                <g  transform="rotate(-90)">
+                    <rect height="19.045856" x="-115.55107" y="-93.943375" id="rect263" fill="#999999" stroke-width="1.63909853"  gorn="0.4.20.0.13.0" width="2.2219431"/>
+                </g>
+                <g  transform="rotate(-90)">
+                    <rect height="19.045856" x="-262.8768" y="-93.943375" id="rect265" fill="#999999" stroke-width="1.63909853"  gorn="0.4.20.0.14.0" width="2.2407749"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="translate(424.82393,-802.81688)">
+            <g id="g294"  gorn="0.4.21.0">
+                <rect x="-182.71347" height="67.010262" y="850.57922" stroke-linecap="round" stroke="none" id="rect36-5" fill="#8c8c8c" stroke-width="0"  gorn="0.4.21.0.0" width="114.02889" connectorname="EP"/>
+                <rect x="-205.45776" height="88.593071" y="839.78796" stroke="none" id="rect38-2" fill="#303030" stroke-width="0"  gorn="0.4.21.0.1" width="149.99998"/>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-205.45769,809.0844)">
+                    <polygon points="0,46.9016 134.654,46.9016 124.654,56.9016 10,56.9016 " id="polygon40-4" fill="#1f1f1f"  gorn="0.4.21.0.2.0"/>
+                </g>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-205.45769,809.0844)">
+                    <polygon points="0,182.232 134.654,182.232 124.654,172.232 10,172.232 " id="polygon42-6" fill="#1f1f1f"  gorn="0.4.21.0.3.0"/>
+                </g>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-205.45769,809.0844)">
+                    <polygon points="0,46.9016 0,182.232 10,172.232 10,56.9016 " id="polygon44-6" fill="#000000"  gorn="0.4.21.0.4.0"/>
+                </g>
+                <g  transform="matrix(1.113966,0,0,0.65463999,-205.45769,809.0844)">
+                    <polygon points="134.654,46.9016 134.654,182.232 124.654,172.232 124.654,56.9016 " id="polygon46-3" fill="#3d3d3d"  gorn="0.4.21.0.5.0"/>
+                </g>
+                <ellipse rx="11.13966" ry="6.5463996" stroke="none" id="circle48-7" cy="908.74146" fill="#1f1f1f" stroke-width="0"  gorn="0.4.21.0.6" cx="-172.03879"/>
+            </g>
+        </g>
+        <g  transform="rotate(90,-100.35211,606.44366)">
+            <g id="g345"  gorn="0.4.22.0">
+                <g  transform="rotate(90)">
+                    <rect x="250.28169" height="18.92021" y="160.5986" id="rect3787" fill="#4d4d4d" stroke-width="0.61721325"  gorn="0.4.22.0.0.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.28169" height="0.32462892" opacity="0.2" y="160.5986" id="rect3789" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.22.0.1.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect x="250.28169" height="5.6386509" y="174.92459" id="rect3791" fill="#333333" stroke-width="0.61721325"  gorn="0.4.22.0.2.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.28169" height="0.22582853" opacity="0.2" y="180.37276" id="rect3793" stroke-width="0.61721325"  gorn="0.4.22.0.3.0" width="50.000023"/>
+                </g>
+                <path d="m -160.59859,293.01957 v 0 0 -0.58374 0 c -1.77135,-0.50214 -5.61752,-0.84736 -7.58646,-0.84736 -2.05363,0 -4.8906,0.30128 -6.73958,0.84736 v 0 0 l 5e-5,7.67636 h 14.32599 z" id="path3795" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.22.0.4"/>
+                <path d="m -161.33253,258.09616 h 0.73393 v -7.6701 h -14.32598 v 7.67636 c 1.85599,0.55236 4.65062,1.21139 6.73252,1.21139 2.44174,0 4.73532,-0.47072 6.85953,-1.21765 z" id="path3797" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.22.0.5"/>
+                <path d="m -175.67268,300.15603 v -7.67628 l 0.7481,-0.044 v 7.67637 l -0.7481,0.0438 z" id="path3799" fill="#999999" stroke-width="0.61721325"  gorn="0.4.22.0.6"/>
+                <path d="m -175.68675,250.46372 v 7.67636 l 0.76217,-0.0439 v -7.6701 l -0.76217,0.0377 z" id="path3801" fill="#999999" stroke-width="0.61721325"  gorn="0.4.22.0.7"/>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.42606" height="0.32462892" opacity="0.15" y="180.27391" id="rect3803" stroke-width="0.61721325"  gorn="0.4.22.0.8.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.42606" height="0.32462892" opacity="0.5" y="160.5986" id="rect3805" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.22.0.9.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="292.44211" height="0.32462892" opacity="0.15" y="180.27391" id="rect3807" stroke-width="0.61721325"  gorn="0.4.22.0.10.0" width="7.6826468"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="292.44211" height="0.32462892" opacity="0.5" y="160.5986" id="rect3809" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.22.0.11.0" width="7.6826468"/>
+                </g>
+                <line x2="-180.59854" id="line3811" fill="none" stroke-width="0.61721325"  gorn="0.4.22.0.12" y1="255.0645" x1="-180.59854" y2="255.0645"/>
+                <g  transform="rotate(90)">
+                    <rect x="299.53464" height="4.8835459" y="175.67267" id="rect3813" fill="#999999" stroke-width="0.61721325"  gorn="0.4.22.0.13.0" width="0.74064785"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect x="250.42606" height="4.8835459" y="175.67267" id="rect3815" fill="#999999" stroke-width="0.61721325"  gorn="0.4.22.0.14.0" width="0.74692506"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="rotate(90,-135.47535,641.5669)">
+            <g id="g377"  gorn="0.4.23.0">
+                <g  transform="rotate(90)">
+                    <rect height="18.92021" x="250.28169" y="160.5986" id="rect347" fill="#4d4d4d" stroke-width="0.61721325"  gorn="0.4.23.0.0.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.28169" opacity="0.2" y="160.5986" id="rect349" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.23.0.1.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect height="5.6386509" x="250.28169" y="174.92459" id="rect351" fill="#333333" stroke-width="0.61721325"  gorn="0.4.23.0.2.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.22582853" x="250.28169" opacity="0.2" y="180.37276" id="rect353" stroke-width="0.61721325"  gorn="0.4.23.0.3.0" width="50.000023"/>
+                </g>
+                <path d="m -160.59859,293.01957 v 0 0 -0.58374 0 c -1.77135,-0.50214 -5.61752,-0.84736 -7.58646,-0.84736 -2.05363,0 -4.8906,0.30128 -6.73958,0.84736 v 0 0 l 5e-5,7.67636 h 14.32599 z" id="path355" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.23.0.4"/>
+                <path d="m -161.33253,258.09616 h 0.73393 v -7.6701 h -14.32598 v 7.67636 c 1.85599,0.55236 4.65062,1.21139 6.73252,1.21139 2.44174,0 4.73532,-0.47072 6.85953,-1.21765 z" id="path357" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.23.0.5"/>
+                <path d="m -175.67268,300.15603 v -7.67628 l 0.7481,-0.044 v 7.67637 l -0.7481,0.0438 z" id="path359" fill="#999999" stroke-width="0.61721325"  gorn="0.4.23.0.6"/>
+                <path d="m -175.68675,250.46372 v 7.67636 l 0.76217,-0.0439 v -7.6701 l -0.76217,0.0377 z" id="path361" fill="#999999" stroke-width="0.61721325"  gorn="0.4.23.0.7"/>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.42606" opacity="0.15" y="180.27391" id="rect363" stroke-width="0.61721325"  gorn="0.4.23.0.8.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.42606" opacity="0.5" y="160.5986" id="rect365" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.23.0.9.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="292.44211" opacity="0.15" y="180.27391" id="rect367" stroke-width="0.61721325"  gorn="0.4.23.0.10.0" width="7.6826468"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="292.44211" opacity="0.5" y="160.5986" id="rect369" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.23.0.11.0" width="7.6826468"/>
+                </g>
+                <line x2="-180.59854" id="line371" fill="none" stroke-width="0.61721325"  gorn="0.4.23.0.12" x1="-180.59854" y1="255.0645" y2="255.0645"/>
+                <g  transform="rotate(90)">
+                    <rect height="4.8835459" x="299.53464" y="175.67267" id="rect373" fill="#999999" stroke-width="0.61721325"  gorn="0.4.23.0.13.0" width="0.74064785"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect height="4.8835459" x="250.42606" y="175.67267" id="rect375" fill="#999999" stroke-width="0.61721325"  gorn="0.4.23.0.14.0" width="0.74692506"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="rotate(90,-85.299295,691.74295)">
+            <g id="g409"  gorn="0.4.24.0">
+                <g  transform="rotate(90)">
+                    <rect x="250.28169" height="18.92021" y="160.5986" id="rect379" fill="#4d4d4d" stroke-width="0.61721325"  gorn="0.4.24.0.0.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.28169" height="0.32462892" opacity="0.2" y="160.5986" id="rect381" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.24.0.1.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect x="250.28169" height="5.6386509" y="174.92459" id="rect383" fill="#333333" stroke-width="0.61721325"  gorn="0.4.24.0.2.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.28169" height="0.22582853" opacity="0.2" y="180.37276" id="rect385" stroke-width="0.61721325"  gorn="0.4.24.0.3.0" width="50.000023"/>
+                </g>
+                <path d="m -160.59859,293.01957 v 0 0 -0.58374 0 c -1.77135,-0.50214 -5.61752,-0.84736 -7.58646,-0.84736 -2.05363,0 -4.8906,0.30128 -6.73958,0.84736 v 0 0 l 5e-5,7.67636 h 14.32599 z" id="path387" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.24.0.4"/>
+                <path d="m -161.33253,258.09616 h 0.73393 v -7.6701 h -14.32598 v 7.67636 c 1.85599,0.55236 4.65062,1.21139 6.73252,1.21139 2.44174,0 4.73532,-0.47072 6.85953,-1.21765 z" id="path389" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.24.0.5"/>
+                <path d="m -175.67268,300.15603 v -7.67628 l 0.7481,-0.044 v 7.67637 l -0.7481,0.0438 z" id="path391" fill="#999999" stroke-width="0.61721325"  gorn="0.4.24.0.6"/>
+                <path d="m -175.68675,250.46372 v 7.67636 l 0.76217,-0.0439 v -7.6701 l -0.76217,0.0377 z" id="path393" fill="#999999" stroke-width="0.61721325"  gorn="0.4.24.0.7"/>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.42606" height="0.32462892" opacity="0.15" y="180.27391" id="rect395" stroke-width="0.61721325"  gorn="0.4.24.0.8.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.42606" height="0.32462892" opacity="0.5" y="160.5986" id="rect397" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.24.0.9.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="292.44211" height="0.32462892" opacity="0.15" y="180.27391" id="rect399" stroke-width="0.61721325"  gorn="0.4.24.0.10.0" width="7.6826468"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="292.44211" height="0.32462892" opacity="0.5" y="160.5986" id="rect401" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.24.0.11.0" width="7.6826468"/>
+                </g>
+                <line x2="-180.59854" id="line403" fill="none" stroke-width="0.61721325"  gorn="0.4.24.0.12" y1="255.0645" x1="-180.59854" y2="255.0645"/>
+                <g  transform="rotate(90)">
+                    <rect x="299.53464" height="4.8835459" y="175.67267" id="rect405" fill="#999999" stroke-width="0.61721325"  gorn="0.4.24.0.13.0" width="0.74064785"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect x="250.42606" height="4.8835459" y="175.67267" id="rect407" fill="#999999" stroke-width="0.61721325"  gorn="0.4.24.0.14.0" width="0.74692506"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="rotate(90,-51.848592,661.63732)">
+            <g id="g441"  gorn="0.4.25.0">
+                <g  transform="rotate(90)">
+                    <rect height="18.92021" x="250.28169" y="160.5986" id="rect411" fill="#4d4d4d" stroke-width="0.61721325"  gorn="0.4.25.0.0.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.28169" opacity="0.2" y="160.5986" id="rect413" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.25.0.1.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect height="5.6386509" x="250.28169" y="174.92459" id="rect415" fill="#333333" stroke-width="0.61721325"  gorn="0.4.25.0.2.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.22582853" x="250.28169" opacity="0.2" y="180.37276" id="rect417" stroke-width="0.61721325"  gorn="0.4.25.0.3.0" width="50.000023"/>
+                </g>
+                <path d="m -160.59859,293.01957 v 0 0 -0.58374 0 c -1.77135,-0.50214 -5.61752,-0.84736 -7.58646,-0.84736 -2.05363,0 -4.8906,0.30128 -6.73958,0.84736 v 0 0 l 5e-5,7.67636 h 14.32599 z" id="path419" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.25.0.4"/>
+                <path d="m -161.33253,258.09616 h 0.73393 v -7.6701 h -14.32598 v 7.67636 c 1.85599,0.55236 4.65062,1.21139 6.73252,1.21139 2.44174,0 4.73532,-0.47072 6.85953,-1.21765 z" id="path421" fill="#dcdcdc" stroke-width="0.61721325"  gorn="0.4.25.0.5"/>
+                <path d="m -175.67268,300.15603 v -7.67628 l 0.7481,-0.044 v 7.67637 l -0.7481,0.0438 z" id="path423" fill="#999999" stroke-width="0.61721325"  gorn="0.4.25.0.6"/>
+                <path d="m -175.68675,250.46372 v 7.67636 l 0.76217,-0.0439 v -7.6701 l -0.76217,0.0377 z" id="path425" fill="#999999" stroke-width="0.61721325"  gorn="0.4.25.0.7"/>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.42606" opacity="0.15" y="180.27391" id="rect427" stroke-width="0.61721325"  gorn="0.4.25.0.8.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.42606" opacity="0.5" y="160.5986" id="rect429" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.25.0.9.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="292.44211" opacity="0.15" y="180.27391" id="rect431" stroke-width="0.61721325"  gorn="0.4.25.0.10.0" width="7.6826468"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="292.44211" opacity="0.5" y="160.5986" id="rect433" fill="#ffffff" stroke-width="0.61721325"  gorn="0.4.25.0.11.0" width="7.6826468"/>
+                </g>
+                <line x2="-180.59854" id="line435" fill="none" stroke-width="0.61721325"  gorn="0.4.25.0.12" x1="-180.59854" y1="255.0645" y2="255.0645"/>
+                <g  transform="rotate(90)">
+                    <rect height="4.8835459" x="299.53464" y="175.67267" id="rect437" fill="#999999" stroke-width="0.61721325"  gorn="0.4.25.0.13.0" width="0.74064785"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect height="4.8835459" x="250.42606" y="175.67267" id="rect439" fill="#999999" stroke-width="0.61721325"  gorn="0.4.25.0.14.0" width="0.74692506"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="matrix(0,2.0000004,-1.9999991,0,1007.0773,750.31703)">
+            <g id="g473" stroke-width="0.50000006"  gorn="0.4.26.0">
+                <g  transform="rotate(90)">
+                    <rect height="18.92021" x="250.28169" y="160.5986" id="rect443" fill="#4d4d4d" stroke-width="0.30860668"  gorn="0.4.26.0.0.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.28169" opacity="0.2" y="160.5986" id="rect445" fill="#ffffff" stroke-width="0.30860668"  gorn="0.4.26.0.1.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect height="5.6386509" x="250.28169" y="174.92459" id="rect447" fill="#333333" stroke-width="0.30860668"  gorn="0.4.26.0.2.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.22582853" x="250.28169" opacity="0.2" y="180.37276" id="rect449" stroke-width="0.30860668"  gorn="0.4.26.0.3.0" width="50.000023"/>
+                </g>
+                <path d="m -160.59859,293.01957 v 0 0 -0.58374 0 c -1.77135,-0.50214 -5.61752,-0.84736 -7.58646,-0.84736 -2.05363,0 -4.8906,0.30128 -6.73958,0.84736 v 0 0 l 5e-5,7.67636 h 14.32599 z" id="path451" fill="#dcdcdc" stroke-width="0.30860668"  gorn="0.4.26.0.4"/>
+                <path d="m -161.33253,258.09616 h 0.73393 v -7.6701 h -14.32598 v 7.67636 c 1.85599,0.55236 4.65062,1.21139 6.73252,1.21139 2.44174,0 4.73532,-0.47072 6.85953,-1.21765 z" id="path453" fill="#dcdcdc" stroke-width="0.30860668"  gorn="0.4.26.0.5"/>
+                <path d="m -175.67268,300.15603 v -7.67628 l 0.7481,-0.044 v 7.67637 l -0.7481,0.0438 z" id="path455" fill="#999999" stroke-width="0.30860668"  gorn="0.4.26.0.6"/>
+                <path d="m -175.68675,250.46372 v 7.67636 l 0.76217,-0.0439 v -7.6701 l -0.76217,0.0377 z" id="path457" fill="#999999" stroke-width="0.30860668"  gorn="0.4.26.0.7"/>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.42606" opacity="0.15" y="180.27391" id="rect459" stroke-width="0.30860668"  gorn="0.4.26.0.8.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="250.42606" opacity="0.5" y="160.5986" id="rect461" fill="#ffffff" stroke-width="0.30860668"  gorn="0.4.26.0.9.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="292.44211" opacity="0.15" y="180.27391" id="rect463" stroke-width="0.30860668"  gorn="0.4.26.0.10.0" width="7.6826468"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " height="0.32462892" x="292.44211" opacity="0.5" y="160.5986" id="rect465" fill="#ffffff" stroke-width="0.30860668"  gorn="0.4.26.0.11.0" width="7.6826468"/>
+                </g>
+                <line x2="-180.59854" id="line467" fill="none" stroke-width="0.30860668"  gorn="0.4.26.0.12" x1="-180.59854" y1="255.0645" y2="255.0645"/>
+                <g  transform="rotate(90)">
+                    <rect height="4.8835459" x="299.53464" y="175.67267" id="rect469" fill="#999999" stroke-width="0.30860668"  gorn="0.4.26.0.13.0" width="0.74064785"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect height="4.8835459" x="250.42606" y="175.67267" id="rect471" fill="#999999" stroke-width="0.30860668"  gorn="0.4.26.0.14.0" width="0.74692506"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="matrix(0,2.0000004,-1.9999991,0,1140.8801,750.31703)">
+            <g id="g505" stroke-width="0.50000006"  gorn="0.4.27.0">
+                <g  transform="rotate(90)">
+                    <rect x="250.28169" height="18.92021" y="160.5986" id="rect475" fill="#4d4d4d" stroke-width="0.30860668"  gorn="0.4.27.0.0.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.28169" height="0.32462892" opacity="0.2" y="160.5986" id="rect477" fill="#ffffff" stroke-width="0.30860668"  gorn="0.4.27.0.1.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect x="250.28169" height="5.6386509" y="174.92459" id="rect479" fill="#333333" stroke-width="0.30860668"  gorn="0.4.27.0.2.0" width="50.000023"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.28169" height="0.22582853" opacity="0.2" y="180.37276" id="rect481" stroke-width="0.30860668"  gorn="0.4.27.0.3.0" width="50.000023"/>
+                </g>
+                <path d="m -160.59859,293.01957 v 0 0 -0.58374 0 c -1.77135,-0.50214 -5.61752,-0.84736 -7.58646,-0.84736 -2.05363,0 -4.8906,0.30128 -6.73958,0.84736 v 0 0 l 5e-5,7.67636 h 14.32599 z" id="path483" fill="#dcdcdc" stroke-width="0.30860668"  gorn="0.4.27.0.4"/>
+                <path d="m -161.33253,258.09616 h 0.73393 v -7.6701 h -14.32598 v 7.67636 c 1.85599,0.55236 4.65062,1.21139 6.73252,1.21139 2.44174,0 4.73532,-0.47072 6.85953,-1.21765 z" id="path485" fill="#dcdcdc" stroke-width="0.30860668"  gorn="0.4.27.0.5"/>
+                <path d="m -175.67268,300.15603 v -7.67628 l 0.7481,-0.044 v 7.67637 l -0.7481,0.0438 z" id="path487" fill="#999999" stroke-width="0.30860668"  gorn="0.4.27.0.6"/>
+                <path d="m -175.68675,250.46372 v 7.67636 l 0.76217,-0.0439 v -7.6701 l -0.76217,0.0377 z" id="path489" fill="#999999" stroke-width="0.30860668"  gorn="0.4.27.0.7"/>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.42606" height="0.32462892" opacity="0.15" y="180.27391" id="rect491" stroke-width="0.30860668"  gorn="0.4.27.0.8.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="250.42606" height="0.32462892" opacity="0.5" y="160.5986" id="rect493" fill="#ffffff" stroke-width="0.30860668"  gorn="0.4.27.0.9.0" width="7.6763649"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="292.44211" height="0.32462892" opacity="0.15" y="180.27391" id="rect495" stroke-width="0.30860668"  gorn="0.4.27.0.10.0" width="7.6826468"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect enable-background="new    " x="292.44211" height="0.32462892" opacity="0.5" y="160.5986" id="rect497" fill="#ffffff" stroke-width="0.30860668"  gorn="0.4.27.0.11.0" width="7.6826468"/>
+                </g>
+                <line x2="-180.59854" id="line499" fill="none" stroke-width="0.30860668"  gorn="0.4.27.0.12" y1="255.0645" x1="-180.59854" y2="255.0645"/>
+                <g  transform="rotate(90)">
+                    <rect x="299.53464" height="4.8835459" y="175.67267" id="rect501" fill="#999999" stroke-width="0.30860668"  gorn="0.4.27.0.13.0" width="0.74064785"/>
+                </g>
+                <g  transform="rotate(90)">
+                    <rect x="250.42606" height="4.8835459" y="175.67267" id="rect503" fill="#999999" stroke-width="0.30860668"  gorn="0.4.27.0.14.0" width="0.74692506"/>
+                </g>
+            </g>
+        </g>
+        <g  transform="matrix(5.8942705,0,0,5.4206845,555.15486,489.21153)">
+            <g id="bb_trimpot" stroke-width="2.45711493"  gorn="0.4.28.0">
+                <rect height="15.93" x="4.013" y="1.566" id="rect35" fill="#999999" stroke-width="2.45711493"  gorn="0.4.28.0.0" width="14.492"/>
+                <polygon points="9.995,10.837 9.995,15.476 12.182,15.476 12.182,10.837 16.818,10.837 16.818,8.652 12.182,8.652 12.182,4.014 9.995,4.014 9.995,8.652 5.357,8.652 5.357,10.837 " id="polygon37" fill="#333333" stroke-width="2.45711493"  gorn="0.4.28.0.1"/>
+                <polygon points="9.995,8.652 9.995,4.014 10.511,4.014 10.511,9.189 5.357,9.189 5.357,8.652 " id="polygon39" fill="#1a1a1a" stroke-width="2.45711493"  gorn="0.4.28.0.2"/>
+                <polygon points="10.511,11.481 9.995,10.837 9.995,14.839 10.511,14.839 " id="polygon41" fill="#1a1a1a" stroke-width="2.45711493"  gorn="0.4.28.0.3"/>
+                <polygon points="12.68,9.171 12.18,8.655 16.039,8.655 16.039,9.171 " id="polygon43" fill="#1a1a1a" stroke-width="2.45711493"  gorn="0.4.28.0.4"/>
+                <path d="M 0,-0.048 V 19.535 H 22.176 V -0.048 Z m 11.088,14.334 c -2.509,0 -4.542,-2.033 -4.542,-4.542 0,-2.51 2.033,-4.542 4.542,-4.542 2.51,0 4.542,2.032 4.542,4.542 0,2.509 -2.032,4.542 -4.542,4.542 z" id="path45" fill="#3250be" stroke-width="2.45711493"  gorn="0.4.28.0.5"/>
+                <circle cy="15.242" id="circle47" fill="#e6e6e6" stroke-width="2.45711493"  gorn="0.4.28.0.6" r="0.41999999" cx="2.161"/>
+                <circle cy="15.242" id="circle49" fill="#e6e6e6" stroke-width="2.45711493"  gorn="0.4.28.0.7" r="0.41999999" cx="2.161"/>
+                <circle cy="15.242" id="circle51" fill="#b3b3b3" stroke-width="2.45711493"  gorn="0.4.28.0.8" r="0.41999999" cx="2.1619999"/>
+                <path d="m 1.865,15.54 c -0.165,-0.164 -0.164,-0.431 0,-0.595 0.164,-0.164 0.429,-0.164 0.594,0 0.164,0.164 -0.218,-0.306 -0.511,0.097 -0.301,0.41 0.08,0.662 -0.083,0.498 z" id="path53" fill="#e6e6e6" stroke-width="2.45711493"  gorn="0.4.28.0.9"/>
+                <path d="m 2.458,14.946 c 0.165,0.164 0.164,0.431 0,0.595 -0.164,0.164 -0.429,0.164 -0.594,0 -0.163,-0.163 0.219,0.305 0.512,-0.096 0.3,-0.412 -0.081,-0.664 0.082,-0.499 z" id="path55" fill="#808080" stroke-width="2.45711493"  gorn="0.4.28.0.10"/>
+                <circle cy="6.6220002" id="circle57" fill="#333333" stroke-width="2.45711493"  gorn="0.4.28.0.11" r="0.41999999" cx="8.0430002"/>
+                <circle cy="6.6220002" id="circle59" fill="#333333" stroke-width="2.45711493"  gorn="0.4.28.0.12" r="0.41999999" cx="14.209"/>
+                <path d="M 7.624,6.838 5.541,5.444 4.984,6.275 7.069,7.67 C 7.224,7.371 7.409,7.094 7.624,6.838 Z" id="path63" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.13"/>
+                <path d="m 11.088,5.202 c 0.157,0 0.305,0.03 0.458,0.046 l -0.035,-3.684 -1,0.011 0.035,3.682 c 0.18,-0.021 0.356,-0.055 0.542,-0.055 z" id="path65" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.14"/>
+                <path d="M 9.295,5.573 8.148,3.545 7.278,4.037 8.43,6.075 C 8.7,5.879 8.985,5.706 9.295,5.573 Z" id="path67" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.15"/>
+                <path d="m 15.63,9.744 c 0,0.042 -0.011,0.079 -0.013,0.122 L 18.077,9.65 17.988,8.654 15.542,8.869 c 0.056,0.284 0.088,0.576 0.088,0.875 z" id="path69" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.16"/>
+                <path d="m 13.684,6.024 1.092,-2.001 -0.879,-0.478 -1.09,1.999 c 0.31,0.127 0.603,0.289 0.877,0.48 z" id="path71" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.17"/>
+                <path d="M 15.115,7.687 17.064,6.392 16.511,5.559 14.562,6.853 c 0.215,0.256 0.4,0.533 0.553,0.834 z" id="path73" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.18"/>
+                <path d="m 15.068,11.892 2.55,1.021 0.37,-0.929 -2.545,-1.02 c -0.091,0.326 -0.216,0.635 -0.375,0.928 z" id="path75" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.19"/>
+                <path d="m 13.784,13.382 2.965,3.178 0.729,-0.683 -2.967,-3.181 c -0.217,0.255 -0.456,0.487 -0.727,0.686 z" id="path77" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.20"/>
+                <path d="M 7.646,12.678 5.55,14.9 6.278,15.586 8.373,13.367 C 8.104,13.164 7.864,12.934 7.646,12.678 Z" id="path79" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.21"/>
+                <path d="m 6.546,9.744 c 0,-0.317 0.033,-0.625 0.095,-0.925 L 3.99,8.56 3.893,9.554 6.554,9.817 C 6.553,9.792 6.546,9.77 6.546,9.744 Z" id="path81" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.22"/>
+                <path d="M 6.708,10.883 4.014,11.904 4.368,12.841 7.069,11.82 C 6.915,11.522 6.792,11.211 6.708,10.883 Z" id="path83" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.23"/>
+                <polygon points="16.529,10.964 16.529,10.837 12.182,10.837 12.182,14.628 12.307,14.628 12.316,10.982 " id="polygon85" fill="#cccccc" stroke-width="2.45711493"  gorn="0.4.28.0.24"/>
+                <path d="m 11.088,3.976 c -3.187,0 -5.77,2.583 -5.77,5.771 0,3.188 2.583,5.771 5.77,5.771 3.188,0 5.77,-2.583 5.77,-5.771 -0.001,-3.189 -2.585,-5.771 -5.77,-5.771 z m 0,10.31 c -2.509,0 -4.542,-2.033 -4.542,-4.542 0,-2.51 2.033,-4.542 4.542,-4.542 2.51,0 4.542,2.032 4.542,4.542 0,2.509 -2.032,4.542 -4.542,4.542 z" id="path87" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.25"/>
+                <path d="m 14.645,14.145 -0.078,0.063 c -1.006,0.785 -2.209,1.199 -3.479,1.199 -1.282,0 -2.494,-0.421 -3.503,-1.219 L 7.507,14.125 6.273,15.434 5.703,14.896 6.937,13.588 6.871,13.514 C 6.521,13.121 6.227,12.684 5.998,12.211 L 5.955,12.122 4.43,12.698 4.152,11.966 5.673,11.39 5.646,11.295 C 5.5,10.779 5.426,10.26 5.426,9.745 V 9.648 L 5.332,9.587 4.011,9.457 4.088,8.677 5.506,8.818 5.524,8.719 C 5.634,8.116 5.836,7.546 6.122,7.026 L 6.169,6.94 5.134,6.245 5.57,5.593 6.607,6.287 6.669,6.209 C 7.018,5.776 7.425,5.396 7.88,5.081 L 7.961,5.024 7.425,4.078 8.107,3.691 8.644,4.64 8.734,4.6 C 9.312,4.334 9.922,4.169 10.544,4.11 l 0.099,-0.009 -0.023,-2.418 0.784,-0.009 0.023,2.423 0.099,0.009 c 0.638,0.049 1.253,0.202 1.83,0.453 l 0.09,0.04 0.494,-0.906 0.689,0.374 -0.496,0.907 0.083,0.055 c 0.493,0.328 0.933,0.73 1.304,1.201 l 0.063,0.078 0.899,-0.599 0.435,0.652 -0.899,0.596 0.049,0.087 c 0.287,0.529 0.488,1.115 0.597,1.735 l 0.019,0.099 1.213,-0.105 0.067,0.78 -1.213,0.106 -0.002,0.098 c -0.001,0.559 -0.083,1.11 -0.246,1.641 l -0.029,0.096 1.377,0.551 -0.291,0.728 -1.382,-0.553 -0.045,0.088 c -0.225,0.441 -0.51,0.855 -0.849,1.23 l -0.066,0.072 2.11,2.263 -0.573,0.536 z" stroke="#000000" id="path91" fill="none" stroke-width="0.49142307"  gorn="0.4.28.0.26"/>
+                <text x="2.0678999" y="18.7444" font-family="Arial-BoldMT" font-size="4" id="text95" fill="#263c8f" stroke-width="2.45711493"  gorn="0.4.28.0.27">1 3362 3</text>
+                <path enable-background="new    " d="m 6.858,10.101 c 0,-2.51 2.033,-4.542 4.542,-4.542 0.94,0 2.227,0.42 2.227,0.42 -0.725,-0.49 -1.6,-0.775 -2.539,-0.775 -2.509,0 -4.542,2.032 -4.542,4.542 0,0.655 0.139,1.279 0.39,1.844 0,-0.002 -0.078,-0.834 -0.078,-1.489 z" opacity="0.35" id="path97" stroke-width="2.45711493"  gorn="0.4.28.0.28"/>
+                <rect x="0" height="6.487" y="19.535999" id="rect99" fill="#131e48" stroke-width="2.45711493"  gorn="0.4.28.0.29" width="22.176001"/>
+                <rect enable-background="new    " x="0" height="1.054" opacity="0.18000004" y="19.025" id="rect101" fill="#ffffff" stroke-width="2.45711493"  gorn="0.4.28.0.30" width="22.176001"/>
+                <text x="26.747341" y="-71.362106" font-family="Arial-BoldMT" font-size="14" id="text591" fill="#ffffff" stroke-width="2.45711493"  gorn="0.4.28.0.31">-</text>
+                <text x="25.041849" y="21.944126" font-family="Arial-BoldMT" font-size="10" id="text593" fill="#ffffff" stroke-width="2.45711493"  gorn="0.4.28.0.32">+</text>
+            </g>
+        </g>
+    </g>
+</svg>

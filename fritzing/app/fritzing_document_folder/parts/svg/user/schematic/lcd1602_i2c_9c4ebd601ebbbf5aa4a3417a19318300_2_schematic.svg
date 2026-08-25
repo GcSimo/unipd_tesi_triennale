@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg>
+<!-- Creator: CorelDRAW X6 -->
+<svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 80793 81494" shape-rendering="geometricPrecision" xml:space="preserve" height="0.70972in" width="0.70361in" version="1.1" clip-rule="evenodd" image-rendering="optimizeQuality"  xmlns:xml="http://www.w3.org/XML/1998/namespace" text-rendering="geometricPrecision">
+    <desc >
+        <referenceFile >LCD1602-I2C_schematic.svg</referenceFile>
+    </desc>
+    <g gorn="0.1" id="schematic" >
+        <metadata id="CorelCorpID_0Corel-Layer" />
+        <rect stroke-linecap="round" stroke-width="1148.26" height="55978" width="67460" stroke="black" fill="white" x="574"  y="12759"/>
+        <line x2="34304" y2="80378" stroke-linecap="round" gorn="0.1.2" stroke-width="1116.16" x1="34304" id="connector0pin" stroke="#787878" fill="none" y1="68895" />
+        <g  transform="matrix(-8.01198E-014 -1 1 -8.01198E-014 -1899.6 101172)">
+            <g >
+                <g >
+                    <g >
+                        <text font-size="5581.7" fill="#606062" font-weight="normal" x="35181"  font-family="Droid Sans" y="38392">GND</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <rect gorn="0.1.4" height="1116" width="1116" id="connector0terminal" text-anchor="start" fill="none" x="33746"  y="80378"/>
+        <line x2="34304" y2="12599" stroke-linecap="round" gorn="0.1.5" stroke-width="1116.16" x1="34304" id="connector1pin" stroke="#787878" fill="none" y1="1117" />
+        <g  transform="matrix(-8.01198E-014 -1 1 -8.01198E-014 -1899.14 50511.1)">
+            <g >
+                <g >
+                    <g >
+                        <text font-size="5581.7" fill="#606062" font-weight="normal" x="25503"  font-family="Droid Sans" y="38392">VCC</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <rect gorn="0.1.7" height="1116" width="1116" id="connector1terminal" text-anchor="end" fill="none" x="33746" />
+        <line x2="79676" y2="35006" stroke-linecap="round" gorn="0.1.8" stroke-width="1116.16" x1="68193" id="connector2pin" stroke="#787878" fill="none" y1="35006" />
+        <g  transform="matrix(1 0 0 1 29521.1 -996.814)">
+            <g >
+                <g >
+                    <g >
+                        <text font-size="5581.7" fill="#606062" font-weight="normal" x="25127"  font-family="Droid Sans" y="38392">SDA</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <rect gorn="0.1.10" height="1116" width="1116" id="connector2terminal" text-anchor="end" fill="none" x="79676"  y="34448"/>
+        <line x2="79676" y2="46489" stroke-linecap="round" gorn="0.1.11" stroke-width="1116.16" x1="68193" id="connector3pin" stroke="#787878" fill="none" y1="46489" />
+        <g  transform="matrix(1 0 0 1 29861 10565.8)">
+            <g >
+                <g >
+                    <g >
+                        <text font-size="5581.7" fill="#606062" font-weight="normal" x="26177"  font-family="Droid Sans" y="38392">SCL</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <rect gorn="0.1.13" height="1116" width="1116" id="connector3terminal" text-anchor="end" fill="none" x="79676"  y="45931"/>
+        <g  transform="matrix(1 0 0 1 -1006.31 -765.354)">
+            <g >
+                <g >
+                    <g >
+                        <text gorn="0.1.14.0.0.0.0" font-size="6777.88" id="label" fill="black" font-weight="500" x="18219"  font-family="OCRA" y="38392">LCD1602</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <g  transform="matrix(1 0 0 1 -913.633 9199.17)">
+            <g >
+                <g >
+                    <g >
+                        <text gorn="0.1.15.0.0.0.0" font-size="6777.88" id="label_0" fill="black" font-weight="500" x="27911"  font-family="OCRA" y="38392">I2C</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

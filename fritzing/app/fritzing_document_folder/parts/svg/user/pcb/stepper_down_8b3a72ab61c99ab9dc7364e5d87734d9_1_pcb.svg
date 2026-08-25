@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns="http://www.w3.org/2000/svg" height="0.67000002in" viewBox="0 0 879.99388 669.99998" id="svg2"  gorn="0" width="0.87999392in" version="1.2">
+    <metadata id="metadata30" >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <cc:Work xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="" xmlns:cc="http://creativecommons.org/ns#">
+                <dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format>
+                <dc:type xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+                <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <defs id="defs28" />
+    <desc id="desc4" >
+        <referenceFile >dsun_773629999eb9789162f063db90289f2f_1_pcb.svg</referenceFile>
+    </desc>
+    <desc id="desc6" >Fritzing
+    footprint
+    SVG</desc>
+    <g  transform="translate(-347.76197,-659335.31)">
+        <g id="silkscreen"  gorn="0.4.0">
+            <line x2="1223.825" stroke="#000000" id="line11" stroke-width="10.00000095"  gorn="0.4.0.0" y1="660000.31" x1="353.82495" y2="660000.31"/>
+            <line x2="1222.7559" stroke="#000000" id="line13" stroke-width="10"  gorn="0.4.0.1" x1="1222.7559" y1="659999.88" y2="659339.88"/>
+            <line x2="353.81891" stroke="#000000" id="line15" stroke-width="10"  gorn="0.4.0.2" x1="1223.819" y1="659340.31" y2="659340.31"/>
+            <line x2="352.76196" stroke="#000000" id="line9" stroke-width="9.99999428"  gorn="0.4.0.3" x1="352.76196" y1="659339.88" y2="659999.88"/>
+        </g>
+    </g>
+    <g id="copper1"  gorn="0.5">
+        <g id="copper0"  gorn="0.5.0">
+            <circle stroke="#ffbf00" id="connector0pin" cy="80.002502" fill="none" stroke-width="20"  gorn="0.5.0.0" r="29" cx="76.047234"/>
+            <circle stroke="#ffbf00" id="connector2pin" cy="500.0025" fill="none" stroke-width="20"  gorn="0.5.0.1" r="29" cx="76.047234"/>
+            <circle stroke="#ffbf00" id="connector7pin" cy="80.002502" fill="none" stroke-width="20"  gorn="0.5.0.2" r="29" cx="806.61707"/>
+            <circle stroke="#ffbf00" id="connector6pin" cy="180.0025" fill="none" stroke-width="20"  gorn="0.5.0.3" r="29" cx="806.61719"/>
+            <rect x="778" height="57.999996" y="151.00002" stroke="#ffbf00" id="rect83" fill="none" stroke-width="20"  gorn="0.5.0.4" width="57.999996"/>
+            <circle stroke="#ffbf00" id="connector5pin" cy="500.0025" fill="none" stroke-width="20"  gorn="0.5.0.5" r="29" cx="806.04504"/>
+            <circle stroke="#ffbf00" cy="180.0025" id="connector1pin" fill="none" stroke-width="20"  gorn="0.5.0.6" r="29" cx="76.047234"/>
+            <rect height="57.999996" x="47" y="151.00002" stroke="#ffbf00" id="rect81" fill="none" stroke-width="20"  gorn="0.5.0.7" width="57.999996"/>
+            <circle stroke="#ffbf00" cy="600.0025" id="connector3pin" fill="none" stroke-width="20"  gorn="0.5.0.8" r="29" cx="76.047234"/>
+            <rect x="47" height="57.999996" y="571" stroke="#ffbf00" id="rect79" fill="none" stroke-width="20"  gorn="0.5.0.9" width="57.999996"/>
+            <circle stroke="#ffbf00" cy="600.0025" id="connector4pin" fill="none" stroke-width="20"  gorn="0.5.0.10" r="29" cx="806.04504"/>
+            <rect height="57.999996" x="778" y="571" stroke="#ffbf00" id="rect85" fill="none" stroke-width="20"  gorn="0.5.0.11" width="57.999996"/>
+        </g>
+    </g>
+</svg>

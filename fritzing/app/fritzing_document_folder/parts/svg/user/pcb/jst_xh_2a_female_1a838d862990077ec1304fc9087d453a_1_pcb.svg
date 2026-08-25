@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Fritzing (https://fritzing.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" x="0in" version="1.2" height="7.77mm" gorn="0" y="0in" viewBox="0 0 18.801 22.025204" id="svg812"  width="6.632575mm">
+    <desc id="desc2" >
+        <referenceFile >JST-B2B-XH-A_pcb.svg</referenceFile>
+    </desc>
+    <defs id="defs816" />
+    <g gorn="0.2" id="silkscreen" >
+        <line stroke-width="0.75" gorn="0.2.0" x2="0.34599999" y1="1.041" x1="0.34599999" id="line7" stroke="#000000" y2="21.030924"  fill="none"/>
+        <line stroke-width="0.75" gorn="0.2.1" x2="17.354" y1="15.761459" x1="14.485" id="line9" stroke="#000000" y2="15.761459"  fill="none"/>
+        <line stroke-width="0.75" gorn="0.2.2" x2="16.281" y1="15.763262" x1="16.281" id="line11" stroke="#000000" y2="5.842"  fill="none"/>
+        <line stroke-width="0.75" gorn="0.2.3" x2="0.38499999" y1="0.36000001" x1="17.007999" id="line13" stroke="#000000" y2="0.36000001"  fill="none"/>
+        <line stroke-width="0.75" gorn="0.2.4" x2="12.252" y1="21.339216" x1="12.252" id="line4338" stroke="#000000" y2="0.72000003"  fill="none"/>
+        <line stroke-width="0.75" gorn="0.2.5" x2="17.007999" y1="21.620672" x1="0.38499999" id="line4342" stroke="#000000" y2="21.620672"  fill="none"/>
+        <line stroke-width="0.75" gorn="0.2.6" x2="17.354" y1="5.842" x1="14.485" id="line4344" stroke="#000000" y2="5.842"  fill="none"/>
+    </g>
+    <g gorn="0.3" id="copper1" >
+        <g gorn="0.3.0" id="g7" >
+            <circle stroke-width="1.44" gorn="0.3.0.0" cx="8.0380001" r="2.0880001" cy="7.447" id="connector0pin" stroke="#f7bd13"  fill="none"/>
+            <rect x="5.9499998" stroke-width="1.44" height="4.1669998" gorn="0.3.0.1" y="5.3629999" id="rect779" stroke="#f7bd13"  fill="none" width="4.1760001"/>
+        </g>
+        <circle stroke-width="1.44" gorn="0.3.1" cx="8.0380001" r="2.0880001" cy="14.533" id="connector1pin" stroke="#f7bd13"  fill="none"/>
+        <g gorn="0.3.2" display="inline" id="g798" >
+            <g gorn="0.3.2.0" id="g792" >
+                <circle stroke-width="1.44" gorn="0.3.2.0.0" cx="8.0380001" r="2.0880001" cy="7.447" id="circle788" stroke="#f7bd13"  fill="none"/>
+                <rect x="5.9499998" stroke-width="1.44" height="4.1669998" gorn="0.3.2.0.1" y="5.3629999" id="rect790" stroke="#f7bd13"  fill="none" width="4.1760001"/>
+            </g>
+            <circle stroke-width="1.44" gorn="0.3.2.1" cx="8.0380001" r="2.0880001" cy="14.533" id="circle794" stroke="#f7bd13"  fill="none"/>
+        </g>
+    </g>
+</svg>

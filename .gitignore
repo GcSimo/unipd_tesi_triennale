@@ -1,0 +1,79 @@
+# ===== default .gitignore file =====
+# --- project directories ---
+#build
+#test
+
+# --- C/C++ compiled files ---
+*.a
+*.o
+*.obj
+*.exe
+*.out
+#main
+
+# --- Java compiled files ---
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# --- Latex compiled files ---
+*.aux
+*-blx.bib
+*.bbl
+*.bbl-SAVE-ERROR
+*.bcf
+*.bcf-SAVE-ERROR
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.ind
+*.ilg
+*.idx
+#*.pdf
+
+# --- compressed archive files ---
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# --- VSCode files ---
+.vscode
+
+# --- PlatformIO files ---
+.pio
+
+# --- Vim files ---
+*.swp
+*.swo
+*~
+*.bak
+
+# --- macOS generated files ---
+.DS_Store
+.DS_Store\?
+._*
+.Spotlight-V100
+.Trashes
+
+# --- windows generated files ---
+ehthumbs.db
+ehthumbs_vista.db
+thumbs.db
+Thumbs.db

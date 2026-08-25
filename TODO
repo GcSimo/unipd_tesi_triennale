@@ -1,0 +1,13 @@
+TODO LIST - incubatrice neonatale
+
+firmware:
+- [ ] correggere connessioni relay e switch
+- [ ] tarare parametri PID
+- [ ] aggiungere gestione degli errori (temperatura, umidità fuori dai range)
+- [ ] verificare temporizzazione del pid
+- [ ] verificare temporizzazione display, led allarme
+- [ ] ritardare impostazione setpoint temperatura e umidità
+- [ ] creare classe per gestire sht20
+
+tesi:
+- [ ] scattare foto del prototipo da inserire nel documento

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg>
+<!-- Creator: CorelDRAW X6 -->
+<svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 1434940 648221" shape-rendering="geometricPrecision" xml:space="preserve" height="1.42732in" width="3.15961in" version="1.1" clip-rule="evenodd" image-rendering="optimizeQuality"  xmlns:xml="http://www.w3.org/XML/1998/namespace" text-rendering="geometricPrecision">
+    <desc >
+        <referenceFile >LCD1602-I2C_pcb.svg</referenceFile>
+    </desc>
+    <g gorn="0.1" id="pcb" >
+        <metadata id="CorelCorpID_0Corel-Layer" />
+        <g gorn="0.1.1" id="copper1" >
+            <g gorn="0.1.1.0" id="copper0" >
+                <rect stroke-width="7720.57" height="25887" width="25887" stroke="#F7BD13" fill="none" x="32409"  y="80508"/>
+                <circle cx="45353" gorn="0.1.1.0.1" connectorname="GND" cy="93451" stroke-width="7720.57" r="12943" id="connector0pad" stroke="#F7BD13" fill="none" />
+                <circle cx="45353" gorn="0.1.1.0.2" connectorname="VCC" cy="138867" stroke-width="7720.57" r="12943" id="connector1pad" stroke="#F7BD13" fill="none" />
+                <circle cx="45353" gorn="0.1.1.0.3" connectorname="SDA" cy="184282" stroke-width="7720.57" r="12943" id="connector2pad" stroke="#F7BD13" fill="none" />
+                <circle cx="45353" gorn="0.1.1.0.4" connectorname="SCL" cy="229697" stroke-width="7720.57" r="12943" id="connector3pad" stroke="#F7BD13" fill="none" />
+            </g>
+        </g>
+        <g gorn="0.1.2" id="silkscreen" >
+            <rect stroke-width="4541.51" height="643679" width="1430398" stroke="#FEFEFE" fill="none" x="2271"  y="2271"/>
+            <g >
+                <line x2="68060" y2="241051" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="218343" />
+                <line x2="56706" y2="252404" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="241051" />
+                <line x2="22645" y2="241051" stroke-linecap="round" stroke-width="3633.21" x1="33999" stroke="white" fill="none" y1="252404" />
+                <line x2="68060" y2="172928" stroke-linecap="round" stroke-width="3633.21" x1="56706" stroke="white" fill="none" y1="161574" />
+                <line x2="68060" y2="195636" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="172928" />
+                <line x2="56706" y2="206989" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="195636" />
+                <line x2="22645" y2="195636" stroke-linecap="round" stroke-width="3633.21" x1="33999" stroke="white" fill="none" y1="206989" />
+                <line x2="22645" y2="172928" stroke-linecap="round" stroke-width="3633.21" x1="22645" stroke="white" fill="none" y1="195636" />
+                <line x2="33999" y2="161574" stroke-linecap="round" stroke-width="3633.21" x1="22645" stroke="white" fill="none" y1="172928" />
+                <line x2="56706" y2="206989" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="218343" />
+                <line x2="22645" y2="218343" stroke-linecap="round" stroke-width="3633.21" x1="33999" stroke="white" fill="none" y1="206989" />
+                <line x2="22645" y2="218343" stroke-linecap="round" stroke-width="3633.21" x1="22645" stroke="white" fill="none" y1="241051" />
+                <line x2="68060" y2="104805" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="82098" />
+                <line x2="56706" y2="116159" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="104805" />
+                <line x2="22645" y2="104805" stroke-linecap="round" stroke-width="3633.21" x1="33999" stroke="white" fill="none" y1="116159" />
+                <line x2="68060" y2="127513" stroke-linecap="round" stroke-width="3633.21" x1="56706" stroke="white" fill="none" y1="116159" />
+                <line x2="68060" y2="150220" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="127513" />
+                <line x2="56706" y2="161574" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="150220" />
+                <line x2="22645" y2="150220" stroke-linecap="round" stroke-width="3633.21" x1="33999" stroke="white" fill="none" y1="161574" />
+                <line x2="22645" y2="127513" stroke-linecap="round" stroke-width="3633.21" x1="22645" stroke="white" fill="none" y1="150220" />
+                <line x2="33999" y2="116159" stroke-linecap="round" stroke-width="3633.21" x1="22645" stroke="white" fill="none" y1="127513" />
+                <line x2="33999" y2="70744" stroke-linecap="round" stroke-width="3633.21" x1="56706" stroke="white" fill="none" y1="70744" />
+                <line x2="56706" y2="70744" stroke-linecap="round" stroke-width="3633.21" x1="68060" stroke="white" fill="none" y1="82098" />
+                <line x2="22645" y2="82098" stroke-linecap="round" stroke-width="3633.21" x1="33999" stroke="white" fill="none" y1="70744" />
+                <line x2="22645" y2="82098" stroke-linecap="round" stroke-width="3633.21" x1="22645" stroke="white" fill="none" y1="104805" />
+                <line x2="33999" y2="252404" stroke-linecap="round" stroke-width="3633.21" x1="56706" stroke="white" fill="none" y1="252404" />
+            </g>
+            <g  transform="matrix(1 0 0 1 559892 173361)">
+                <g >
+                    <g >
+                        <g >
+                            <text gorn="0.1.2.2.0.0.0.0" font-size="26807.4" id="label" fill="#FEFEFE" font-weight="500" x="52560"  font-family="OCRA" y="160664">LCD1602-I2C</text>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

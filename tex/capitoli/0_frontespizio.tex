@@ -1,0 +1,49 @@
+\begin{titlepage}
+	% solo il frontespizio deve essere simmetrico rispetto ai margini interno ed esterno
+	\newgeometry{hmargin=2.5cm,vmargin=2cm}
+
+	\begin{center}
+		\begin{minipage}{0.45\textwidth}
+			\raggedright
+			\includegraphics[height=3cm]{immagini/logo_unipd.pdf}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.4\textwidth}
+			\raggedleft
+			\includegraphics[height=2.5cm]{immagini/logo_dei.pdf}
+		\end{minipage}
+	\end{center}
+
+	\vspace{\stretch{0.5}}
+
+	\begin{center}
+		\makeatletter % serve per poter usare \@...
+
+		UNIVERSITÀ DEGLI STUDI DI PADOVA \\
+		\vspace*{\stretch{0.1}}
+		DIPARTIMENTO DI INGEGNERIA DELL'INFORMAZIONE \\
+
+
+		\vspace*{\stretch{0.5}}
+		\LARGE
+		\textbf{\@title}
+
+		\vspace*{\stretch{1}}
+		\normalsize
+		\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
+			\textbf{Relatore} & \textbf{Laureando} \\
+			\supervisor       & \@author \\
+			& \matricola \\
+			\textbf{Correlatore} \\
+			\assistantsupervisor \\
+		\end{tabular*}
+
+		\vspace*{\stretch{2}}
+		\text{ANNO ACCADEMICO 2025-2026} \\
+		\vspace*{\stretch{0.1}}
+		Data di laurea \@date
+
+		\makeatother % serve dopo \makeatletter
+	\end{center}
+	\restoregeometry
+\end{titlepage}

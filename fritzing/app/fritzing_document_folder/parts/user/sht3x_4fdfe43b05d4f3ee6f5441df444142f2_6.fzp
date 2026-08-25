@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module referenceFile="ADXL345-BreakoutBoard-v13.fzp" fritzingVersion="0.5.2b.02.18.4756" moduleId="sht3x_4fdfe43b05d4f3ee6f5441df444142f2_6">
+ <version>4</version>
+ <date>lun ago 24 2026</date>
+ <author>giacomo</author>
+ <description>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">SHT31 SHT35&lt;/p>&lt;/body>&lt;/html></description>
+ <title>SHT3x</title>
+ <url/>
+ <tags/>
+ <properties>
+  <property name="part number"></property>
+  <property name="family">sensor</property>
+  <property name="variant">sht3x</property>
+ </properties>
+ <views>
+  <breadboardView>
+   <layers image="breadboard/sht3x_772979eaa21ab55441f528eb4a089e8c_1_breadboard.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </breadboardView>
+  <iconView>
+   <layers image="icon/sht3x_772979eaa21ab55441f528eb4a089e8c_1_icon.svg">
+    <layer layerId="icon"/>
+   </layers>
+  </iconView>
+  <schematicView>
+   <layers image="schematic/sht3x_772979eaa21ab55441f528eb4a089e8c_1_schematic.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </schematicView>
+  <pcbView>
+   <layers image="pcb/sht3x_772979eaa21ab55441f528eb4a089e8c_1_pcb.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </pcbView>
+ </views>
+ <connectors>
+  <connector type="male" name="VIN" id="connector6">
+   <description>VIN</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector6pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector6pin" layer="breadboard"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector6pin" layer="breadboard"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector type="male" name="GND" id="connector7">
+   <description>GND</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector7pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector7pin" layer="breadboard"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector7pin" layer="breadboard"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector type="male" name="SDA/RH" id="connector8">
+   <description>SDA/RH</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector8pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector8pin" layer="breadboard"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector8pin" layer="breadboard"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector type="male" name="SCL/T" id="connector9">
+   <description>SCL/T</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector9pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector9pin" layer="breadboard"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector9pin" layer="breadboard"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector type="male" name="ALERT" id="connector10">
+   <description>ALERT</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector10pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector10pin" layer="breadboard"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector10pin" layer="breadboard"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector type="male" name="ADDRESS" id="connector11">
+   <description>ADDRESS</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector11pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector11pin" layer="breadboard"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector11pin" layer="breadboard"/>
+    </pcbView>
+   </views>
+  </connector>
+ </connectors>
+ <buses/>
+ <label>SHT3x</label>
+</module>

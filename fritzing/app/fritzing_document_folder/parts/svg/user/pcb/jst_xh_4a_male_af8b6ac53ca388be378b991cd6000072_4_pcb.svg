@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Fritzing (http://www.fritzing.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 140 440" width="0.14in" baseProfile="tiny" x="0in" y="0in" height="0.44in" version="1.2">
+    <desc >
+        <referenceFile >jumper_4_100mil_pcb.svg</referenceFile>
+    </desc>
+    <g  gorn="0.1" id="silkscreen">
+        <line  stroke="white" stroke-width="10" y1="20" x2="20" y2="420" x1="20"/>
+        <line  stroke="white" stroke-width="10" y1="420" x2="120" y2="420" x1="20"/>
+        <line  stroke="white" stroke-width="10" y1="420" x2="120" y2="20" x1="120"/>
+        <line  stroke="white" stroke-width="10" y1="20" x2="20" y2="20" x1="120"/>
+        <line  stroke="white" stroke-width="5" y1="55" x2="55" y2="20" x1="20"/>
+        <!-- 120 -->
+    </g>
+    <g  gorn="0.2" id="copper1">
+        <g  gorn="0.2.0" id="copper0">
+            <rect  stroke="rgb(255, 191, 0)" gorn="0.2.0.0" id="square" stroke-width="20" width="58" x="41" y="41" height="58" fill="none"/>
+            <circle  cy="70" stroke="rgb(255, 191, 0)" gorn="0.2.0.1" id="connector0pin" stroke-width="20" r="29" fill="none" cx="70"/>
+            <circle  cy="170" stroke="rgb(255, 191, 0)" gorn="0.2.0.2" id="connector1pin" stroke-width="20" r="29" fill="none" cx="70"/>
+            <circle  cy="270" stroke="rgb(255, 191, 0)" gorn="0.2.0.3" id="connector2pin" stroke-width="20" r="29" fill="none" cx="70"/>
+            <circle  cy="370" stroke="rgb(255, 191, 0)" gorn="0.2.0.4" id="connector3pin" stroke-width="20" r="29" fill="none" cx="70"/>
+        </g>
+    </g>
+</svg>

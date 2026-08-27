@@ -1,35 +1,49 @@
+
+
+function serial_read(portName, baudRate, filename)
+    if nargin < 1 || isempty(portName)
+        portName = "/dev/cu.usbserial-110"; % Modifica con la tua porta (es. "/dev/ttyUSB0" su Linux/Mac)
+    end
+    if nargin < 2 || isempty(baudRate)
+        baudRate = 115200; % Assicurati che coincida con Serial.begin()
+    end
+    if nargin < 3 || isempty(filename)
+        filename = sprintf('dati_arduino_%s.csv', datestr(now, 'yyyymmdd_HHMMSS')); % Nome di default del file CSV
+    end
+
 % --- 0. PULIZIA INIZIALE (SBLOCCO MEMORIA E PORTE) ---
 clear all;  % Cancella tutte le variabili e chiude le porte seriali rimaste aperte
 close all;  % Chiude tutte le finestre dei grafici precedenti
 %clc;       % Pulisce la Command Window
 
 % --- 1. CONFIGURAZIONE PORTA SERIALE ---
-% configura la porta seriale e il baud rate
-portaCOM = '/dev/cu.usbserial-110';
-baudRate = 9600;
-
-% crea l'oggetto seriale
-arduinoObj = serialport(portaCOM, baudRate);
-
-% imposta il terminatore di riga per comunicazioni seriali dall'Arduino
-configureTerminator(arduinoObj, "CR/LF");
-
-% pulisce eventuali dati vecchi rimasti nel buffer
-flush(arduinoObj);
+try
+    % crea l'oggetto seriale
+    arduinoObj = serialport(portName, baudRate);
+    % imposta il terminatore di riga per comunicazioni seriali dall'Arduino
+    configureTerminator(arduinoObj, "CR/LF");
+    % pulisce eventuali dati vecchi rimasti nel buffer
+    flush(arduinoObj);
+catch ME
+    error('Errore nell''apertura della porta seriale %s: %s', portName, ME.message);
+end
 
 % --- 2. CONFIGURAZIONE FILE CSV (SALVATAGGIO REAL-TIME) ---
-% crea un nome file unico come: dati_arduino_20231024_153022.csv
-nomeFile = sprintf('dati_arduino_%s.csv', datestr(now, 'yyyymmdd_HHMMSS'));
-
 % apre il file in modalità scrittura ('w' write, 'a' append)
-fileID = fopen(nomeFile, 'w');
+fileID = fopen(filename, 'w');
+if fileID == -1
+    error('Impossibile aprire il file %s per la scrittura.', filename);
+end
 
 % SISTEMA DI SICUREZZA: onCleanup garantisce l'esecuzione di fclose(fileID)
 % non appena lo script termina (sia con successo, sia per errore, sia per Ctrl+C)
-chiusuraSicura = onCleanup(@() fclose(fileID));
+cleanupObj = onCleanup(@() fclose(fileID));
 
 % scrive l'intestazione del CSV (la prima riga)
-fprintf(fileID, 'Tempo_s,Valore_Sensore\n');
+fprintf(fileID, ['Timestamp,Temperature,Humidity,Setpoint_Temperature,Setpoint_Humidity,', ...
+                      'Status,Error_Code,T_PWM,RH_PWM,', ...
+                      'T_PID_p,T_PID_i,T_PID_d,T_PID_out,', ...
+                      'RH_PID_p,RH_PID_i,RH_PID_d,RH_PID_out\n']);
 
 % --- 3. PARAMETRI DI ACQUISIZIONE ---
 numCampioni = 3600; % numero di letture da effettuare (1h di dati a 1Hz)

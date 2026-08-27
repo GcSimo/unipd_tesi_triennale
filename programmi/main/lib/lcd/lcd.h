@@ -62,12 +62,12 @@ void lcd_man_light_off();
 /**
  * @brief Visualizzazione del nuovo setpoint di temperatura.
  */
-void lcd_new_temp_setpoint();
+void lcd_new_temp_setpoint(float new_temp_setpoint);
 
 /**
  * @brief Visualizzazione del nuovo setpoint di umidità.
  */
-void lcd_new_rh_setpoint();
+void lcd_new_rh_setpoint(float new_rh_setpoint);
 
 /**
  * @brief Stampa il messaggio di refill sul display lcd.

@@ -21,7 +21,8 @@
 
 // --- variabili globali temporanee ---
 int pot_read = 0;       // valore appena letto dai potenziometri
-float new_setpoint = 0; // setpoint appena calcolato
+float new_temp_setpoint = 0; // setpoint appena calcolato
+float new_rh_setpoint = 0;   // setpoint appena calcolato
 
 
 // --- helper functions ---
@@ -95,13 +96,26 @@ void setup() {
   // inizializzazione controllori PID
   ctrl_begin();
 
+  // inizializzazione setpoint di temperatura e umidità
+  status.temp_setpoint = new_temp_setpoint = TEMP_DEF_SETPOINT;
+  status.rh_setpoint = new_rh_setpoint = RH_DEF_SETPOINT;
+
+  // inizializzazione valori potenziometri e switch
+  status.temp_pot_value = analogRead(TEMP_POT);
+  status.rh_pot_value = analogRead(RH_POT);
+  status.heat_sw = digitalRead(HEAT_SW);
+  status.rh_sw = digitalRead(RH_SW);
+  status.light_sw = digitalRead(LIGHT_SW);
+
+
   delay(2000);
 }
 
 // --- loop function ---
 void loop() {
   // --- cambio stato switch riscaldatore ---
-  if (status.heat_sw != digitalRead(HEAT_SW)) {
+  if (millis() - timers.heat_sw >= SW_DEBOUNCE_TIMER && status.heat_sw != digitalRead(HEAT_SW)) {
+    timers.heat_sw = millis(); // aggiornamento timer
     status.heat_sw = !status.heat_sw; // aggiornamento stato switch
     status.manual_ctrl = true; // abilitazione controllo manuale
 
@@ -121,7 +135,8 @@ void loop() {
   }
 
   // --- cambio stato switch umidificatore ---
-  if (status.rh_sw != digitalRead(RH_SW)) {
+  if (millis() - timers.rh_sw >= SW_DEBOUNCE_TIMER && status.rh_sw != digitalRead(RH_SW)) {
+    timers.rh_sw = millis(); // aggiornamento timer
     status.rh_sw = !status.rh_sw; // aggiornamento stato switch
     status.manual_ctrl = true; // abilitazione controllo manuale
 
@@ -146,7 +161,8 @@ void loop() {
   }
 
   // --- cambio stato switch illuminazione ---
-  if (status.light_sw != digitalRead(LIGHT_SW)) {
+  if (millis() - timers.light_sw >= SW_DEBOUNCE_TIMER && status.light_sw != digitalRead(LIGHT_SW)) {
+    timers.light_sw = millis(); // aggiornamento timer
     status.light_sw = !status.light_sw; // aggiornamento stato switch
 
     // switch illuminazione attivo
@@ -172,8 +188,9 @@ void loop() {
    * 1. lettura del potenziometro ogni TEMP_POT_TIMER millisecondi
    * 2. controllo di soglia per eliminare disturbi e rumore elettrico
    * 3. calcolo del nuovo setpoint di temperatura
-   * 4. aggiornamento del setpoint se il nuovo valore è diverso dal precedente
-   * 5. visualizzazione del nuovo setpoint sul display lcd e su serial monitor
+   * 4. visualizzazione del nuovo setpoint sul display lcd e su serial monitor
+   * 5. aggiornamento del setpoint se il nuovo valore è diverso dal precedente
+   *    e se è trascorso il tempo di ritardo previsto SETPOINT_UPDATE_DELAY
    */
 
   // controllo timer per lettura potenziometro temperatura
@@ -186,18 +203,23 @@ void loop() {
       status.temp_pot_value = pot_read; // aggiornamento valore potenziometro temperatura
 
       // calcolo nuovo setpoint di temperatura
-      new_setpoint = map_16bit(pot_read, TEMP_POT_MIN, TEMP_POT_MAX, TEMP_MIN / TEMP_STEP, TEMP_MAX / TEMP_STEP) * TEMP_STEP;
-      if (new_setpoint < TEMP_MIN) new_setpoint = TEMP_MIN; // controllo limite inferiore
-      if (new_setpoint > TEMP_MAX) new_setpoint = TEMP_MAX; // controllo limite superiore
+      new_temp_setpoint = map(pot_read, TEMP_POT_MIN, TEMP_POT_MAX, TEMP_MIN / TEMP_STEP, TEMP_MAX / TEMP_STEP) * TEMP_STEP;
+      if (new_temp_setpoint < TEMP_MIN) new_temp_setpoint = TEMP_MIN; // controllo limite inferiore
+      if (new_temp_setpoint > TEMP_MAX) new_temp_setpoint = TEMP_MAX; // controllo limite superiore
 
       // controllo variazioni del setpoint di temperatura
-      if (status.temp_setpoint != new_setpoint) {
-        lcd_new_temp_setpoint(); // stampa su display lcd
-        serial_new_temp_setpoint(); // stampa su serial monitor
-        status.temp_setpoint = new_setpoint; // aggiornamento setpoint precedente
-        status.manual_ctrl = false; // disabilitazione controllo manuale
+      if (status.temp_setpoint != new_temp_setpoint) {
+        lcd_new_temp_setpoint(new_temp_setpoint); // stampa su display lcd
+        timers.temp_setpoint = millis(); // aggiornamento timer
       }
     }
+  }
+
+  // aggiornamento effettivo del setpoint di temperatura
+  if (status.temp_setpoint != new_temp_setpoint && millis() - timers.temp_setpoint >= SETPOINT_UPDATE_DELAY) {
+    status.temp_setpoint = new_temp_setpoint; // aggiornamento setpoint precedente
+    status.manual_ctrl = false; // disabilitazione controllo manuale
+    serial_new_temp_setpoint(); // stampa su serial monitor
   }
 
   /**
@@ -209,8 +231,9 @@ void loop() {
    * 1. lettura del potenziometro ogni TEMP_POT_TIMER millisecondi
    * 2. controllo di soglia per eliminare disturbi e rumore elettrico
    * 3. calcolo del nuovo setpoint di temperatura
-   * 4. aggiornamento del setpoint se il nuovo valore è diverso dal precedente
-   * 5. visualizzazione del nuovo setpoint sul display lcd e su serial monitor
+   * 4. visualizzazione del nuovo setpoint sul display lcd e su serial monitor
+   * 5. aggiornamento del setpoint se il nuovo valore è diverso dal precedente
+   *    e se è trascorso il tempo di ritardo previsto SETPOINT_UPDATE_DELAY
    */
 
   // controllo timer per lettura potenziometro umidità
@@ -223,18 +246,23 @@ void loop() {
       status.rh_pot_value = pot_read; // aggiornamento valore potenziometro umidità
 
       // calcolo nuovo setpoint di umidità
-      new_setpoint = map_16bit(pot_read, RH_POT_MIN, RH_POT_MAX, RH_MIN / RH_STEP, RH_MAX / RH_STEP) * RH_STEP;
-      if (new_setpoint < RH_MIN) new_setpoint = RH_MIN; // controllo limite inferiore
-      if (new_setpoint > RH_MAX) new_setpoint = RH_MAX; // controllo limite superiore
+      new_rh_setpoint = map(pot_read, RH_POT_MIN, RH_POT_MAX, RH_MIN / RH_STEP, RH_MAX / RH_STEP) * RH_STEP;
+      if (new_rh_setpoint < RH_MIN) new_rh_setpoint = RH_MIN; // controllo limite inferiore
+      if (new_rh_setpoint > RH_MAX) new_rh_setpoint = RH_MAX; // controllo limite superiore
 
       // controllo variazioni del setpoint di umidità
-      if (status.rh_setpoint != new_setpoint) {
-        lcd_new_rh_setpoint(); // stampa su display lcd
-        serial_new_rh_setpoint(); // stampa su serial monitor
-        status.rh_setpoint = new_setpoint; // aggiornamento setpoint precedente
-        status.manual_ctrl = false; // disabilitazione controllo manuale
+      if (status.rh_setpoint != new_rh_setpoint) {
+        lcd_new_rh_setpoint(new_rh_setpoint); // stampa su display lcd
+        timers.rh_setpoint = millis(); // aggiornamento timer
       }
     }
+  }
+
+  // aggiornamento effettivo del setpoint di umidità
+  if (status.rh_setpoint != new_rh_setpoint && millis() - timers.rh_setpoint >= SETPOINT_UPDATE_DELAY) {
+    status.rh_setpoint = new_rh_setpoint; // aggiornamento setpoint precedente
+    status.manual_ctrl = false; // disabilitazione controllo manuale
+    serial_new_rh_setpoint(); // stampa su serial monitor
   }
 
   /**
@@ -350,35 +378,91 @@ void loop() {
    */
 
   // controllo del duty cycle per il riscaldatore
-  if (!status.heat_relay && millis() % CTRL_PWM_PERIOD <= status.temp_pwm_value) {
+  if (!status.manual_ctrl && !status.heat_relay && status.temp_pwm_value > CTRL_MIN_INTERVAL_ON && millis() % CTRL_PWM_PERIOD <= status.temp_pwm_value) {
     heat_turn_on();
     serial_auto_heat_on();
   }
-  else if (status.heat_relay && millis() % CTRL_PWM_PERIOD > status.temp_pwm_value) {
+  else if (!status.manual_ctrl && status.heat_relay && status.temp_pwm_value < CTRL_PWM_PERIOD - CTRL_MIN_INTERVAL_OFF && millis() % CTRL_PWM_PERIOD > status.temp_pwm_value) {
     heat_turn_off();
     serial_auto_heat_off();
   }
 
   // controllo del duty cycle per l'umidificatore
-  if (!status.rh_relay && !status.refill_led && millis() % CTRL_PWM_PERIOD <= status.rh_pwm_value) {
+  if (!status.manual_ctrl && !status.rh_relay && !status.refill_led && status.rh_pwm_value > CTRL_MIN_INTERVAL_ON && millis() % CTRL_PWM_PERIOD <= status.rh_pwm_value) {
     rh_turn_on();
     serial_auto_rh_on();
   }
-  else if (status.rh_relay && !status.refill_led && millis() % CTRL_PWM_PERIOD > status.rh_pwm_value) {
+  else if (!status.manual_ctrl && status.rh_relay && !status.refill_led && status.rh_pwm_value < CTRL_PWM_PERIOD - CTRL_MIN_INTERVAL_OFF && millis() % CTRL_PWM_PERIOD > status.rh_pwm_value) {
     rh_turn_off();
     serial_auto_rh_off();
   }
 
   /**
-   * @brief Gestione dello spegnimento automatico del led di allarme.
+   * @brief Gestione degli errori e del led di allarme.
    *
-   * Il led di allarme si spegne dopo ALARM_INTERVAL millisecondi dalla sua
-   * accensione e corrisponde a quando il display lcd viene aggiornato e non
-   * mostra più il messaggio di errore.
+   * Lo stato degli errori viene memorizzato nella variabile "error_code"
+   * a 8 bit, in cui ogni bit rappresenta un errore specifico. Quando si
+   * verifica un errore, il bit corrispondente viene impostato a 1 e il
+   * led di allarme viene acceso. Viceversa quando l'errore viene risolto,
+   * il bit corrispondente viene portato a 0 e si spegne il led di allarme.
+   *
+   * Tipi di errori associati ad ogni bit:
+   *  - bit0: errore temporaneo del sensore SHT20 (1)
+   *  - bit1: errore di temperatura troppo bassa (2)
+   *  - bit2: errore di temperatura troppo alta (4)
+   *  - bit3: errore di umidità troppo bassa (8)
+   *  - bit4: errore di umidità troppo alta (16)
+   *  - bit5: errore generico (32)
+   *  - bit6: unused (64)
+   *  - bit7: unused (128)
+   *
+   * Gli errori dovuti alla comunicazione con il sensore SHT20, sono errori
+   * temporanei, per cui vengono disabilitati automaticamente dopo un tempo
+   * di ALARM_INTERVAL millisecondi da quando l'errore è stato rilevato.
+   *
+   * L'errore del refill dell'acqua viene gestito separatamente in quanto
+   * controlla un led separato da quello degli allarmi.
    */
 
-  if (status.alarm_led && millis() - timers.alarm >= ALARM_INTERVAL) {
+  // --- verifica presenze errori ---
+  // temperatura troppo bassa
+  if (!(status.error_code & ERR_LOW_TEMP) && status.temp_sht20 < status.temp_setpoint - TEMP_ERR_THLD)
+    status.error_code |= ERR_LOW_TEMP; // errore temperatura troppo bassa
+  else if (status.error_code & ERR_LOW_TEMP && status.temp_sht20 >= status.temp_setpoint - TEMP_ERR_THLD)
+    status.error_code &= ~ERR_LOW_TEMP; // rimozione errore temperatura troppo bassa
+
+  // temperatura troppo alta
+  else if (!(status.error_code & ERR_HIGH_TEMP) && status.temp_sht20 > status.temp_setpoint + TEMP_ERR_THLD)
+    status.error_code |= ERR_HIGH_TEMP; // errore temperatura troppo alta
+  else if (status.error_code & ERR_HIGH_TEMP && status.temp_sht20 <= status.temp_setpoint + TEMP_ERR_THLD)
+    status.error_code &= ~ERR_HIGH_TEMP; // rimozione errore temperatura troppo alta
+
+  // umidità troppo bassa
+  if (!(status.error_code & ERR_LOW_RH) && status.rh_sht20 < status.rh_setpoint - RH_ERR_THLD)
+    status.error_code |= ERR_LOW_RH; // errore umidità troppo bassa
+  else if (status.error_code & ERR_LOW_RH && status.rh_sht20 >= status.rh_setpoint - RH_ERR_THLD)
+    status.error_code &= ~ERR_LOW_RH; // rimozione errore umidità troppo bassa
+
+  // umidità troppo alta
+  else if (!(status.error_code & ERR_HIGH_RH) && status.rh_sht20 > status.rh_setpoint + RH_ERR_THLD)
+    status.error_code |= ERR_HIGH_RH; // errore umidità troppo alta
+  else if (status.error_code & ERR_HIGH_RH && status.rh_sht20 <= status.rh_setpoint + RH_ERR_THLD)
+    status.error_code &= ~ERR_HIGH_RH; // rimozione errore umidità troppo alta
+
+  // accensione led di allarme se c'è almeno un errore
+  if (!status.alarm_led && status.error_code != ERR_NONE) {
+    digitalWrite(ALARM_LED, HIGH);
+    status.alarm_led = true;
+  }
+  else if (status.alarm_led && status.error_code == ERR_NONE) {
     digitalWrite(ALARM_LED, LOW);
+    status.alarm_led = false;
+  }
+
+  // rimozione errore temporaneo del sensore SHT20
+  if (status.error_code & ERR_SHT20 && millis() - timers.alarm >= ERR_SHT20_INTERVAL) {
+    status.error_code &= ~ERR_SHT20; // rimozione errore sensore SHT20
+    digitalWrite(ALARM_LED, LOW); // spegnimento led di allarme
     status.alarm_led = false;
   }
 
@@ -423,10 +507,13 @@ bool sht20_error(int errorCode) {
   serial_sht20_error(errorCode);
   lcd_sht20_error(errorCode);
 
+  // impostazione del bit di errore del sensore SHT20
+  status.error_code |= ERR_SHT20;
+
   // accensione led di allarme
   digitalWrite(ALARM_LED, HIGH); // accensione led di allarme
-  timers.alarm = millis(); // aggiornamento timer allarme
   status.alarm_led = true; // aggiornamento variabile di stato allarme
+  timers.alarm = millis(); // aggiornamento timer allarme
 
   return true;
 }

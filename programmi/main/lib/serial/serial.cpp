@@ -14,31 +14,58 @@ void serial_boot_message() {
   Serial.println(F("BOOT: avvio incubatrice neonatale"));
 }
 
-// trasmissione temperatura e umidità misurate
+// trasmissione temperatura, umidità e stato del sistema
 void serial_datalog() {
-  Serial.print(F("CSV-: T: "));
-  Serial.print(float_to_string(status.temp_sht20));
+  Serial.print(F("LOG: T: "));
+  Serial.print(dtostrf(status.temp_sht20, 5, 2, float_buffer));
   Serial.print(F("°C | RH: "));
-  Serial.print(float_to_string(status.rh_sht20));
+  Serial.print(dtostrf(status.rh_sht20, 5, 2, float_buffer));
   Serial.print(F("% | Set_T: "));
-  Serial.print(float_to_string(status.temp_setpoint));
+  Serial.print(dtostrf(status.temp_setpoint, 5, 2, float_buffer));
   Serial.print(F("°C | Set_RH: "));
-  Serial.print(float_to_string(status.rh_setpoint));
-  Serial.println(F("%"));
+  Serial.print(dtostrf(status.rh_setpoint, 5, 2, float_buffer));
+  Serial.print(F("% | Ctrl: "));
+  Serial.print(status.manual_ctrl ? F("MAN") : F("AUTO"));
+  Serial.print(F(" | Error_Code: "));
+  Serial.print(status.error_code);
+  #if TEMP_CONTROLLER == 1
+  Serial.print(F(" | T_PID_p: "));
+  Serial.print(temp_pid.proportional);
+  Serial.print(F(" | T_PID_i: "));
+  Serial.print(temp_pid.integral);
+  Serial.print(F(" | T_PID_d: "));
+  Serial.print(temp_pid.derivative);
+  Serial.print(F(" | T_PID_out: "));
+  Serial.print(temp_pid.output);
+  #endif
+  Serial.print(F(" | T_PWM: "));
+  Serial.print(status.temp_pwm_value);
+  #if RH_CONTROLLER == 1
+  Serial.print(F(" | RH_PID_p: "));
+  Serial.print(rh_pid.proportional);
+  Serial.print(F(" | RH_PID_i: "));
+  Serial.print(rh_pid.integral);
+  Serial.print(F(" | RH_PID_d: "));
+  Serial.print(rh_pid.derivative);
+  Serial.print(F(" | RH_PID_out: "));
+  Serial.print(rh_pid.output);
+  #endif
+  Serial.print(F(" | RH_PWM: "));
+  Serial.println(status.rh_pwm_value);
 }
 
 // visualizzazione del nuovo setpoint di temperatura
 void serial_new_temp_setpoint() {
   Serial.print(F("SET0: New Set_T: "));
-  Serial.print(float_to_string(status.temp_setpoint));
+  Serial.print(dtostrf(status.temp_setpoint, 5, 2, float_buffer));
   Serial.println(F("°C"));
 }
 
 // visualizzazione del nuovo setpoint di umidità
 void serial_new_rh_setpoint() {
   Serial.print(F("SET1: New Set_RH: "));
-  Serial.print(float_to_string(status.rh_setpoint));
-  Serial.println(F("%"));
+  Serial.print(dtostrf(status.rh_setpoint, 5, 2, float_buffer));
+  Serial.println('%');
 }
 
 // accensione manuale del riscaldatore

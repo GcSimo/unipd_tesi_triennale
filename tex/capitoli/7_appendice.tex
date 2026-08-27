@@ -1,5 +1,5 @@
-\chapter{Appendice}
-\section{Metodo dei minimi quadrati per il calcolo stabile della derivata}
+\appendix
+\chapter{Metodo dei minimi quadrati per il calcolo stabile della derivata}
 Di seguito viene illustrato il procedimento matematico effettuato per ottenere la formula utilizzata nel controllore PID per
 il calcolo del contributo derivativo.
 
@@ -49,6 +49,8 @@ lineare di due equazioni a due incognite \(a_0\) e \(a_1\) così ottenuto.
 	&= -2 \left( \sum_{i = 0}^{N-1} x_i y_i - a_0 \sum_{i=0}^{N-1} x_i - a_1 \sum_{i=0}^{N-1} {x_i}^2 \right) = \\
 	&= -2 \left( \sum_{i = 0}^{N-1} x_i y_i - a_0 N \bar{x} - a_1 \sum_{i=0}^{N-1} {x_i}^2 \right)
 \end{align}
+
+\newpage
 
 Si procede quindi a risolvere il sistema di equazioni lineari così ottenuto per sostituzione:
 \begin{equation}

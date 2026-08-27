@@ -78,9 +78,11 @@ char lcd_page = 0;
 #define LCD_MESSAGE_PAGE 4
 
 // variabili per memorizzare i dati precedentemente stampati
-float old_temp = 0;
-float old_rh = 0;
-bool manual_printed = false;
+float old_temp = 0.0f;
+float old_rh = 0.0f;
+float old_temp_setpoint = 0.0f;
+float old_rh_setpoint = 0.0f;
+unsigned char old_error_code = 0;
 
 // messaggi di errore del sensore SHT20 da stampare sul display lcd
 const struct lcd_message sht20_error_lcd_message[11] PROGMEM = {
@@ -108,34 +110,27 @@ void lcd_boot_message() {
   lcd.print(F("Navlab - DEI - UNIPD"));
 }
 
-// ____________________
-
-// T: xx.xx°C / xx.xx°C
-// H: xx.xx%  / xx.xx%
-// Status: AUTO - OK
-// Status: MAN  - xx    (xx = error code)
-//   -- white line --
-// ____________________
-
-/**
- * @brief Stampa lo stato dell'incubatrice sul display lcd.
- *
- *    0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1
- *    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9
- *    - - - - - - - - - - - - - - - - - - - -
- * 0 |T :   x x . x x ° C   /   x x . x x ° C|
- * 1 |H :   x x . x x %     /   x x . x x %  |
- * 2 |S t a t u s :   A U T O   -   O K      |
- * 2 |S t a t u s :   M A N     -   x x      | (xx = error code)
- * 3 |    - -   w h i t e   l i n e   - -    |
- *    - - - - - - - - - - - - - - - - - - - -
-*/
 
 // stampa lo stato dell'incubatrice sul display lcd
 void lcd_print_status() {
   // timer per visualizzazione messaggi sul display
   if (lcd_page != LCD_DATA_PAGE && millis() - timers.lcd_update < LCD_UPDATE_INTERVAL)
-    return;
+  return;
+
+  /*
+   * Mappa dei dati stampati sul display lcd per facilitare
+   * l'individuazione delle relative posizioni.
+   *
+   *    | 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 |
+   *    | 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 |
+   *  - | - - - - - - - - - - - - - - - - - - - - |
+   *  0 | T :   x x . x x ° C   /   x x . x x ° C |
+   *  1 | H :   x x . x x %     /   x x . x x %   |
+   *  2 | S t a t u s :   A U T O   -   O K       |
+   *  2 | S t a t u s :   M A N     -   x x x     | (xxx = error code)
+   *  3 |     - -   w h i t e   l i n e   - -     |
+   *  - | - - - - - - - - - - - - - - - - - - - - |
+   */
 
   // pulizia e stampa intestazioni per cambio pagina
   if (lcd_page != LCD_DATA_PAGE) {
@@ -145,33 +140,65 @@ void lcd_print_status() {
     lcd.setCursor(8, 0);
     lcd.print((char)223);
     lcd.print(F("C / "));
-    lcd.print(float_to_string(status.temp_setpoint));
+    lcd.setCursor(18, 0);
     lcd.print((char)223);
     lcd.print('C');
     lcd.setCursor(0, 1);
     lcd.print(F("H:"));
     lcd.setCursor(8, 1);
     lcd.print(F("%  / "));
-    lcd.print(float_to_string(status.rh_setpoint));
+    lcd.setCursor(18, 1);
     lcd.print('%');
     lcd.setCursor(0, 2);
-    lcd.print(F("Status: "));
-    lcd.print(status.manual_ctrl ? F("MAN - ") : F("AUTO - "));
-    lcd.print(!status.error_code ? "OK" : String(status.error_code));
+    lcd.print(F("Ctrl status: "));
+    lcd.print(status.manual_ctrl ? F("MAN ") : F("AUTO"));
   }
 
   // aggiornamento temperatura
   if (lcd_page != LCD_DATA_PAGE || status.temp_sht20 != old_temp) {
     lcd.setCursor(3, 0);
-    lcd.print(float_to_string(status.temp_sht20));
+    lcd.print(dtostrf(status.temp_sht20, 5, 2, float_buffer));
     old_temp = status.temp_sht20;
+  }
+
+  // aggiornamento setpoint di temperatura
+  if (lcd_page != LCD_DATA_PAGE || status.temp_setpoint != old_temp_setpoint) {
+    lcd.setCursor(13, 0);
+    lcd.print(dtostrf(status.temp_setpoint, 5, 2, float_buffer));
+    old_temp_setpoint = status.temp_setpoint;
   }
 
   // aggiornamento umidità
   if (lcd_page != LCD_DATA_PAGE || status.rh_sht20 != old_rh) {
     lcd.setCursor(3, 1);
-    lcd.print(float_to_string(status.rh_sht20));
+    lcd.print(dtostrf(status.rh_sht20, 5, 2, float_buffer));
     old_rh = status.rh_sht20;
+  }
+
+  // aggiornamento setpoint di umidità
+  if (lcd_page != LCD_DATA_PAGE || status.rh_setpoint != old_rh_setpoint) {
+    lcd.setCursor(13, 1);
+    lcd.print(dtostrf(status.rh_setpoint, 5, 2, float_buffer));
+    old_rh_setpoint = status.rh_setpoint;
+  }
+
+  // aggiornamento errori
+  if (lcd_page != LCD_DATA_PAGE || status.error_code != old_error_code) {
+    // pulizia della riga dei messaggi di errore
+    lcd.setCursor(0, 3);
+    lcd.print(F("                    "));
+
+    // stampa codice di errore se presente, altrimenti messaggio di assenza errori
+    lcd.setCursor(0, 3);
+    if (!status.error_code) {
+      lcd.print(F("No errors detected  "));
+    } else {
+      lcd.print("Error code: ");
+      lcd.print(status.error_code);
+    }
+
+    // aggiornamento variabile di stato
+    old_error_code = status.error_code;
   }
 
   lcd_page = LCD_DATA_PAGE; // aggiornamento pagina
@@ -179,7 +206,7 @@ void lcd_print_status() {
 }
 
 // visualizzazione del nuovo setpoint di temperatura
-void lcd_new_temp_setpoint() {
+void lcd_new_temp_setpoint(float new_temp_setpoint) {
   // pulizia e stampa intestazioni per cambio pagina
   if (lcd_page != LCD_TEMP_SETPOINT_PAGE) {
     lcd.clear();
@@ -187,31 +214,31 @@ void lcd_new_temp_setpoint() {
     lcd.print(F("Nuovo setpoint temp:"));
     lcd.setCursor(11, 2);
     lcd.print((char)223);
-    lcd.print(F("C"));
+    lcd.print('C');
   }
 
   // stampa nuovo setpoint temperatura
   lcd.setCursor(6, 2);
-  lcd.print(float_to_string(status.temp_setpoint));
+  lcd.print(dtostrf(new_temp_setpoint, 5, 2, float_buffer));
 
   lcd_page = LCD_TEMP_SETPOINT_PAGE; // aggiornamento pagina
   timers.lcd_update = millis(); // aggiornamento timer
 }
 
 // visualizzazione del nuovo setpoint di umidità
-void lcd_new_rh_setpoint() {
+void lcd_new_rh_setpoint(float new_rh_setpoint) {
   // pulizia e stampa intestazioni per cambio pagina
   if (lcd_page != LCD_RH_SETPOINT_PAGE) {
     lcd.clear();
     lcd.setCursor(0, 1);
     lcd.print(F("Nuovo setpoint RH:"));
     lcd.setCursor(11, 2);
-    lcd.print(F("%"));
+    lcd.print('%');
   }
 
   // stampa nuovo setpoint umidità
   lcd.setCursor(6, 2);
-  lcd.print(float_to_string(status.rh_setpoint));
+  lcd.print(dtostrf(new_rh_setpoint, 5, 2, float_buffer));
 
   lcd_page = LCD_RH_SETPOINT_PAGE; // aggiornamento pagina
   timers.lcd_update = millis(); // aggiornamento timer

@@ -8,21 +8,22 @@
  */
 
 #include "actuators.h"
+#include "utils.h"
 
 // accensione riscaldatore
 bool heat_turn_on() {
   // se il riscaldatore è già acceso, restituisce false senza fare nulla
-  if (status.heat_relay == true)
+  if (status.heat_relay)
     return false;
 
   // accensione riscaldatore e LED di stato
-  digitalWrite(HEAT_RELAY, LOW);  // accensione riscaldatore
-  digitalWrite(HEAT_LED, HIGH);   // accensione LED riscaldatore
+  digitalWrite(HEAT_RELAY, RELAY_ON);  // accensione riscaldatore
+  digitalWrite(HEAT_LED, LED_ON);   // accensione LED riscaldatore
   status.heat_relay = true; // aggiornamento stato riscaldatore
 
   // accensione ventola ausiliaria se spenta
-  if (status.fan_relay == false) {
-    digitalWrite(FAN_RELAY, LOW);  // accensione ventola ausiliaria
+  if (!status.fan_relay) {
+    digitalWrite(FAN_RELAY, RELAY_ON);  // accensione ventola ausiliaria
     status.fan_relay = true; // aggiornamento stato ventola ausiliaria
   }
 
@@ -33,17 +34,17 @@ bool heat_turn_on() {
 // spegnimento riscaldatore
 bool heat_turn_off() {
   // se il riscaldatore è già spento, restituisce false senza fare nulla
-  if (status.heat_relay == false)
+  if (!status.heat_relay)
     return false;
 
   // spegnimento riscaldatore e LED di stato
-  digitalWrite(HEAT_RELAY, HIGH);  // spegnimento riscaldatore
-  digitalWrite(HEAT_LED, LOW);     // spegnimento LED riscaldatore
+  digitalWrite(HEAT_RELAY, RELAY_OFF);  // spegnimento riscaldatore
+  digitalWrite(HEAT_LED, LED_OFF);     // spegnimento LED riscaldatore
   status.heat_relay = false; // aggiornamento stato riscaldatore
 
   // spegnimento ventola ausiliaria se l'umidificatore è spento
-  if (status.rh_relay == false) {
-    digitalWrite(FAN_RELAY, HIGH);  // spegnimento ventola ausiliaria
+  if (!status.rh_relay) {
+    digitalWrite(FAN_RELAY, RELAY_OFF);  // spegnimento ventola ausiliaria
     status.fan_relay = false; // aggiornamento stato ventola ausiliaria
   }
 
@@ -54,22 +55,22 @@ bool heat_turn_off() {
 // accensione umidificatore
 bool rh_turn_on() {
   // se l'umidificatore è già acceso o serve refill, restituisce false senza fare nulla
-  if (status.rh_relay == true || status.refill_led == true)
+  if (status.rh_relay || status.refill_led)
     return false;
 
   // accensione umidificatore e LED di stato
-  digitalWrite(RH_RELAY, LOW);  // accensione umidificatore
-  digitalWrite(RH_LED, HIGH);   // accensione LED umidificatore
+  digitalWrite(RH_RELAY, RELAY_ON);  // accensione umidificatore
+  digitalWrite(RH_LED, LED_ON);   // accensione LED umidificatore
   status.rh_relay = true; // aggiornamento stato umidificatore
 
   // accensione ventola ausiliaria se spenta
-  if (status.fan_relay == false) {
-    digitalWrite(FAN_RELAY, LOW);  // accensione ventola ausiliaria
+  if (!status.fan_relay) {
+    digitalWrite(FAN_RELAY, RELAY_ON);  // accensione ventola ausiliaria
     status.fan_relay = true; // aggiornamento stato ventola ausiliaria
   }
 
   // gestione contatore refill
-  status.last_rh_on = millis();
+  timers.last_rh_on = millis();
 
   // accensione avvenuta con successo
   return true;
@@ -78,22 +79,22 @@ bool rh_turn_on() {
 // spegnimento umidificatore
 bool rh_turn_off() {
   // se l'umidificatore è già spento, restituisce false senza fare nulla
-  if (status.rh_relay == false)
+  if (!status.rh_relay)
     return false;
 
   // spegnimento umidificatore e LED di stato
-  digitalWrite(RH_RELAY, HIGH);  // spegnimento umidificatore
-  digitalWrite(RH_LED, LOW);     // spegnimento LED umidificatore
+  digitalWrite(RH_RELAY, RELAY_OFF);  // spegnimento umidificatore
+  digitalWrite(RH_LED, LED_OFF);     // spegnimento LED umidificatore
   status.rh_relay = false; // aggiornamento stato umidificatore
 
   // spegnimento ventola ausiliaria se il riscaldatore è spento
-  if (status.heat_relay == false) {
-    digitalWrite(FAN_RELAY, HIGH);  // spegnimento ventola ausiliaria
+  if (!status.heat_relay) {
+    digitalWrite(FAN_RELAY, RELAY_OFF);  // spegnimento ventola ausiliaria
     status.fan_relay = false; // aggiornamento stato ventola ausiliaria
   }
 
   // gestione contatore refill
-  status.refill_counter += millis() - status.last_rh_on;
+  timers.refill_counter += millis() - timers.last_rh_on;
 
   // spegnimento avvenuto con successo
   return true;
@@ -102,10 +103,10 @@ bool rh_turn_off() {
 // accensione illuminazione
 bool light_turn_on() {
   // se l'illuminazione è già accesa, restituisce false senza fare nulla
-  if (status.light_relay == true)
+  if (status.light_relay)
     return false;
 
-  digitalWrite(LIGHT_RELAY, LOW);  // accensione illuminazione
+  digitalWrite(LIGHT_RELAY, RELAY_ON);  // accensione illuminazione
   status.light_relay = true; // aggiornamento stato illuminazione
 
   // accensione avvenuta con successo
@@ -115,12 +116,36 @@ bool light_turn_on() {
 // spegnimento illuminazione
 bool light_turn_off() {
   // se l'illuminazione è già spenta, restituisce false senza fare nulla
-  if (status.light_relay == false)
+  if (!status.light_relay)
     return false;
 
-  digitalWrite(LIGHT_RELAY, HIGH);  // spegnimento illuminazione
+  digitalWrite(LIGHT_RELAY, RELAY_OFF);  // spegnimento illuminazione
   status.light_relay = false; // aggiornamento stato illuminazione
 
   // spegnimento avvenuto con successo
   return true;
+}
+
+/**
+ * @brief Verifica se è necessario un refill dell'acqua
+ *
+ * NOTE IMPLEMENTATIVE:
+ *
+ * Si verifica se la somma dei seguenti valori supera REFILL_INTERVAL:
+ *
+ * - durata delle precedenti accensioni dell'umidificatore data dalla
+ *   variabile timers.refill_counter
+ * - tempo trascorso dall'ultima accensione, data dalla differenza
+ *   (millis() - timers.last_rh_on) moltiplicata per lo stato attuale
+ *   dell'umidificatore (status.rh_relay), così da considerare solo
+ *   il tempo trascorso se l'umidificatore è acceso
+ */
+bool check_refill() {
+  if (!status.refill_led && timers.refill_counter + (millis() - timers.last_rh_on) * status.rh_relay >= REFILL_INTERVAL) {
+    rh_turn_off(); // spegnimento umidificatore
+    digitalWrite(REFILL_LED, LED_ON); // accensione led di refill
+    status.refill_led = true; // aggiornamento stato led di refill
+    return true; // refill necessario
+  }
+  return false; // refill non necessario
 }

@@ -5,12 +5,13 @@
 - [x] aggiungere pid integral windup
 - [x] verificare indipendenza parametri PID temperatura e umidità
 - [x] ritardare impostazione setpoint temperatura e umidità
+- [x] integrare derivative kick
+- [x] creare classe per gestire sht20
 - [ ] tarare parametri PID
 - [ ] tarare timer di refill
 - [ ] verificare temporizzazione del pid
 - [ ] verificare derivata al variare del setpoint (derivative kick test)
 - [ ] verificare temporizzazione display, led allarme
-- [ ] creare classe per gestire sht20
 
 ## csv:
 - [x] creare script matlab per interpretare comandi seriali

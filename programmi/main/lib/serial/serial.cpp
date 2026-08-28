@@ -8,6 +8,7 @@
  */
 
 #include "serial.h"
+#include "utils.h"
 
 // messaggio di avvio su serial monitor
 void serial_boot_message() {
@@ -17,18 +18,18 @@ void serial_boot_message() {
 // trasmissione temperatura, umidità e stato del sistema
 void serial_datalog() {
   Serial.print(F("LOG: T: "));
-  Serial.print(dtostrf(status.temp_sht20, 5, 2, float_buffer));
+  Serial.print(data_to_string(status.temp_sht20));
   Serial.print(F("°C | RH: "));
-  Serial.print(dtostrf(status.rh_sht20, 5, 2, float_buffer));
+  Serial.print(data_to_string(status.rh_sht20));
   Serial.print(F("% | Set_T: "));
-  Serial.print(dtostrf(status.temp_setpoint, 5, 2, float_buffer));
+  Serial.print(data_to_string(status.temp_setpoint));
   Serial.print(F("°C | Set_RH: "));
-  Serial.print(dtostrf(status.rh_setpoint, 5, 2, float_buffer));
+  Serial.print(data_to_string(status.rh_setpoint));
   Serial.print(F("% | Ctrl: "));
   Serial.print(status.manual_ctrl ? F("MAN") : F("AUTO"));
   Serial.print(F(" | Error_Code: "));
   Serial.print(status.error_code);
-  #if TEMP_CONTROLLER == 1
+  #if TEMP_CTRL == 2
   Serial.print(F(" | T_PID_p: "));
   Serial.print(temp_pid.proportional);
   Serial.print(F(" | T_PID_i: "));
@@ -38,9 +39,9 @@ void serial_datalog() {
   Serial.print(F(" | T_PID_out: "));
   Serial.print(temp_pid.output);
   #endif
-  Serial.print(F(" | T_PWM: "));
-  Serial.print(status.temp_pwm_value);
-  #if RH_CONTROLLER == 1
+  Serial.print(F(" | T_PWM_norm: "));
+  Serial.print(map(status.temp_pwm_value, 0, CTRL_PWM_PERIOD, CTRL_MIN_OUTPUT, CTRL_MAX_OUTPUT));
+  #if RH_CTRL == 2
   Serial.print(F(" | RH_PID_p: "));
   Serial.print(rh_pid.proportional);
   Serial.print(F(" | RH_PID_i: "));
@@ -50,21 +51,21 @@ void serial_datalog() {
   Serial.print(F(" | RH_PID_out: "));
   Serial.print(rh_pid.output);
   #endif
-  Serial.print(F(" | RH_PWM: "));
-  Serial.println(status.rh_pwm_value);
+  Serial.print(F(" | RH_PWM_norm: "));
+  Serial.println(map(status.rh_pwm_value, 0, CTRL_PWM_PERIOD, CTRL_MIN_OUTPUT, CTRL_MAX_OUTPUT));
 }
 
 // visualizzazione del nuovo setpoint di temperatura
 void serial_new_temp_setpoint() {
   Serial.print(F("SET0: New Set_T: "));
-  Serial.print(dtostrf(status.temp_setpoint, 5, 2, float_buffer));
+  Serial.print(data_to_string(status.temp_setpoint));
   Serial.println(F("°C"));
 }
 
 // visualizzazione del nuovo setpoint di umidità
 void serial_new_rh_setpoint() {
   Serial.print(F("SET1: New Set_RH: "));
-  Serial.print(dtostrf(status.rh_setpoint, 5, 2, float_buffer));
+  Serial.print(data_to_string(status.rh_setpoint));
   Serial.println('%');
 }
 

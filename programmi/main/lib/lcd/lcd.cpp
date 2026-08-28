@@ -8,6 +8,7 @@
  */
 
 #include "lcd.h"
+#include "utils.h"
 
 /**
  * @brief Controllo della temporizzazione degli aggiornamenti del display lcd.
@@ -21,10 +22,10 @@
  *
  * La pagina relativa alla visualizzazione dei dati (temperatura, umidità,
  * setpoint e stato controllo attuatori) viene aggiornata solo dopo
- * LCD_UPDATE_INTERVAL millisecondi dall'ultima stampa, in modo da lasciare
+ * LCD_UPDATE_PERIOD millisecondi dall'ultima stampa, in modo da lasciare
  * il tempo all'utente di leggere le pagine precedentemente stampate.
  * Per questo motivo le informazioni potranno avere un ritardo massimo
- * di LCD_UPDATE_INTERVAL millisecondi rispetto ai valori reali.
+ * di LCD_UPDATE_PERIOD millisecondi rispetto ai valori reali.
  */
 
 /**
@@ -114,7 +115,7 @@ void lcd_boot_message() {
 // stampa lo stato dell'incubatrice sul display lcd
 void lcd_print_status() {
   // timer per visualizzazione messaggi sul display
-  if (lcd_page != LCD_DATA_PAGE && millis() - timers.lcd_update < LCD_UPDATE_INTERVAL)
+  if (lcd_page != LCD_DATA_PAGE && millis() - timers.lcd_update < LCD_UPDATE_PERIOD)
   return;
 
   /*
@@ -157,28 +158,28 @@ void lcd_print_status() {
   // aggiornamento temperatura
   if (lcd_page != LCD_DATA_PAGE || status.temp_sht20 != old_temp) {
     lcd.setCursor(3, 0);
-    lcd.print(dtostrf(status.temp_sht20, 5, 2, float_buffer));
+    lcd.print(data_to_string(status.temp_sht20));
     old_temp = status.temp_sht20;
   }
 
   // aggiornamento setpoint di temperatura
   if (lcd_page != LCD_DATA_PAGE || status.temp_setpoint != old_temp_setpoint) {
     lcd.setCursor(13, 0);
-    lcd.print(dtostrf(status.temp_setpoint, 5, 2, float_buffer));
+    lcd.print(data_to_string(status.temp_setpoint));
     old_temp_setpoint = status.temp_setpoint;
   }
 
   // aggiornamento umidità
   if (lcd_page != LCD_DATA_PAGE || status.rh_sht20 != old_rh) {
     lcd.setCursor(3, 1);
-    lcd.print(dtostrf(status.rh_sht20, 5, 2, float_buffer));
+    lcd.print(data_to_string(status.rh_sht20));
     old_rh = status.rh_sht20;
   }
 
   // aggiornamento setpoint di umidità
   if (lcd_page != LCD_DATA_PAGE || status.rh_setpoint != old_rh_setpoint) {
     lcd.setCursor(13, 1);
-    lcd.print(dtostrf(status.rh_setpoint, 5, 2, float_buffer));
+    lcd.print(data_to_string(status.rh_setpoint));
     old_rh_setpoint = status.rh_setpoint;
   }
 
@@ -219,7 +220,7 @@ void lcd_new_temp_setpoint(float new_temp_setpoint) {
 
   // stampa nuovo setpoint temperatura
   lcd.setCursor(6, 2);
-  lcd.print(dtostrf(new_temp_setpoint, 5, 2, float_buffer));
+  lcd.print(data_to_string(new_temp_setpoint));
 
   lcd_page = LCD_TEMP_SETPOINT_PAGE; // aggiornamento pagina
   timers.lcd_update = millis(); // aggiornamento timer
@@ -238,7 +239,7 @@ void lcd_new_rh_setpoint(float new_rh_setpoint) {
 
   // stampa nuovo setpoint umidità
   lcd.setCursor(6, 2);
-  lcd.print(dtostrf(new_rh_setpoint, 5, 2, float_buffer));
+  lcd.print(data_to_string(new_rh_setpoint));
 
   lcd_page = LCD_RH_SETPOINT_PAGE; // aggiornamento pagina
   timers.lcd_update = millis(); // aggiornamento timer

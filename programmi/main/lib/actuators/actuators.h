@@ -72,4 +72,42 @@ bool light_turn_on();
  */
 bool light_turn_off();
 
+/**
+ * @brief Verifica se è necessario un refill dell'acqua.
+ *
+ * Per funzionare correttamente, questa funzione deve essere invocata ad ogni
+ * iterazione del loop principale.
+ *
+ * Il refill dell'acqua viene gestito tramite un contatore che tiene traccia
+ * del tempo di accensione dell'umidificatore. Quando il contatore supera
+ * REFILL_INTERVAL millisecondi, il led rosso di refill si accende e
+ * l'umidificatore viene spento automaticamente.
+ *
+ * Per disattivare il blocco automatico dell'umidificatore, è necessario
+ * riavviare l'incubatrice neonatale. In questo modo tutti i contatori
+ * vengono azzerati.
+ */
+
+/**
+ * @brief Verifica se è necessario un refill dell'acqua.
+ *
+ * Questa funzione verifica se è necessario effettuare un refill dell'acqua
+ * dell'incubatrice. Controlla se il periodo di tempo in cui l'umidificatore
+ * è stato acceso supera il valore di REFILL_INTERVAL. Se è necessario un
+ * refill, la funzione spegne l'umidificatore e accende il led di refill,
+ * attivando il blocco automatico dell'umidificatore.
+ *
+ * Per far ripristinare il funzionamento dell'umidificatore, è necessario
+ * effettuare un refill dell'acqua e successivamente riavviare l'incubatrice
+ * neonatale dal tasto reset della scheda Arduino. In questo modo tutti i
+ * contatori vengono azzerati.
+ *
+ * Per funzionare correttamente, questa funzione deve essere invocata ad ogni
+ * iterazione del loop principale.
+ *
+ * @return true refill necessario, umidificatore spento e led di refill acceso
+ * @return false refill non necessario, nessuna azione eseguita
+ */
+bool check_refill();
+
 #endif // ACTUATORS_H

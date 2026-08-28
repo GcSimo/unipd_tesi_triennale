@@ -161,8 +161,8 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 				ctrl    = extractStr(lineStr, 'Ctrl:\s*([A-Z]+)');
 				err     = extractNum(lineStr, 'Error_Code:\s*(\d+)');
 
-				t_pwm   = extractNum(lineStr, 'T_PWM:\s*(\d+)');
-				rh_pwm  = extractNum(lineStr, 'RH_PWM:\s*(\d+)');
+				t_pwm   = extractNum(lineStr, 'T_PWM_norm:\s*(\d+)');
+				rh_pwm  = extractNum(lineStr, 'RH_PWM_norm:\s*(\d+)');
 
 				t_p     = extractNum(lineStr, 'T_PID_p:\s*([-+]?\d*\.?\d+)');
 				t_i     = extractNum(lineStr, 'T_PID_i:\s*([-+]?\d*\.?\d+)');

@@ -4,6 +4,8 @@
 - sensore a 20cm dalle pareti laterali, 17cm dalla parete dove passano i cavi e 7.5cm dal fondo della camera
 - codice serial_read_2.m
 
+
+## set prove 1
 ### data_20260827_161338.csv
 - kp = 10, ki = 0, kd = 0
 - raggiunge sui 30.5°C circa e poi inizia una lenta salita
@@ -51,3 +53,29 @@
 ### data_20260827_183121.csv
 - kp = 50, ki = 0.5, kd = 20, integral clamping, 8 buffer error size
 - chiusura culla ritardata al secondo 55
+
+
+## set prove 2
+### data_20260831_110724.csv
+- test evoluzione forzata con riscaldatore al massimo
+
+### data_20260831_122037.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 6.40A
+- tempo da 35°C a 37°C = 178 secondi
+- 6.40A * 12V * 178s / 2°C = 6835,2 J/°C
+
+### data_20260831_130256.csv
+- raggiunta equilibrio iniziale per avvio test
+
+### data_20260831_132059.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 6.75A
+- tempo da 35°C a 37°C = 173 secondi
+- 6.75A * 12V * 173s / 2°C = 7006,5 J/°C
+
+### data_20260831_134425.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 6.67A
+- tempo da 35°C a 37°C = 175 secondi
+- 6.67A * 12V * 175s / 2°C = 7003,5 J/°C

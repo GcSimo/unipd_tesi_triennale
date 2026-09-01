@@ -29,19 +29,19 @@ void serial_datalog() {
   Serial.print(status.manual_ctrl ? F("MAN") : F("AUTO"));
   Serial.print(F(" | Error_Code: "));
   Serial.print(status.error_code);
-  #if TEMP_CTRL == 2
+  #if TEMP_CTRL == PID
     Serial.print(F(" | T_PID_p: "));
     Serial.print(temp_pid.proportional);
     Serial.print(F(" | T_PID_i: "));
     Serial.print(temp_pid.integral);
     Serial.print(F(" | T_PID_d: "));
-    Serial.print(temp_pid.derivative);
+    Serial.print(-temp_pid.derivative);
     Serial.print(F(" | T_PID_out: "));
     Serial.print(temp_pid.output);
   #endif
   Serial.print(F(" | T_PWM_norm: "));
-  Serial.print(map(status.temp_pwm_value, 0, PWM_PERIOD, PID_MIN_OUTPUT, PID_MAX_OUTPUT));
-  #if RH_CTRL == 2
+  Serial.print(status.temp_pwm_value * (PID_MAX_OUTPUT - PID_MIN_OUTPUT) / PWM_PERIOD);
+  #if RH_CTRL == PID
     Serial.print(F(" | RH_PID_p: "));
     Serial.print(rh_pid.proportional);
     Serial.print(F(" | RH_PID_i: "));
@@ -52,7 +52,7 @@ void serial_datalog() {
     Serial.print(rh_pid.output);
   #endif
   Serial.print(F(" | RH_PWM_norm: "));
-  Serial.println(map(status.rh_pwm_value, 0, PWM_PERIOD, PID_MIN_OUTPUT, PID_MAX_OUTPUT));
+  Serial.println(status.rh_pwm_value * (PID_MAX_OUTPUT - PID_MIN_OUTPUT) / PWM_PERIOD);
 }
 
 // visualizzazione del nuovo setpoint di temperatura

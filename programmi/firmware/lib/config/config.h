@@ -30,12 +30,36 @@
 
 #define HEAT_RELAY 9  // relè riscaldatore
 #define RH_RELAY 10    // relè umidificatore
-#define FAN_RELAY 11   // relè ventola ausiliaria
+#define FAN_RELAY 11   // relè ventola di omogeneizzazione
 #define LIGHT_RELAY 12 // relè illuminazione
 
 #define TEMP_POT A0 // potenziometro temperatura
 #define RH_POT A1   // potenziometro umidità
 
+
+// ----------------------------------------------------------------------------
+// -------------------- configurazione flag del programma ---------------------
+// ----------------------------------------------------------------------------
+
+// stati relay, switch e led
+#define RELAY_OFF HIGH // relè spento (logica invertita)
+#define RELAY_ON LOW   // relè acceso (logica invertita)
+#define LED_OFF LOW    // led spento
+#define LED_ON HIGH    // led acceso
+
+// modalità di controllo della temperatura e dell'umidità
+#define AUTO_CTRL 0   // controllo automatico tramite PID o isteresi
+#define MANUAL_CTRL 1 // controllo manuale tramite switch
+
+// tipi di controllori
+#define NONE 0 // nessun controllo
+#define HYST 1 // controllore ad isteresi ON/OFF
+#define PID 2  // controllore PID
+
+// tipi di windup per i controllori PID
+#define NO_WINDUP 0 // nessun anti-windup
+#define CLAMPING 1  // anti-windup con clamping
+#define BACK_CALC 2 // anti-windup con back calculation
 
 // ----------------------------------------------------------------------------
 // -------------------- configurazione parametri programma --------------------
@@ -76,22 +100,22 @@
 // utilizzando il dato di 0,1017 g/s di acqua nebulizzata dalla tesi di Vanni
 
 // parametri per il controllo della temperatura
-#define TEMP_CTRL 2        // 0 = no control | 1 = hysteresis | 2 = PID
-#define TEMP_HYS_THLD 25   // soglia di isteresi per temperatura (in cent. di °C)
-#define TEMP_PID_KP 0.5f  // guadagno proporzionale del PID per temperatura
-#define TEMP_PID_KI 0.01f   // guadagno integrale del PID per temperatura
-#define TEMP_PID_KD 0.0f  // guadagno derivativo del PID per temperatura
-#define TEMP_PID_KW 0.0f   // guadagno anti-windup del PID per temperatura
-#define TEMP_PID_WINDUP 1  // 0 = no windup | 1 = clamping | 2 = back calculation
+#define TEMP_CTRL PID       // tipo di controllore per la temperatura
+#define TEMP_HYS_THLD 25    // soglia di isteresi per temperatura (in cent. di °C)
+#define TEMP_PID_KP 0.5f    // guadagno proporzionale del PID per temperatura
+#define TEMP_PID_KI 0.0075f // guadagno integrale del PID per temperatura
+#define TEMP_PID_KD 10.0f   // guadagno derivativo del PID per temperatura
+#define TEMP_PID_KW 0.0f    // guadagno anti-windup del PID per temperatura
+#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup del PID per temperatura
 
 // parametri per il controllo dell'umidità
-#define RH_CTRL 2        // 0 = no control | 1 = hysteresis | 2 = PID
+#define RH_CTRL PID      // tipo di controllore per l'umidità
 #define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
 #define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità
 #define RH_PID_KI 0.0f   // guadagno integrale del PID per umidità
 #define RH_PID_KD 0.0f   // guadagno derivativo del PID per umidità
 #define RH_PID_KW 0.0f   // guadagno anti-windup del PID per umidità
-#define RH_PID_WINDUP 0  // 0 = no windup | 1 = clamping | 2 = back calculation
+#define RH_PID_WINDUP CLAMPING // tipo di anti-windup del PID per umidità
 
 // parametri per la gestione del segnale pwm
 #define PWM_PERIOD 8000 // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
@@ -103,20 +127,6 @@
 #define PID_MAX_OUTPUT 100 // limite massimo dell'output del PID
 #define PID_DATA_PERIOD SHT20_READ_PERIOD // periodo di acquisizione dei dati
 #define PID_UPDATE_PERIOD PWM_PERIOD      // periodo di aggiornamento dell'output
-
-// ----------------------------------------------------------------------------
-// -------------------- configurazione flag del programma ---------------------
-// ----------------------------------------------------------------------------
-
-// stati relay, switch e led
-#define RELAY_OFF HIGH // relè spento (logica invertita)
-#define RELAY_ON LOW   // relè acceso (logica invertita)
-#define LED_OFF LOW    // led spento
-#define LED_ON HIGH    // led acceso
-
-// modalità di controllo della temperatura e dell'umidità
-#define AUTO_CTRL 0   // controllo automatico tramite PID o isteresi
-#define MANUAL_CTRL 1 // controllo manuale tramite switch
 
 
 // ----------------------------------------------------------------------------
@@ -157,7 +167,7 @@ struct status {
   // stato dei relè
   bool heat_relay;  // stato relay e led riscaldatore
   bool rh_relay;    // stato relay e led umidificatore
-  bool fan_relay;   // stato relay ventola ausiliaria
+  bool fan_relay;   // stato relay ventola di omogeneizzazione
   bool light_relay; // stato relay illuminazione
 
   // stato degli switch

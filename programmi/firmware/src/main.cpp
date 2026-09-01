@@ -96,31 +96,36 @@ void setup() {
   serial_boot_message();
   lcd_boot_message();
 
-  // inizializzazione pin
-  pinMode(ALARM_LED, OUTPUT);
-  pinMode(HEAT_LED, OUTPUT);
-  pinMode(RH_LED, OUTPUT);
-  pinMode(REFILL_LED, OUTPUT);
+  // definizione dei pin degli switch come input
+  pinMode(HEAT_SW, INPUT);
+  pinMode(RH_SW, INPUT);
+  pinMode(LIGHT_SW, INPUT);
 
+  // inizializzazione stato iniziale dei pin con i relè su input-pullup per
+  // evitare il glitch iniziale che si verifica in caso di inizializzazione
+  // ad HIGH successiva alla funzione pinMode() che porta l'uscita a LOW
+  digitalWrite(HEAT_RELAY, RELAY_OFF);
+  digitalWrite(RH_RELAY, RELAY_OFF);
+  digitalWrite(FAN_RELAY, RELAY_OFF);
+  digitalWrite(LIGHT_RELAY, RELAY_OFF);
+
+  // definizione dei pin dei relè come output
   pinMode(HEAT_RELAY, OUTPUT);
   pinMode(RH_RELAY, OUTPUT);
   pinMode(FAN_RELAY, OUTPUT);
   pinMode(LIGHT_RELAY, OUTPUT);
 
-  pinMode(HEAT_SW, INPUT);
-  pinMode(RH_SW, INPUT);
-  pinMode(LIGHT_SW, INPUT);
+  // definizione dei pin dei led come output
+  pinMode(ALARM_LED, OUTPUT);
+  pinMode(HEAT_LED, OUTPUT);
+  pinMode(RH_LED, OUTPUT);
+  pinMode(REFILL_LED, OUTPUT);
 
-  // inizializzazione stato iniziale dei pin con led, relè
+  // inizializzazione stato iniziale dei pin con i led
   digitalWrite(ALARM_LED, LED_OFF);
   digitalWrite(HEAT_LED, LED_OFF);
   digitalWrite(RH_LED, LED_OFF);
   digitalWrite(REFILL_LED, LED_OFF);
-
-  digitalWrite(HEAT_RELAY, RELAY_OFF);
-  digitalWrite(RH_RELAY, RELAY_OFF);
-  digitalWrite(FAN_RELAY, RELAY_OFF);
-  digitalWrite(LIGHT_RELAY, RELAY_OFF);
 
   // inizializzazione stato iniziale delle variabili globali
   memset(&status, 0, sizeof(status));
@@ -133,10 +138,10 @@ void setup() {
   status.rh_setpoint = new_rh_setpoint = RH_DEF_SP;
 
   // inizializzazione controllori PID
-  #if TEMP_CTRL == 2
+  #if TEMP_CTRL == PID
     pid_init(temp_pid, TEMP_PID_KP, TEMP_PID_KI, TEMP_PID_KD, TEMP_PID_KW, TEMP_PID_WINDUP);
   #endif
-  #if RH_CTRL == 2
+  #if RH_CTRL == PID
     pid_init(rh_pid, RH_PID_KP, RH_PID_KI, RH_PID_KD, RH_PID_KW, RH_PID_WINDUP);
   #endif
 
@@ -426,7 +431,7 @@ void loop() {
     // 3. controllo degli attuatori se in modalità automatica
     if (!status.manual_ctrl) {
       // controllo ad isteresi ON/OFF della temperatura
-      #if TEMP_CTRL == 1 // HYSTERESIS
+      #if TEMP_CTRL == HYST
         if (!status.heat_relay && status.temp_setpoint - status.temp_sht20 > TEMP_HYS_THLD) {
           heat_turn_on();
           serial_auto_heat_on();
@@ -438,12 +443,12 @@ void loop() {
       #endif
 
       // controllo tramite PID della temperatura
-      #if TEMP_CTRL == 2 // PID
+      #if TEMP_CTRL == PID
         pid_add_data(temp_pid, status.temp_setpoint - status.temp_sht20, status.temp_sht20);
       #endif
 
       // controllo ad isteresi ON/OFF dell'umidità
-      #if RH_CTRL == 1 // HYSTERESIS
+      #if RH_CTRL == HYST
         if (!status.rh_relay && !status.refill_led && status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) > RH_HYS_THLD) {
           rh_turn_on();
           serial_auto_rh_on();
@@ -455,7 +460,7 @@ void loop() {
       #endif
 
       // controllo tramite PID dell'umidità
-      #if RH_CTRL == 2 // PID
+      #if RH_CTRL == PID
         pid_add_data(rh_pid, status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint), status.rh_sht20);
       #endif
     }
@@ -503,7 +508,7 @@ void loop() {
    */
 
   // implementazione PWM se è attivo almeno un controllore PID
-  #if TEMP_CTRL == 2 || RH_CTRL == 2
+  #if TEMP_CTRL == PID || RH_CTRL == PID
     // controllo pwm in modalità automatica
     if (!status.manual_ctrl) {
       // inizio del ciclo di controllo PWM ogni CTRL_PWM_PERIOD millisecondi
@@ -511,7 +516,7 @@ void loop() {
         timers.start_pwm += PWM_PERIOD; // aggiornamento timer
 
         // aggiornamento dei valori del duty cycle
-        #if TEMP_CTRL == 2 // PID per la temperatura
+        #if TEMP_CTRL == PID // PID per la temperatura
           // conversione output del PID della temperatura in duty cycle
           status.temp_pwm_value = (pid_update_output(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
 
@@ -521,7 +526,7 @@ void loop() {
           else if (status.temp_pwm_value > PWM_PERIOD - PWM_MIN_TIME_OFF)
             status.temp_pwm_value = PWM_PERIOD;
         #endif
-        #if RH_CTRL == 2 // PID per l'umidità
+        #if RH_CTRL == PID // PID per l'umidità
           // conversione output del PID dell'umidità in duty cycle
           status.rh_pwm_value = (pid_update_output(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
 
@@ -534,7 +539,7 @@ void loop() {
       }
 
       // controllo del duty cycle per il riscaldatore controllato in PID
-      #if TEMP_CTRL == 2
+      #if TEMP_CTRL == PID
         if (!status.heat_relay && millis() - timers.start_pwm < status.temp_pwm_value) {
           heat_turn_on();
           serial_auto_heat_on();
@@ -546,7 +551,7 @@ void loop() {
       #endif
 
       // controllo del duty cycle per l'umidificatore controllato in PID
-      #if RH_CTRL == 2
+      #if RH_CTRL == PID
         if (!status.rh_relay && !status.refill_led && millis() - timers.start_pwm < status.rh_pwm_value) {
           rh_turn_on();
           serial_auto_rh_on();
@@ -647,12 +652,12 @@ void set_auto_ctrl() {
   status.manual_ctrl = AUTO_CTRL;
 
   // reset vecchi dati accumulati nel PID temperatura
-  #if TEMP_CTRL == 2
+  #if TEMP_CTRL == PID
   pid_reset_accumulators(temp_pid);
   #endif
 
   // reset vecchi dati accumulati nel PID umidità
-  #if RH_CTRL == 2
+  #if RH_CTRL == PID
   pid_reset_accumulators(rh_pid);
   #endif
 

@@ -16,7 +16,7 @@
  * @brief Gestione del controllore PID
  *
  * L'output del pid viene aggiornato ogni volta che inizia un nuovo ciclo del
- * segnale PWM, quindi ogni CTRL_PWM_PERIOD millisecondi. Le misurazioni che
+ * segnale PWM, quindi ogni PID_UPDATE_PERIOD millisecondi. Le misurazioni che
  * avvengono tra un aggiornamento dell'output e il successivo vengono salvate
  * all'interno di accumulatori interni per calcolare successivamente le tre
  * componenti del PID (proporzionale, integrale e derivativa).
@@ -50,7 +50,7 @@
  * @param kw const reference al guadagno della back calculation (anti-windup)
  * @param anti_windup const reference all'opzione di anti-windup da utilizzare
  */
-void pid_init(struct pid &pid, const float &kp, const float &ki, const float &kd, const float &kw, const uint8_t &anti_windup = 1);
+void pid_init(struct pid &pid, const float &kp, const float &ki, const float &kd, const float &kw, const uint8_t &anti_windup = CLAMPING);
 
 /**
  * @brief Salva una nuova misurazione negli accumulatori del PID.

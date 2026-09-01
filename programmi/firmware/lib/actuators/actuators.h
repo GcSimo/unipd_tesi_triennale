@@ -13,10 +13,32 @@
 #include "config.h"
 
 /**
+ * @brief Gestione della ventola di omogeneizzazione dell'aria.
+ *
+ * Il modo più semplice per gestire la ventola di omogeneizzazione dell'aria
+ * è quello di accenderla quando almeno uno dei due attuatori (riscaldatore
+ * o umidificatore) è acceso e di spegnerla quando entrambi sono spenti.
+ *
+ * Quando, però, tali attuatori sono controllati da un pid con un segnale pwm,
+ * la ventola deve fare continui e rapidi cicli di accensione-spegnimento che
+ * risultano totalmente inutili. Provocano, infatti, l'usura delle componenti
+ * elettriche e meccaniche della ventola e non permettono un efficiente
+ * ricircolo dell'aria all'interno dell'incubatrice.
+ *
+ * Per questo motivo, è stato deciso di non vincolare l'accensione della
+ * ventola alla sola accensione degli attuatori, ma di mantenerla attiva
+ * se uno dei due attuatori viene pilotato da un segnale pwm non nullo.
+ *
+ * La gestione dell'accensione e dello spegnimento avviene all'interno delle
+ * funzioni di accensione e spegnimento del riscaldatore e dell'umidificatore,
+ * in modo da eseguire tutto in maniera automatica e centralizzata.
+ */
+
+/**
  * @brief Accensione del riscaldatore.
  *
  * Questa funzione accende il riscaldatore e il led di stato corrispondente.
- * Accende anche la ventola ausiliaria se è spenta.
+ * Accende anche la ventola di omogeneizzazione dell'aria se è spenta.
  *
  * @return true riscaldatore acceso con successo
  * @return false riscaldatore già acceso, nessuna azione eseguita
@@ -27,7 +49,7 @@ bool heat_turn_on();
  * @brief Spegnimento del riscaldatore.
  *
  * Questa funzione spegne il riscaldatore e il led di stato corrispondente.
- * Spegne anche la ventola ausiliaria se l'umidificatore è spento.
+ * Spegne anche la ventola di omogeneizzazione dell'aria se è possibile farlo.
  *
  * @return true riscaldatore spento con successo
  * @return false riscaldatore già spento, nessuna azione eseguita
@@ -38,7 +60,7 @@ bool heat_turn_off();
  * @brief Accensione dell'umidificatore.
  *
  * Questa funzione accende l'umidificatore e il led di stato corrispondente.
- * Accende anche la ventola ausiliaria se è spenta.
+ * Accende anche la ventola di omogeneizzazione dell'aria se è spenta.
  *
  * Se è necessario fare un refill dell'acqua, l'umidificatore non viene acceso
  * e la funzione restituisce false senza fare nulla.
@@ -56,7 +78,7 @@ bool rh_turn_on();
  * @brief Spegnimento dell'umidificatore.
  *
  * Questa funzione spegne l'umidificatore e il led di stato corrispondente.
- * Spegne anche la ventola ausiliaria se il riscaldatore è spento.
+ * Spegne anche la ventola di omogeneizzazione dell'aria se è possibile farlo.
  *
  * Aggiorna il timer di refill dell'acqua, aggiungendo il tempo trascorso
  * dall'ultima accensione dell'umidificatore.

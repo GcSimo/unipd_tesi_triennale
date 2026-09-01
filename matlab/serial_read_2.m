@@ -84,10 +84,10 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 		yyaxis right;
 		ylabel('Segnali (PWM/PID)');
 		line_t_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
-		line_t_p   = animatedline('Color', c_P, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
-		line_t_i   = animatedline('Color', c_I, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
-		line_t_d   = animatedline('Color', c_D, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
-		line_t_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1.2, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+		line_t_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+		line_t_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+		line_t_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+		line_t_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
 		legend('Location', 'westoutside');
 
 		% -- Riquadro 2: Umidità --
@@ -162,8 +162,8 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 				ctrl    = extractStr(lineStr, 'Ctrl:\s*([A-Z]+)');
 				err     = extractNum(lineStr, 'Error_Code:\s*(\d+)');
 
-				t_pwm   = extractNum(lineStr, 'T_PWM_norm:\s*(\d+)');
-				rh_pwm  = extractNum(lineStr, 'RH_PWM_norm:\s*(\d+)');
+				t_pwm   = extractNum(lineStr, 'T_PWM_norm:\s*([-+]?\d*\.?\d+)');
+				rh_pwm  = extractNum(lineStr, 'RH_PWM_norm:\s*([-+]?\d*\.?\d+)');
 
 				t_p     = extractNum(lineStr, 'T_PID_p:\s*([-+]?\d*\.?\d+)');
 				t_i     = extractNum(lineStr, 'T_PID_i:\s*([-+]?\d*\.?\d+)');

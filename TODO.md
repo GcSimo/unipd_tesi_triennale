@@ -7,15 +7,15 @@
 - [x] ritardare impostazione setpoint temperatura e umidità
 - [x] integrare derivative kick
 - [x] creare classe per gestire sht20
+- [x] verifica glitch iniziale dei relè e invertire digitalWrite con pinMode per i relè nella funzione di setup()
 - [ ] aggiungere conversione °C in potenza
 - [ ] verificare massima durata di un loop
-- [ ] verifica glitch iniziale dei relè e invertire digitalWrite con pinMode per i relè nella funzione di setup()
 - [ ] verificare derivata al variare del setpoint (derivative kick test)
 - [ ] verificare temporizzazione display, led allarme
 - [ ] tarare parametri PID
 - [ ] tarare timer di refill
-- [ ] gestione output nel passaggio da automatico a manuale -> non necessaria\
-- [ ] implementare il pid come oggetto -> non necessaria
+- [ ] gestione output nel passaggio da automatico a manuale -> non necessaria
+- [ ] implementare il pid come oggetto -> non necessaria (peggiorativa)
 
 ## csv:
 - [x] creare script matlab per interpretare comandi seriali

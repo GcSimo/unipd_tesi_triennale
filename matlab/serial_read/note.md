@@ -167,3 +167,26 @@
 ### data_20260901_172544.csv
 - test pid con kp = 0.3, ki = 0, kd = 0
 - partenza da 31°C, raggiunge in sovraelongazione i 35°C, si stabilizza a 34.7°C con pwm a 38%
+
+### data_20260901_173825.csv
+- test pid con kp = 0.5, ki = 0.01, kd = 0
+- partenza da vecchio regime (34.7°C)
+- raggiunge in sovraelongazione i 36.4°C, scende a 35.8°C, sale a 36.1°C, si stabilizza a 36.02°C con pwm a 45%
+- spegnimento manuale e apertura da 550 a 700 secondi
+- raggiunge in sovraelongazione i 36.4°C, scende a 35.7°C, sale a 36.1°C, fa un po' di oscillazioni
+
+### data_20260901_180225.csv
+- test pid con kp = 0.5, ki = 0.005, kd = 10 - contributo derivativo invertito
+- buono, nota: il contributo derivativo mostrato agisce al contrario (viene sottratto)
+- apertura sportello da 550
+- ritorna a regime senza sovraelongazioni
+- chiusura sportello a 900
+- a 1300 lieve abbassamento della temperatura esterna percepita da me
+
+### data_20260901_181124.csv
+- test pid con kp = 0.5, ki = 0.01, kd = 10 - raddrizzamento contributo derivativo
+- sovraelongazione fino a 36.5°C, scende a 35.8°C e si stabilizza
+
+### data_20260901_184203.csv
+- test pid con kp = 0.5, ki = 0.01, kd = 20
+- sovraelongazione fino a 36.5°C, scende a 35.8°C e continua con lente e leggere oscillazioni

@@ -221,16 +221,16 @@ float pid_update_output(struct pid &pid) {
 
   // 5. anti-windup della componente integrale del PID
   switch (pid.anti_windup) {
-    case 0: // no anti-windup
+    case NO_WINDUP: // no anti-windup
       pid.integral += integral_contrib;
       break;
 
-    case 1: // clamping
+    case CLAMPING: // clamping
       if (!(pid.output > PID_MAX_OUTPUT && mean_error > 0.0f) && !(pid.output < PID_MIN_OUTPUT && mean_error < 0.0f))
         pid.integral += integral_contrib;
       break;
 
-    case 2: // back calculation
+    case BACK_CALC: // back calculation
       pid.integral += integral_contrib + pid.kw * (constrain(pid.output, PID_MIN_OUTPUT, PID_MAX_OUTPUT) - pid.output) * (PID_UPDATE_PERIOD / 1000.0f);
       break;
   }

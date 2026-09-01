@@ -10,6 +10,42 @@
 #include "actuators.h"
 #include "utils.h"
 
+/**
+ * NOTE IMPLEMENTATIVE sullo spegnimento della ventola di omogeneizzazione:
+ *
+ * La condizione di spegnimento è la seguente:
+ *
+ *  ON = heat_on || rh_on || (auto_ctrl && TEMP_CTRL == 2 && temp_pwm_value != 0) || (auto_ctrl && RH_CTRL == 2 && rh_pwm_value != 0)
+ *
+ *  OFF = !ON =
+ *      = !heat_on && !rh_on && !(auto_ctrl && TEMP_CTRL == 2 && temp_pwm_value != 0) && !(auto_ctrl && RH_CTRL == 2 && rh_pwm_value != 0) =
+ *      = heat_off && rh_off && (manual_ctrl || TEMP_CTRL != 2 || temp_pwm_value == 0) && (manual_ctrl || RH_CTRL != 2 || rh_pwm_value == 0) =
+ *      = heat_off && rh_off && (manual_ctrl || ((TEMP_CTRL != 2 || temp_pwm_value == 0) && (RH_CTRL != 2 || rh_pwm_value == 0)))
+ *
+ * Analizzando i 4 casi possibili per le configurazioni dei controllori degli
+ * attuatori, si ottengono le seguenti condizioni di spegnimento:
+ *
+ * 1. entrambi gli attuatori sono controllati da un pid con segnale pwm,
+ *    ovvero per TEMP_CTRL == PID && RH_CTRL == PID
+ *
+ *    OFF = heat_off && rh_off && (manual_ctrl || (temp_pwm_value == 0 && rh_pwm_value == 0))
+ *
+ * 2. solo il riscaldatore è controllato da un pid con segnale pwm, ovvero
+ *    per TEMP_CTRL == PID && RH_CTRL != PID
+ *
+ *    OFF = heat_off && rh_off && (manual_ctrl || temp_pwm_value == 0))
+ *
+ * 3. solo l'umidificatore è controllato da un pid con segnale pwm, ovvero
+ *    per TEMP_CTRL != PID && RH_CTRL == PID
+ *
+ *    OFF = heat_off && rh_off && (manual_ctrl || rh_pwm_value == 0))
+ *
+ * 4. nessuno dei due attuatori è controllato da un pid con segnale pwm,
+ *    ovvero per TEMP_CTRL != PID && RH_CTRL != PID
+ *
+ *    OFF = heat_off && rh_off
+ */
+
 // accensione riscaldatore
 bool heat_turn_on() {
   // se il riscaldatore è già acceso, restituisce false senza fare nulla
@@ -21,10 +57,10 @@ bool heat_turn_on() {
   digitalWrite(HEAT_LED, LED_ON);     // accensione LED riscaldatore
   status.heat_relay = true; // aggiornamento stato riscaldatore
 
-  // accensione ventola ausiliaria se spenta
+  // accensione ventola di omogeneizzazione se spenta
   if (!status.fan_relay) {
-    digitalWrite(FAN_RELAY, RELAY_ON); // accensione ventola ausiliaria
-    status.fan_relay = true; // aggiornamento stato ventola ausiliaria
+    digitalWrite(FAN_RELAY, RELAY_ON); // accensione ventola di omogeneizzazione
+    status.fan_relay = true; // aggiornamento stato ventola di omogeneizzazione
   }
 
   // accensione avvenuta con successo
@@ -42,10 +78,18 @@ bool heat_turn_off() {
   digitalWrite(HEAT_LED, LED_OFF);     // spegnimento LED riscaldatore
   status.heat_relay = false; // aggiornamento stato riscaldatore
 
-  // spegnimento ventola ausiliaria se l'umidificatore è spento
+  // spegnimento ventola di omogeneizzazione come descritto sopra
+  #if TEMP_CTRL == PID && RH_CTRL == PID
+  if (!status.rh_relay && (status.manual_ctrl || (!status.temp_pwm_value && !status.rh_pwm_value))) {
+  #elif TEMP_CTRL == PID && RH_CTRL != PID
+  if (!status.rh_relay && (status.manual_ctrl || !status.temp_pwm_value)) {
+  #elif TEMP_CTRL != PID && RH_CTRL == PID
+  if (!status.rh_relay && (status.manual_ctrl || !status.rh_pwm_value)) {
+  #else
   if (!status.rh_relay) {
-    digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola ausiliaria
-    status.fan_relay = false; // aggiornamento stato ventola ausiliaria
+  #endif
+    digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola di omogeneizzazione
+    status.fan_relay = false; // aggiornamento stato ventola di omogeneizzazione
   }
 
   // spegnimento avvenuto con successo
@@ -64,10 +108,10 @@ bool rh_turn_on() {
   digitalWrite(RH_LED, LED_ON);     // accensione LED umidificatore
   status.rh_relay = true; // aggiornamento stato umidificatore
 
-  // accensione ventola ausiliaria se spenta
+  // accensione ventola di omogeneizzazione se spenta
   if (!status.fan_relay) {
-    digitalWrite(FAN_RELAY, RELAY_ON); // accensione ventola ausiliaria
-    status.fan_relay = true; // aggiornamento stato ventola ausiliaria
+    digitalWrite(FAN_RELAY, RELAY_ON); // accensione ventola di omogeneizzazione
+    status.fan_relay = true; // aggiornamento stato ventola di omogeneizzazione
   }
 
   // gestione contatore refill
@@ -88,10 +132,18 @@ bool rh_turn_off() {
   digitalWrite(RH_LED, LED_OFF);     // spegnimento LED umidificatore
   status.rh_relay = false; // aggiornamento stato umidificatore
 
-  // spegnimento ventola ausiliaria se il riscaldatore è spento
+  // spegnimento ventola di omogeneizzazione come descritto sopra
+  #if TEMP_CTRL == PID && RH_CTRL == PID
+  if (!status.heat_relay && (status.manual_ctrl || (!status.temp_pwm_value && !status.rh_pwm_value))) {
+  #elif TEMP_CTRL == PID && RH_CTRL != PID
+  if (!status.heat_relay && (status.manual_ctrl || !status.temp_pwm_value)) {
+  #elif TEMP_CTRL != PID && RH_CTRL == PID
+  if (!status.heat_relay && (status.manual_ctrl || !status.rh_pwm_value)) {
+  #else
   if (!status.heat_relay) {
-    digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola ausiliaria
-    status.fan_relay = false; // aggiornamento stato ventola ausiliaria
+  #endif
+    digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola di omogeneizzazione
+    status.fan_relay = false; // aggiornamento stato ventola di omogeneizzazione
   }
 
   // gestione contatore refill

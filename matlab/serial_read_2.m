@@ -61,7 +61,8 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 				%'BackgroundColor', [0.8 0.2 0.2], 'ForegroundColor', 'w', ...
 				%'FontWeight', 'bold', 'FontSize', 10, ...
 
-		t_layout = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+%		t_layout = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+		t_layout = tiledlayout(1, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 
 		maxPts = 3600;
 
@@ -90,28 +91,28 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 		legend('Location', 'westoutside');
 
 		% -- Riquadro 2: Umidità --
-		ax2 = nexttile(t_layout);
-		title('Controllo Umidità');
-		grid on; hold on;
-
-		yyaxis left;
-		ylabel('Umidità (%)');
-		line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
-		line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
-
-		yyaxis right;
-		ylabel('Segnali (PWM/PID)');
-		line_rh_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}', 'MaximumNumPoints', maxPts);
-		line_rh_p   = animatedline('Color', c_P, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
-		line_rh_i   = animatedline('Color', c_I, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
-		line_rh_d   = animatedline('Color', c_D, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
-		line_rh_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1.2, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
-		legend('Location', 'westoutside');
-
-		linkaxes([ax1, ax2], 'x');
-
+%		ax2 = nexttile(t_layout);
+%		title('Controllo Umidità');
+%		grid on; hold on;
+%
+%		yyaxis left;
+%		ylabel('Umidità (%)');
+%		line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
+%		line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+%
+%		yyaxis right;
+%		ylabel('Segnali (PWM/PID)');
+%		line_rh_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}', 'MaximumNumPoints', maxPts);
+%		line_rh_p   = animatedline('Color', c_P, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+%		line_rh_i   = animatedline('Color', c_I, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+%		line_rh_d   = animatedline('Color', c_D, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+%		line_rh_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1.2, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+%		legend('Location', 'westoutside');
+%
+%		linkaxes([ax1, ax2], 'x');
+%
 		ax1.XLimMode = 'auto';
-		ax2.XLimMode = 'auto';
+%		ax2.XLimMode = 'auto';
 
 		% Etichette asse X
 		%xlabel(ax1, 'Tempo trascorso (secondi)');
@@ -190,13 +191,13 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 					addpoints(line_t_d, t_elapsed, t_d);
 					addpoints(line_t_out, t_elapsed, t_out);
 
-					addpoints(line_rh, t_elapsed, rh);
-					addpoints(line_set_rh, t_elapsed, set_rh);
-					addpoints(line_rh_pwm, t_elapsed, rh_pwm);
-					addpoints(line_rh_p, t_elapsed, rh_p);
-					addpoints(line_rh_i, t_elapsed, rh_i);
-					addpoints(line_rh_d, t_elapsed, rh_d);
-					addpoints(line_rh_out, t_elapsed, rh_out);
+%					addpoints(line_rh, t_elapsed, rh);
+%					addpoints(line_set_rh, t_elapsed, set_rh);
+%					addpoints(line_rh_pwm, t_elapsed, rh_pwm);
+%					addpoints(line_rh_p, t_elapsed, rh_p);
+%					addpoints(line_rh_i, t_elapsed, rh_i);
+%					addpoints(line_rh_d, t_elapsed, rh_d);
+%					addpoints(line_rh_out, t_elapsed, rh_out);
 
 					% limitrate forza MATLAB a non aggiornare l'UI più di 20 volte
 					% al secondo, prevenendo lag e crash in caso di alta frequenza di dati

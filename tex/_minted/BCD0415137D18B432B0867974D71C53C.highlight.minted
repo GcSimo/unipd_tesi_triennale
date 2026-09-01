@@ -1,0 +1,86 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file lcd.h}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Gestione del display lcd dell\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Dichiarazione delle funzioni per la gestione del display lcd del pannello}
+\PYG{c+cm}{ * frontale dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}ifndef LCD\PYGZus{}H}
+\PYG{c+cp}{\PYGZsh{}define LCD\PYGZus{}H}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa il messaggio di avvio sul display lcd.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}boot\PYGZus{}message}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa lo stato dell\PYGZsq{}incubatrice su display lcd.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Questa funzione stampa sul display lcd:}
+\PYG{c+cm}{ * \PYGZhy{} la temperatura misurata e il relativo setpoint}
+\PYG{c+cm}{ * \PYGZhy{} l\PYGZsq{}umidità misurata e il relativo setpoint}
+\PYG{c+cm}{ * \PYGZhy{} stato del controllo degli attuatori (manuale o automatico)}
+\PYG{c+cm}{ * \PYGZhy{} il codice di eventuali errori che si sono verificati}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}print\PYGZus{}status}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione manuale del riscaldatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}heat\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento manuale del riscaldatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}heat\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione manuale dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}rh\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento manuale dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}rh\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione manuale dell\PYGZsq{}illuminazione.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}light\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento manuale dell\PYGZsq{}illuminazione.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}light\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Visualizzazione del nuovo setpoint di temperatura.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Visualizzazione del nuovo setpoint di umidità.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{(}\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa il messaggio di refill sul display lcd.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}refill\PYGZus{}message}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa il messaggio di errore associato al codice di errore}
+\PYG{c+cm}{ * restituito dal sensore SHT20.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param errorCode codice di errore restituito dal sensore SHT20}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}sht20\PYGZus{}error}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{errorCode}\PYG{p}{);}
+
+\PYG{c+cp}{\PYGZsh{}endif }\PYG{c+c1}{// LCD\PYGZus{}H}
+\end{MintedVerbatim}

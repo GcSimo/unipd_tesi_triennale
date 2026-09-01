@@ -128,6 +128,10 @@ void setup() {
   memset(&temp_pid, 0, sizeof(temp_pid));
   memset(&rh_pid, 0, sizeof(rh_pid));
 
+  // inizializzazione setpoint di temperatura e umidità
+  status.temp_setpoint = new_temp_setpoint = TEMP_DEF_SP;
+  status.rh_setpoint = new_rh_setpoint = RH_DEF_SP;
+
   // inizializzazione controllori PID
   #if TEMP_CTRL == 2
     pid_init(temp_pid, TEMP_PID_KP, TEMP_PID_KI, TEMP_PID_KD, TEMP_PID_KW, TEMP_PID_WINDUP);
@@ -136,7 +140,7 @@ void setup() {
     pid_init(rh_pid, RH_PID_KP, RH_PID_KI, RH_PID_KD, RH_PID_KW, RH_PID_WINDUP);
   #endif
 
-  // inizializzazione sensore SHT20 e controllo errori
+  // inizializzazione sensore SHT20 e controllo errori del sensore
   while (!sensor.begin()) {
     lcd_sht20_error(sensor.get_error()); // stampa messaggio su display lcd
     serial_sht20_error(sensor.get_error()); // stampa messaggio su serial monitor
@@ -144,10 +148,6 @@ void setup() {
     delay(1000); // attesa di 1 secondo prima di riprovare
   }
   digitalWrite(ALARM_LED, LED_OFF); // spegnimento led in assenza di errori
-
-  // inizializzazione setpoint di temperatura e umidità
-  status.temp_setpoint = new_temp_setpoint = TEMP_DEF_SP;
-  status.rh_setpoint = new_rh_setpoint = RH_DEF_SP;
 
   // ritardo prima di iniziare il loop principale
   delay(2000);
@@ -344,28 +344,55 @@ void loop() {
 
 
   // --------------------------------------------------------------------------
-  // ----------- lettura dati dal sensore SHT20 - vedi classe sht20 -----------
+  // --------------------- lettura dati dal sensore SHT20 ---------------------
   // --------------------------------------------------------------------------
 
+  /**
+   * @brief Gestione del sensore SHT20.
+   *
+   * Come illustrato nella classe sht20, per leggere le misurazioni del
+   * sensore SHT20 è necessario invocare ripetutamente la funzione update()
+   * fino a quando non restituisce true. Tale funzione si occupa di gestire
+   * in autonomia le fasi di richiesta, attesa e lettura dei dati dal sensore.
+   *
+   * Se la funzione update() restituisce false, significa che le misurazioni
+   * non sono ancora disponibili o che si è verificato un errore. Va quindi
+   * verificata la presenza di eventuali errori con la funzione get_error().
+   *
+   * Quando la funzione update() restituisce true, significa che le nuove
+   * misurazioni sono disponibili e vanno lette entrambe tramite le funzioni
+   * get_temperature() e get_humidity(), altrimenti non è possibile effettuare
+   * la richiesta di nuove misurazioni.
+   *
+   * All'arrivo di nuove misurazioni si effettuano le seguenti operazioni:
+   * 1. lettura della temperatura e dell'umidità (in float) e conversione
+   *    dei valori in interi a 4 cifre
+   * 2. verifica di eventuali overflow dei valori e salvataggio dei valori
+   *    nella struct status
+   * 3. gestione degli attuatori se in modalità automatica
+   * 4. stampa di log sullo stato dell'incubatrice su serial monitor
+   *
+   * La gestione degli attuatori dipende dal tipo di controllo selezionato:
+   * - per i controllori ad isteresi ON/OFF, si verifica se la differenza tra
+   *   il setpoint e la misurazione supera la soglia di isteresi, modificando
+   *   di conseguenza lo stato degli attuatori
+   * - per i controllori PID, si aggiungono i nuovi dati al controllore con
+   *   la funzione pid_add_data().
+   */
+
   // aggiorna il sensore e verifica la presenza di nuovi dati
-  if (!sensor.update()) { // nessun dato disponibile o presenza di errori
+  if (!sensor.update()) {
     // verifica presenza di nuovi errori nel sensore SHT20
     if (sensor.get_error() && !err_check(ERR_SHT20)) {
-      // stampa messaggi di errore su serial monitor e display lcd
-      serial_sht20_error(sensor.get_error());
-      lcd_sht20_error(sensor.get_error());
-
-      // impostazione bit di errore per il sensore SHT20
-      err_set(ERR_SHT20);
+      serial_sht20_error(sensor.get_error()); // stampa errore su serial monitor
+      lcd_sht20_error(sensor.get_error()); // stampa errore su display lcd
+      err_set(ERR_SHT20); // impostazione bit di errore per il sensore SHT20
     }
-
-  }
-  else { // nuovi dati disponibili dal sensore SHT20
-    // --- lettura delle misure dal sensore ---
-    // lettura della temperatura dal sensore e conversione in intero a 4 cifre
+  } else {
+    // 1. lettura della temperatura dal sensore e conversione in intero a 4 cifre
     sensor_read = (int16_t)(sensor.get_temperature() * 100 + 0.5);
 
-    // verifica overflow della temperatura e gestione errori
+    // 2. verifica overflow della temperatura e gestione errori
     if (sensor_read < 0) {        // verifica temperatura negativa
       err_set(ERR_TEMP_OVERFLOW); //  - impostazione bit di errore
       status.temp_sht20 = 0;      //  - assegnazione valore minimo
@@ -379,10 +406,10 @@ void loop() {
       status.temp_sht20 = sensor_read; //  - salvataggio valore
     }
 
-    // lettura dell'umidità dal sensore e conversione in intero a 4 cifre
+    // 1. lettura dell'umidità dal sensore e conversione in intero a 4 cifre
     sensor_read = (int16_t)(sensor.get_humidity() * 100 + 0.5);
 
-    // verifica overflow dell'umidità e gestione errori
+    // 2. verifica overflow dell'umidità e gestione errori
     if (sensor_read < 0) {      // verifica umidità negativa
       err_set(ERR_RH_OVERFLOW); //  - impostazione bit di errore
       status.rh_sht20 = 0;      //  - assegnazione valore minimo
@@ -396,7 +423,7 @@ void loop() {
       status.rh_sht20 = sensor_read; //  - salvataggio valore
     }
 
-    // --- controllo degli attuatori se in modalità automatica ---
+    // 3. controllo degli attuatori se in modalità automatica
     if (!status.manual_ctrl) {
       // controllo ad isteresi ON/OFF della temperatura
       #if TEMP_CTRL == 1 // HYSTERESIS
@@ -433,7 +460,7 @@ void loop() {
       #endif
     }
 
-    // --- stampa di log sullo stato dell'incubatrice su serial monitor ---
+    // 4. stampa di log sullo stato dell'incubatrice su serial monitor
     serial_datalog();
   }
 
@@ -486,7 +513,7 @@ void loop() {
         // aggiornamento dei valori del duty cycle
         #if TEMP_CTRL == 2 // PID per la temperatura
           // conversione output del PID della temperatura in duty cycle
-          status.temp_pwm_value = (pid_update_output(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT);
+          status.temp_pwm_value = (pid_update_output(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
 
           // applicazione dei vincoli sul duty cycle
           if (status.temp_pwm_value < PWM_MIN_TIME_ON)
@@ -496,7 +523,7 @@ void loop() {
         #endif
         #if RH_CTRL == 2 // PID per l'umidità
           // conversione output del PID dell'umidità in duty cycle
-          status.rh_pwm_value = (pid_update_output(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT);
+          status.rh_pwm_value = (pid_update_output(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
 
           // applicazione dei vincoli sul duty cycle
           if (status.rh_pwm_value < PWM_MIN_TIME_ON)

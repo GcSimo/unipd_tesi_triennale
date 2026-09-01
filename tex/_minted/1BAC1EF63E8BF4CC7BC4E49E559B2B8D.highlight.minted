@@ -1,0 +1,100 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file serial.h}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Gestione della comunicazione seriale dell\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Dichiarazione delle funzioni per la gestione della comunicazione seriale}
+\PYG{c+cm}{ * tra computer e incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}ifndef SERIAL\PYGZus{}H}
+\PYG{c+cp}{\PYGZsh{}define SERIAL\PYGZus{}H}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa il messaggio di avvio su serial monitor.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}boot\PYGZus{}message}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Trasmissione temperatura e umidità misurate.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}datalog}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione manuale del riscaldatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}man\PYGZus{}heat\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento manuale del riscaldatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}man\PYGZus{}heat\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione manuale dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}man\PYGZus{}rh\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento manuale dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}man\PYGZus{}rh\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione manuale dell\PYGZsq{}illuminazione.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}man\PYGZus{}light\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento manuale dell\PYGZsq{}illuminazione.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}man\PYGZus{}light\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione automatica del riscaldatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}auto\PYGZus{}heat\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento automatico del riscaldatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}auto\PYGZus{}heat\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione automatica dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}auto\PYGZus{}rh\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento automatico dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}auto\PYGZus{}rh\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Visualizzazione del nuovo setpoint di temperatura.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Visualizzazione del nuovo setpoint di umidità.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa il messaggio di refill sul serial monitor.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}refill\PYGZus{}message}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Stampa il messaggio di errore associato al codice di errore}
+\PYG{c+cm}{ * restituito dal sensore SHT20.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param errorCode codice di errore}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}sht20\PYGZus{}error}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{errorCode}\PYG{p}{);}
+
+\PYG{c+cp}{\PYGZsh{}endif }\PYG{c+c1}{// SERIAL\PYGZus{}H}
+\end{MintedVerbatim}

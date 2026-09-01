@@ -79,3 +79,91 @@
 - consumo medio del riscaldatore 6.67A
 - tempo da 35°C a 37°C = 175 secondi
 - 6.67A * 12V * 175s / 2°C = 7003,5 J/°C
+
+### data_20260831_144643.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 6.10A
+- tempo da 35°C a 37°C = 215 secondi
+- 6.10A * 12V * 215s / 2°C = 7869 J/°C
+
+
+## set prove 3
+### data_20260901_135714.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 5.90A
+- tempo da 35°C a 37°C = 301 secondi
+- 5.90A * 12V * 301s / 2°C = 10655 J/°C
+
+### data_20260901_142034.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 6.34A
+- tempo da 35°C a 37°C = 213 secondi
+- 6.34A * 12V * 213s / 2°C = 8102 J/°C
+
+### data_20260901_143416.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 6.17A
+- tempo da 35°C a 37°C = 158 secondi
+- 6.17A * 12V * 158s / 2°C = 5849 J/°C
+
+### data_20260901_144539.csv
+- test evoluzione forzata con riscaldatore al massimo
+- consumo medio del riscaldatore 5.98A
+- tempo da 35°C a 37°C = 166 secondi
+- 5.98A * 12V * 166s / 2°C = 5956 J/°C
+
+### data_20260901_145820.csv
+- test evoluzione forzata con riscaldatore al massimo (ed evoluzione libera)
+- consumo medio del riscaldatore 6.00A
+- tempo da 35°C a 37°C = 153 secondi
+- 6.00A * 12V * 153s / 2°C = 5508 J/°C
+
+### data_20260901_155236.csv
+- test evoluzione forzata con riscaldatore al massimo con continui saliscendi tra 34°C e 38°C
+- consumo medio del riscaldatore ---
+- tempo da 35°C a 37°C:
+  - 90 secondi
+  - 65 secondi
+  - 61 secondi
+  - 59 secondi
+  - 59 secondi
+
+- si svolgono le seguenti operazioni:
+  - Potenza_erogata * Delta_tempo -> Energia_erogata
+  - Energia_erogata / Delta_Temperatura -> Energia/°C
+  - Energia/°C / Periodo_PWM -> Potenza_PWM/°C
+  - Potenza_PWM/°C / Potenza_media_erogata * 100-> %_duty_cycle/°C
+  - Potenza_erogata * Delta_tempo / Delta_Temperatura / Periodo_PWM / Potenza_media_erogata *100 = Delta_tempo / Delta_Temperatura / Periodo_PWM * 100 = %_duty_cycle/°C
+
+- assumiamo tempo medio di 60 secondi quando l'incubatrice si trova a regime termico tra 34°C e 38°C
+- 60 sec / 2°C / 8 sec * 100 = 375 %/°C
+
+
+## set prove 4
+### data_20260901_163102.csv
+- test pid con kp = 375, ki = 0, kd = 0
+- valore proporzionale troppo grande (mancava un /100 per come sono gestite le temperature)
+
+### data_20260901_164038.csv
+- test pid con kp = 3.75, ki = 0, kd = 0
+- rimane sempre troppo aggressivo, forse perché c'è un ritardo tra l'attuatore e il sensore dovuto all'inerzia termica del sistema
+
+### data_20260901_165006.csv
+- test pid con kp = 1, ki = 0, kd = 0
+- partenza da 36°C
+- accensione manuale da 300 a 320 secondi
+- nota: pwm a 40-45% mantiene i 35.55°C con setpoint 36°C
+- spegnimento manuale e apertura da 630 a 700 secondi
+- risale con sovraelongazione a 36.02°C, scende a 35.35°C e si stabiizza a 35.6°C con pwm a 40°C
+
+### data_20260901_171003.csv
+- test pid con kp = 0.7, ki = 0, kd = 0
+- partenza da 32°C, raggiunge in sovraelongazione i 35.7°C, si stabilizza a 35.4°C con pwm a 40%
+
+### data_20260901_171707.csv
+- test pid con kp = 0.5, ki = 0, kd = 0
+- partenza da 32°C, raggiunge in sovraelongazione i 35.5°C, si stabilizza a 35.15°C con pwm a 42%
+
+### data_20260901_172544.csv
+- test pid con kp = 0.3, ki = 0, kd = 0
+- partenza da 31°C, raggiunge in sovraelongazione i 35°C, si stabilizza a 34.7°C con pwm a 38%

@@ -1,0 +1,76 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file utils.h}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Funzioni di utilità per l\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Dichiarazione delle funzioni di utilità per l\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}ifndef UTILS\PYGZus{}H}
+\PYG{c+cp}{\PYGZsh{}define UTILS\PYGZus{}H}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} gestione della conversione da intero a 4 cifre a stringa \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+c1}{// buffer per conversione da intero a 4 cifre a stringa}
+\PYG{k}{extern}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{float\PYGZus{}buffer}\PYG{p}{[}\PYG{l+m+mi}{6}\PYG{p}{];}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Converte una misurazione in stringa formattata correttamente.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Converte i valori di temperatura ed umidità nella loro rappresentazione}
+\PYG{c+cm}{ * in stringa con due cifre intere e due decimali per la stampa sul display}
+\PYG{c+cm}{ * lcd e sul monitor seriale.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param value il numero da convertire come intero a 4 cifre}
+\PYG{c+cm}{ * @return puntatore al float\PYGZus{}buffer contenente la stringa formattata}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{char}\PYG{+w}{ }\PYG{o}{*}\PYG{n+nf}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{value}\PYG{p}{);}
+
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} calcolo dell\PYGZsq{}umidità relativa al raggiungimento del setpoint \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Calcola l\PYGZsq{}umidità relativa risultante al raggiungimento del setpoint}
+\PYG{c+cm}{ * di temperatura.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Il valore di umidità relativa è calcolato in funzione della temperatura,}
+\PYG{c+cm}{ * per cui variando la temperatura cambia anche il valore di umidità relativa.}
+\PYG{c+cm}{ * Per gestire correttamente l\PYGZsq{}accensione e lo spegnimento dell\PYGZsq{}umidificatore}
+\PYG{c+cm}{ * è necessario confrontare il setpoint di umidità impostato con l\PYGZsq{}umidità}
+\PYG{c+cm}{ * relativa che si avrebbe al raggiungimento del setpoint di temperatura.}
+\PYG{c+cm}{ * Per calcolare tale valore si utilizza la seguente formula:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *   rh2 = rh1 * exp(4283.78 * (t1 \PYGZhy{} t2) / (243.12 + t1) / (243.12 + t2))}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *   \PYGZhy{} t1: temperatura dello stato 1 in °C (attuale \PYGZhy{} misurata dallo SHT20)}
+\PYG{c+cm}{ *   \PYGZhy{} t2: temperatura dello stato 2 in °C (desiderata \PYGZhy{} dal setpoint)}
+\PYG{c+cm}{ *   \PYGZhy{} rh1: umidità relativa dello stato 1 (attuale \PYGZhy{} misurata dallo SHT20)}
+\PYG{c+cm}{ *   \PYGZhy{} rh2: umidità relativa dello stato 2 (desiderata)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * fonte: https://sensirion.com/media/documents/A419127A/6836C0D2/Sensirion\PYGZus{}AppNotes\PYGZus{}Humidity\PYGZus{}Sensors\PYGZus{}at\PYGZus{}a\PYGZus{}Glance.pdf}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Per rendere il calcolo più efficiente, impiegando solo numeri interi nella}
+\PYG{c+cm}{ * rappresentazione a 4 cifre, la formula viene riscritta come segue:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * rh2 = rh1/100 * exp(4283.78 * (t1/100 \PYGZhy{} t2/100) / (243.12 + t1/100) / (243.12 + t2/100)) * 100}
+\PYG{c+cm}{ *     = rh1 * exp(4283.78 * (t1 \PYGZhy{} t2)/100 / ((24312 + t1)/100) / ((24312 + t2)/100))}
+\PYG{c+cm}{ *     = rh1 * exp(4283.78 * (t1 \PYGZhy{} t2) / 100 / (24312 + t1) * 100 / (24312 + t2) * 100)}
+\PYG{c+cm}{ *     = rh1 * exp(4283.78 * (t1 \PYGZhy{} t2) / (24312 + t1) / (24312 + t2) * 100)}
+\PYG{c+cm}{ *     = rh1 * exp(428378 * (t1 \PYGZhy{} t2) / (24312 + t1) / (24312 + t2))}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param rh1 umidità attuale misurata dal sensore SHT20}
+\PYG{c+cm}{ * @param t1 temperatura attuale misurata dal sensore SHT20}
+\PYG{c+cm}{ * @param t2 setpoint di temperatura desiderato}
+\PYG{c+cm}{ * @return int16\PYGZus{}t umidità relativa al raggiungimento del setpoint di temperatura}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}at\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{rh1}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{t1}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{t2}\PYG{p}{);}
+
+\PYG{c+cp}{\PYGZsh{}endif }\PYG{c+c1}{// UTILS\PYGZus{}H}
+\end{MintedVerbatim}

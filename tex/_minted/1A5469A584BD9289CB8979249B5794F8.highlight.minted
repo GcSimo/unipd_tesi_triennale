@@ -1,0 +1,109 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file pid.h}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Implementazione dei controllori PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Dichiarazione delle funzioni per la gestione dei controllori PID per la}
+\PYG{c+cm}{ * temperatura e l\PYGZsq{}umidità dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}ifndef PID\PYGZus{}H}
+\PYG{c+cp}{\PYGZsh{}define PID\PYGZus{}H}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Gestione del controllore PID}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * L\PYGZsq{}output del pid viene aggiornato ogni volta che inizia un nuovo ciclo del}
+\PYG{c+cm}{ * segnale PWM, quindi ogni CTRL\PYGZus{}PWM\PYGZus{}PERIOD millisecondi. Le misurazioni che}
+\PYG{c+cm}{ * avvengono tra un aggiornamento dell\PYGZsq{}output e il successivo vengono salvate}
+\PYG{c+cm}{ * all\PYGZsq{}interno di accumulatori interni per calcolare successivamente le tre}
+\PYG{c+cm}{ * componenti del PID (proporzionale, integrale e derivativa).}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Si avrà quindi una funzione invocata all\PYGZsq{}acquisizione dei nuovi dati per}
+\PYG{c+cm}{ * fornire le nuove misurazioni da utilizzare nel futuro calcolo dell\PYGZsq{}output}
+\PYG{c+cm}{ * del PID e una funzione invocata prima dell\PYGZsq{}inizio di ogni ciclo del PWM}
+\PYG{c+cm}{ * per aggiornare l\PYGZsq{}output del controllore in base ai dati accumulati fino}
+\PYG{c+cm}{ * a quel momento.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Per evitare che vecchi dati accumulati prima della disattivazione del}
+\PYG{c+cm}{ * controllo automatico influenzino il calcolo dell\PYGZsq{}output del PID alla}
+\PYG{c+cm}{ * riattivazione del controllo automatico, è necessario resettare gli}
+\PYG{c+cm}{ * accumulatori interni del PID tramite la funzione apposita.}
+\PYG{c+cm}{ */}
+
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Inizializza i parametri del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Salva i parametri del PID all\PYGZsq{}interno della struct, inizializzando le}
+\PYG{c+cm}{ * varie variabili interne del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Il parametro anti\PYGZus{}windup è opzionale, se non specificato viene impostato}
+\PYG{c+cm}{ * a 1 (clamping).}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param pid reference alla struct del PID da inizializzare}
+\PYG{c+cm}{ * @param kp const reference al guadagno proporzionale}
+\PYG{c+cm}{ * @param ki const reference al guadagno integra}
+\PYG{c+cm}{ * @param kd const reference al guadagno derivativo}
+\PYG{c+cm}{ * @param kw const reference al guadagno della back calculation (anti\PYGZhy{}windup)}
+\PYG{c+cm}{ * @param anti\PYGZus{}windup const reference all\PYGZsq{}opzione di anti\PYGZhy{}windup da utilizzare}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}init}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{kp}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{ki}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{kd}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{kw}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{anti\PYGZus{}windup}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Salva una nuova misurazione negli accumulatori del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Salva l\PYGZsq{}errore e la misurazione in apposite variabili interne del PID}
+\PYG{c+cm}{ * che verranno utilizzate per calcolare l\PYGZsq{}output del PID alla successiva}
+\PYG{c+cm}{ * invocazione della funzione pid\PYGZus{}update\PYGZus{}output().}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Si assume che i dati forniti alla funzione vengano acquisiti dai sensori}
+\PYG{c+cm}{ * ad intervalli di tempo costanti ogni PID\PYGZus{}DATA\PYGZus{}PERIOD millisecondi.}
+\PYG{c+cm}{ * All\PYGZsq{}interno della funzione non si effettua nessun controllo temporale per}
+\PYG{c+cm}{ * cui il rispetto di tale condizione è responsabilità del chiamante.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Non ci sono vincoli sul tempo che intercorre da quando i dati vengono}
+\PYG{c+cm}{ * acquisiti dal sensore e quando vengono passati alla funzione.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param pid reference alla struct del PID da aggiornare}
+\PYG{c+cm}{ * @param error const reference all\PYGZsq{}errore tra setpoint e valore misurato}
+\PYG{c+cm}{ * @param measure const reference al valore misurato dal sensore}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}add\PYGZus{}data}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{error}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{measure}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Aggiorna l\PYGZsq{}output del controllore PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Calcola il nuovo output del PID in base ai dati salvati negli accumulatori}
+\PYG{c+cm}{ * interni dalla funzione pid\PYGZus{}add\PYGZus{}data() nel tempo intercorso dall\PYGZsq{}ultimo}
+\PYG{c+cm}{ * aggiornamento dell\PYGZsq{}output del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Si prevede che l\PYGZsq{}output del PID venga aggiornato ad intervalli di tempo}
+\PYG{c+cm}{ * costanti ogni PID\PYGZus{}UPDATE\PYGZus{}PERIOD millisecondi. All\PYGZsq{}interno della funzione}
+\PYG{c+cm}{ * non si effettua nessun controllo temporale per cui il rispetto di tale}
+\PYG{c+cm}{ * condizione è responsabilità del chiamante.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param pid reference alla struct del PID da aggiornare}
+\PYG{c+cm}{ * @return float output del PID limitato tra CTRL\PYGZus{}MIN\PYGZus{}OUTPUT e CTRL\PYGZus{}MAX\PYGZus{}OUTPUT}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}update\PYGZus{}output}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Resetta gli accumulatori del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Resetta gli accumulatori interni del pid che contengono i dati delle}
+\PYG{c+cm}{ * misurazioni ricevute dall\PYGZsq{}ultimo aggiornamento dell\PYGZsq{}output del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Deve essere invocata ogni volta che si riattiva il controllo automatico}
+\PYG{c+cm}{ * del PID dopo un periodo di controllo manuale, per evitare che i vecchi}
+\PYG{c+cm}{ * dati memorizzati influenzino il successivo calcolo dell\PYGZsq{}output del PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param pid reference alla struct del PID da resettare}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}reset\PYGZus{}accumulators}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{);}
+
+\PYG{c+cp}{\PYGZsh{}endif }\PYG{c+c1}{// PID\PYGZus{}H}
+\end{MintedVerbatim}

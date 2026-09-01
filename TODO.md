@@ -27,6 +27,8 @@
 
 ## hardware:
 - [x] correggere connessioni relay e switch
+- [ ] bloccaggio del coperchio in plexiglass
+- [ ] misurare distanze per supporto dell'arduino e della millefori
 - [ ] verificare dimensione della millefori e componenti già presenti
 - [ ] aggiungere switch di reset per il refill
 - [ ] fare elenco del materiale da acquistare

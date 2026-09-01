@@ -40,6 +40,13 @@ bool heat_turn_off();
  * Questa funzione accende l'umidificatore e il led di stato corrispondente.
  * Accende anche la ventola ausiliaria se è spenta.
  *
+ * Se è necessario fare un refill dell'acqua, l'umidificatore non viene acceso
+ * e la funzione restituisce false senza fare nulla.
+ *
+ * All'accensione dell'umidificatore, viene aggiornato il timer che tiene
+ * traccia dell'ultima accensione dell'umidificatore, per poter gestire
+ * il timer di refill dell'acqua.
+ *
  * @return true umidificatore acceso con successo
  * @return false umidificatore già acceso, nessuna azione eseguita
  */
@@ -50,6 +57,9 @@ bool rh_turn_on();
  *
  * Questa funzione spegne l'umidificatore e il led di stato corrispondente.
  * Spegne anche la ventola ausiliaria se il riscaldatore è spento.
+ *
+ * Aggiorna il timer di refill dell'acqua, aggiungendo il tempo trascorso
+ * dall'ultima accensione dell'umidificatore.
  *
  * @return true umidificatore spento con successo
  * @return false umidificatore già spento, nessuna azione eseguita

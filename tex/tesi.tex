@@ -19,8 +19,25 @@
 \usepackage[italian]{babel} % corretta sillabazione in inglese
 \usepackage[a-1a]{pdfx}     % formato richiesto dall'università
 
-\usepackage{fontspec} % per font richiesti dall'università
-\setmainfont{Times New Roman}
+\usepackage{amsmath} % per l'ambiente matematico
+\usepackage{amssymb} % per l'ambiente matematico
+
+
+% se il sistema contiene il font times new roman
+%\usepackage{fontspec} % per font richiesti dall'università
+%\setmainfont{Times New Roman}
+
+% per utilizzare l'alternativa TeX Gyre Termes con comdando pdflatex
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tgtermes}
+\usepackage{newtxmath} % per l'ambiente matematico con font TeX Gyre Termes
+
+% per utilizzare il font times new roman con comdando lualatex
+%\usepackage{fontspec}
+%\setmainfont{TeX Gyre Termes}
+%\usepackage{unicode-math}
+%\setmathfont{TeX Gyre Termes Math}
 
 \usepackage{geometry} % per margini richiesti dall'università
 \geometry{a4paper,top=2cm, bottom=2cm, outer=2cm, inner=3cm, includeheadfoot}
@@ -28,24 +45,34 @@
 \usepackage{setspace} % per interlinea richiesta dall'università
 \onehalfspacing
 
-\usepackage{amsmath} % per l'ambiente matematico
-\usepackage{amssymb} % per l'ambiente matematico
 \usepackage{enumitem} % per elenchi puntati
 \usepackage{multirow} % per celle che si espandono su più righe
 \usepackage{tabularx} % per tabelle con larghezza flessibile
 \usepackage{booktabs} % per linee orizzontali tabelle
 \usepackage{graphicx} % per immagini
 \usepackage{caption} % per le didascalie
+\usepackage{subcaption} % per subfigure
 \usepackage{csquotes} % per le citazioni
 
-%\usepackage{minted}                             % per il codice con la colorazione della sintassi
+\usepackage{minted} % per il codice con la colorazione della sintassi
+%\usemintedstyle{vs} % Stile simile a Visual Studio Code
+\setminted{
+    linenos=true,          % mostra i numeri di riga
+    frame=single,          % riquadro singolo attorno al codice
+    framesep=2mm,          % distanza tra il codice e il riquadro
+    baselinestretch=0.9,     % interlinea del codice (utile se il documento ha interlinea 1.5)
+    fontsize=\scriptsize,  % dimensione del font più piccola
+	breaklines             % wrap automatico delle righe lunghe
+}
+
+%\usepackage{listings} % per il codice
+%\usepackage{xcolor} % per colorazione della sintassi con listings
+
 %\usepackage[output-decimal-marker={,}]{siunitx} % per le unità di misura
-%\usepackage{subcaption}                         % per le sottodidascalie
 %\usepackage{svg}                                % per inserire file SVG
 
 \usepackage[backend=biber,style=ieee]{biblatex} % per la bibliografia
 \addbibresource{bibliografia.bib}
-
 
 % per centrare testo nelle tabelleX
 \renewcommand\tabularxcolumn[1]{m{#1}}
@@ -53,12 +80,53 @@
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
 
+% per tradurre il nome dei listings e dell'elenco dei listings in italiano
+\renewcommand{\listingscaption}{Codice}
+\renewcommand{\listoflistingscaption}{Elenco dei codici}
+
 % per elenchi puntati
 \setlist[itemize]{label=-, topsep=0pt, noitemsep}
-\setlist[enumerate]{topsep=0pt, itemsep=0pt}
+\setlist[enumerate]{topsep=0pt, noitemsep}
 
 % percorso delle immagini da inserire
 \graphicspath{{./}}
+
+% definizione colori per il codice con listings
+%\definecolor{codegreen}{rgb}{0,0.6,0}
+%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+%\definecolor{codepurple}{rgb}{0.58,0,0.82}
+%\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% definizione stile del codice con listings
+%\lstdefinestyle{mystyle}{
+%	language=C++,
+%	morekeywords={string,C_style_cast,noexcept,alignof,std},
+%	emph={bool,int,char,double,float,unsigned,string,vector},
+%	backgroundcolor=\color{backcolour},    % sfondo
+%	commentstyle=\color{codegreen},        % commenti
+%	keywordstyle=\color{magenta},          % keywords
+%	identifierstyle=\color{blue},          % variabili
+%	stringstyle=\color{codepurple},        % stringhe
+%	directivestyle={\color{purple}},       % direttive
+%	emphstyle={\color{magenta}},           % tipi
+%	numberstyle=\tiny\color{codegray},     % numeri
+%	basicstyle=\ttfamily\footnotesize,
+%	breakatwhitespace=false,
+%	breaklines=true,
+%	captionpos=b,
+%	keepspaces=true,
+%	numbers=left,
+%	numbersep=5pt,
+%	showspaces=false,
+%	showstringspaces=false,
+%	showtabs=false,
+%	tabsize=4
+%}
+
+% utilizzo stile del codice con listings
+%\lstset{style=mystyle}
+%\lstset{literate={~} {{\raisebox{0.4ex}{\texttildelow}}}{1}}
+
 
 \title{Sviluppo firmware per la gestione del sistema di riscaldamento di un prototipo di incubatrice neonatale}
 \author{Simonetto Giacomo}
@@ -86,7 +154,19 @@
     \tableofcontents
     \cleardoublepage
 
+    \phantomsection
+    \addcontentsline{toc}{chapter}{\listfigurename} % Registra la lista nell'indice
     \listoffigures
+    \cleardoublepage
+
+    \phantomsection
+    \addcontentsline{toc}{chapter}{\listtablename} % Registra la lista nell'indice
+    \listoftables
+    \cleardoublepage
+
+    \phantomsection
+    \addcontentsline{toc}{chapter}{Elenco dei codici} % Registra la lista nell'indice
+    \listoflistings
     \cleardoublepage
 
     \pagenumbering{arabic}

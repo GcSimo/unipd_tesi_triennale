@@ -1,0 +1,102 @@
+{
+	"name": "Ambiente LaTeX + Minted",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"James-Yu.latex-workshop"
+			],
+			"settings": {
+				// Impostiamo l'estensione per salvare e compilare in automatico
+				"latex-workshop.latex.autoBuild.run": "onSave",
+
+				// Impostiamo la ricetta di default per compilare con lualatex
+				"latex-workshop.latex.recipe.default": "latexmk",
+
+				// Riscriviamo i comandi di compilazione aggiungendo -shell-escape
+				"latex-workshop.latex.tools": [
+					{
+						"name": "latexmk",
+						"command": "latexmk",
+						"args": [
+							"-synctex=1",
+							"-interaction=nonstopmode",
+							"-file-line-error",
+							"-pdf",
+							"-outdir=%OUTDIR%",
+							"-auxdir=%AUXDIR%",
+							"-shell-escape",
+							"%DOC%"
+						]
+					},
+					{
+						"name": "lualatexmk",
+						"command": "latexmk",
+						"args": [
+							"-synctex=1",
+							"-interaction=nonstopmode",
+							"-file-line-error",
+							"-lualatex",
+							"-outdir=%OUTDIR%",
+							"-auxdir=%AUXDIR%",
+							"-shell-escape",
+							"%DOC%"
+						]
+					},
+					{
+						"name": "pdflatex",
+						"command": "pdflatex",
+						"args": [
+							"-synctex=1",
+							"-interaction=nonstopmode",
+							"-file-line-error",
+							"-shell-escape",
+							"%DOC%"
+						]
+					},
+					{
+						"name": "bibtex",
+						"command": "bibtex",
+						"args": [
+							"%DOCFILE%"
+						]
+					}
+				],
+				// Creiamo le ricette che usano i tool modificati qui sopra
+				"latex-workshop.latex.recipes": [
+					{
+						"name": "latexmk",
+						"tools": [
+							"latexmk"
+						]
+					},
+					{
+						"name": "pdflatex",
+						"tools": [
+							"pdflatex"
+						]
+					},
+					{
+						"name": "lualatexmk",
+						"tools": [
+							"lualatexmk"
+						]
+					},
+					{
+						"name": "pdflatex -> bibtex -> pdflatex * 2",
+						"tools": [
+							"pdflatex",
+							"bibtex",
+							"pdflatex",
+							"pdflatex"
+						]
+					}
+				]
+			}
+		}
+	},
+	// Accedi al container come root per evitare problemi di permessi con i file
+	"remoteUser": "root"
+}

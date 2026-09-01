@@ -127,3 +127,98 @@ nell'implementazione del controllore PID.
 	&= \frac{12}{T_s \cdot N(N-1)(N+1)} \cdot \left( \sum_{i=0}^{N-1} i \cdot y_i - \frac{N-1}{2} \cdot \sum_{i=0}^{N-1} y_i \right) = \\
 	&= \frac{12}{T_s \cdot N(N^2-1)} \cdot \sum_{i=0}^{N-1} i \cdot y_i - \frac{6}{T_s \cdot N(N+1)} \cdot \sum_{i=0}^{N-1} y_i
 \end{align}
+
+\chapter{Codice sorgente del firmware}
+\section{Files di configurazione del firmware}
+
+\captionof{listing}{File header con i parametri di configurazione}
+\label{lst:config_h}
+\inputminted{c++}{../programmi/firmware/lib/config/config.h}
+
+\captionof{listing}{File sorgente con i parametri di configurazione}
+\label{lst:config_cpp}
+\inputminted{c++}{../programmi/firmware/lib/config/config.cpp}
+
+\newpage
+
+\section{Files del modulo con le funzioni di utilità}
+\captionof{listing}{File header con le funzioni di utilità}
+\label{lst:utils_h}
+\inputminted{c++}{../programmi/firmware/lib/utils/utils.h}
+
+\captionof{listing}{File sorgente con le funzioni di utilità}
+\label{lst:utils_cpp}
+\inputminted{c++}{../programmi/firmware/lib/utils/utils.cpp}
+
+\newpage
+
+\section{Files del modulo per la gestione degli errori}
+\captionof{listing}{File header con le funzioni per la gestione degli errori}
+\label{lst:error_h}
+\inputminted{c++}{../programmi/firmware/lib/error/error.h}
+
+\captionof{listing}{File sorgente con le funzioni per la gestione degli errori}
+\label{lst:error_cpp}
+\inputminted{c++}{../programmi/firmware/lib/error/error.cpp}
+
+\newpage
+
+\section{Files del modulo per il controllo attuatori}
+\captionof{listing}{File header con le funzioni per il controllo degli attuatori}
+\label{lst:actuators_h}
+\inputminted{c++}{../programmi/firmware/lib/actuators/actuators.h}
+
+\captionof{listing}{File sorgente con le funzioni per il controllo degli attuatori}
+\label{lst:actuators_cpp}
+\inputminted{c++}{../programmi/firmware/lib/actuators/actuators.cpp}
+
+\newpage
+
+\section{Files del modulo per la gestione del display lcd}
+\captionof{listing}{File header con le funzioni per la gestione del display lcd}
+\label{lst:lcd_h}
+\inputminted{c++}{../programmi/firmware/lib/lcd/lcd.h}
+
+\captionof{listing}{File sorgente con le funzioni per la gestione del display lcd}
+\label{lst:lcd_cpp}
+\inputminted{c++}{../programmi/firmware/lib/lcd/lcd.cpp}
+
+\newpage
+
+\section{Files del modulo per la gestione del sensore di temperatura e umidità SHT20}
+\captionof{listing}{File header con le funzioni per la gestione del sensore SHT20}
+\label{lst:sht20_h}
+\inputminted{c++}{../programmi/firmware/lib/sht20/sht20.h}
+
+\captionof{listing}{File sorgente con le funzioni per la gestione del sensore SHT20}
+\label{lst:sht20_cpp}
+\inputminted{c++}{../programmi/firmware/lib/sht20/sht20.cpp}
+
+\newpage
+
+\section{Files del modulo per la gestione delle comunicazioni seriali}
+\captionof{listing}{File header con le funzioni per la gestione delle comunicazioni seriali}
+\label{lst:serial_h}
+\inputminted{c++}{../programmi/firmware/lib/serial/serial.h}
+
+\captionof{listing}{File sorgente con le funzioni per la gestione delle comunicazioni seriali}
+\label{lst:serial_cpp}
+\inputminted{c++}{../programmi/firmware/lib/serial/serial.cpp}
+
+\newpage
+
+\section{Files del modulo per la gestione del controllore PID}
+\captionof{listing}{File header con le funzioni per la gestione del controllore PID}
+\label{lst:pid_h}
+\inputminted{c++}{../programmi/firmware/lib/pid/pid.h}
+
+\captionof{listing}{File sorgente con le funzioni per la gestione del controllore PID}
+\label{lst:pid_cpp}
+\inputminted{c++}{../programmi/firmware/lib/pid/pid.cpp}
+
+\newpage
+
+\section{File principale del firmware}
+\captionof{listing}{File principale del firmware}
+\label{lst:main_cpp}
+\inputminted{c++}{../programmi/firmware/src/main.cpp}

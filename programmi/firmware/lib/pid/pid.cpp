@@ -136,10 +136,10 @@ float pid_update_output(struct pid &pid) {
    *
    *   pid.derivative = kd * ( -deriv_c1 * sum2 + deriv_c2 * sum3);
    *
-   *                    6         N-1              12          N-1
-   *   dy/dt = - -------------- *  ∑  y_i + ---------------- *  ∑  (i * y_i)
-   *             Ts * N (N + 1)   i=0       Ts * N (N^2 - 1)   i=0
-   *           \______________/   \_____/   \______________/   \___________/
+   *                    6         N-1               12          N-1
+   *   dy/dt = - -------------- * SUM  y_i + ---------------- * SUM  (i * y_i)
+   *             Ts * N (N + 1)   i=0        Ts * N (N^2 - 1)   i=0
+   *           \______________/   \______/   \______________/   \___________/
    *               deriv_c1         sum2        deriv_c2           sum3
    *   con:
    *    - N   = numero di dati passati

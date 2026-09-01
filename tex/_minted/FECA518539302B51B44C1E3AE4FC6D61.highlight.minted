@@ -1,0 +1,259 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file pid.cpp}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Implementazione dei controllori PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Implementazione delle funzioni per la gestione dei controllori PID per la}
+\PYG{c+cm}{ * temperatura e l\PYGZsq{}umidità dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}pid.h\PYGZdq{}}
+
+\PYG{c+c1}{// inizializza i parametri per i controllori PID}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}init}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{kp}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{ki}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{kd}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{kw}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{anti\PYGZus{}windup}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// inizializzazione dei guadagni del PID}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kp}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{kp}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{ki}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{ki}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kd}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{kd}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kw}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{kw}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// inizializzazione delle componenti del PID}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{proportional}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{integral}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{derivative}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// inizializzazione del numero di misurazioni}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}UPDATE\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}DATA\PYGZus{}PERIOD}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// inizializzazione delle variabili e accumulatori intermedi per calcolo PID}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{deriv\PYGZus{}c1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{\PYGZhy{}6.0f}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}DATA\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{1000.0f}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{deriv\PYGZus{}c2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{12.0f}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}DATA\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{1000.0f}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// inizializzazione del metodo di anti\PYGZhy{}windup da utilizzare}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{anti\PYGZus{}windup}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{anti\PYGZus{}windup}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+
+\PYG{c+c1}{// salva una nuova misurazione negli accumulatori del PID}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}add\PYGZus{}data}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{error}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{measure}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{c+cm}{/**}
+\PYG{c+cm}{   * NOTE IMPLEMENTATIVE:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Le grandezze richieste per aggiornare l\PYGZsq{}output sono:}
+\PYG{c+cm}{   * \PYGZhy{} sum1:}
+\PYG{c+cm}{   *   somma degli errori tra setpoint e valore misurato, utilizzato per}
+\PYG{c+cm}{   *   la componente proporzionale, integrale e derivativa del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{} sum2:}
+\PYG{c+cm}{   *   somma dei valori misurati, utilizzato per la componente derivativa}
+\PYG{c+cm}{   *   del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{} sum3:}
+\PYG{c+cm}{   *   somma dei prodotti tra indice della misurazione e valore misurato,}
+\PYG{c+cm}{   *   utilizzato per la componente derivativa del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{} data\PYGZus{}count:}
+\PYG{c+cm}{   *   numero di misurazioni ricevute ed elaborate, utilizzato per il calcolo}
+\PYG{c+cm}{   *   delle componenti proporzionale, integrale e derivativa del PID}
+\PYG{c+cm}{   */}
+
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum1}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{error}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{measure}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int32\PYGZus{}t}\PYG{p}{)}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int32\PYGZus{}t}\PYG{p}{)}\PYG{n}{measure}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{o}{++}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// aggiorna l\PYGZsq{}output del controllore PID}
+\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}update\PYGZus{}output}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{c+cm}{/**}
+\PYG{c+cm}{   * NOTE IMPLEMENTATIVE:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * L\PYGZsq{}output \PYGZdq{}puro\PYGZdq{} è calcolato dalla successiva formula:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   pid.output = pid.proportional + pid.integral + pid.derivative}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Per calcolare l\PYGZsq{}output del PID, si effettuano i seguenti passaggi:}
+\PYG{c+cm}{   *  1. verifica assenza di dati da elaborare}
+\PYG{c+cm}{   *  2. calcolo della componente proporzionale}
+\PYG{c+cm}{   *  3. calcolo della componente integrale}
+\PYG{c+cm}{   *  4. calcolo della componente derivativa}
+\PYG{c+cm}{   *  5. anti\PYGZhy{}windup della componente integrale}
+\PYG{c+cm}{   *  6. limitazioni dell\PYGZsq{}output}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 1. verifica dell\PYGZsq{}assenza di dati da elaborare \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * In caso di problemi come mancanza totale di misurazioni, l\PYGZsq{}output del PID}
+\PYG{c+cm}{   * viene impostato al valore minimo, in modo da spegnere l\PYGZsq{}attuatore e non}
+\PYG{c+cm}{   * far peggiorare la situazione.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 2. calcolo della componente proporzionale \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * La componente proporzionale è calcolata come il prodotto tra il guadagno}
+\PYG{c+cm}{   * proporzionale kp e l\PYGZsq{}errore medio del ciclo di aggiornamento del PID.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Se ci dovessero essere problemi come mancanza di misurazioni, l\PYGZsq{}errore}
+\PYG{c+cm}{   * medio calcolato con i dati disponibili è comunque una buona stima di}
+\PYG{c+cm}{   * quello reale e il disturbo introdotto scompare totalmente al successivo}
+\PYG{c+cm}{   * aggiornamento dell\PYGZsq{}output del PID.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   mean\PYGZus{}error = sum\PYGZus{}error / data\PYGZus{}count}
+\PYG{c+cm}{   *   pid.proportional = kp * mean\PYGZus{}error}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 3. calcolo della componente integrale \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * La componente integrale è calcolata come il prodotto tra il guadagno}
+\PYG{c+cm}{   * integrale ki, l\PYGZsq{}errore accumulato nel ciclo di aggiornamento del PID e}
+\PYG{c+cm}{   * l\PYGZsq{}intervallo tra due misurazioni consecutive.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Se ci dovessero essere problemi come mancanza di misurazioni, i valori}
+\PYG{c+cm}{   * mancanti vengono sostituiti con l\PYGZsq{}errore medio calcolato per la parte}
+\PYG{c+cm}{   * proporzionale, essendo una buona stima. Il disturbo introdotto verrà}
+\PYG{c+cm}{   * propagato anche nei cicli successivi, ma verrà corretto grazie alla}
+\PYG{c+cm}{   * presenza del feedback del controllore PID.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   pid.integral = ki * mean\PYGZus{}error * expected\PYGZus{}data\PYGZus{}count * (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f)}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 4. calcolo della componente derivativa \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * La componente derivativa è calcolata come il prodotto tra il guadagno}
+\PYG{c+cm}{   * derivativo kd e la derivata della grandezza da controllare, calcolata}
+\PYG{c+cm}{   * tramite la formula ottenuta applicando il metodo dei minimi quadrati}
+\PYG{c+cm}{   * alla regressione lineare sulle misurazioni passate.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Si calcola la derivata della grandezza da controllare e non dell\PYGZsq{}errore}
+\PYG{c+cm}{   * tra setpoint e valore misurato in modo da evitare i \PYGZdq{}derivative kick\PYGZdq{}}
+\PYG{c+cm}{   * che si verificano al cambiamento del setpoint.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   pid.derivative = kd * ( \PYGZhy{}deriv\PYGZus{}c1 * sum2 + deriv\PYGZus{}c2 * sum3);}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *                    6         N\PYGZhy{}1               12          N\PYGZhy{}1}
+\PYG{c+cm}{   *   dy/dt = \PYGZhy{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} * SUM  y\PYGZus{}i + \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} * SUM  (i * y\PYGZus{}i)}
+\PYG{c+cm}{   *             Ts * N (N + 1)   i=0        Ts * N (N\PYGZca{}2 \PYGZhy{} 1)   i=0}
+\PYG{c+cm}{   *           \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/   \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/   \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/   \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/}
+\PYG{c+cm}{   *               deriv\PYGZus{}c1         sum2        deriv\PYGZus{}c2           sum3}
+\PYG{c+cm}{   *   con:}
+\PYG{c+cm}{   *    \PYGZhy{} N   = numero di dati passati}
+\PYG{c+cm}{   *    \PYGZhy{} Ts  = intervallo tra due misurazioni consecutive}
+\PYG{c+cm}{   *    \PYGZhy{} y\PYGZus{}i = valore misurato i\PYGZhy{}esimo istante}
+\PYG{c+cm}{   *    \PYGZhy{} i   = indice del dato passato (0 = più vecchio, N\PYGZhy{}1 = più recente)}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Siccome i due coefficienti coeff1 e coeff2 sono costanti, vengono}
+\PYG{c+cm}{   * precalcolati in fase di inizializzazione e memorizzati in due apposite}
+\PYG{c+cm}{   * costanti deriv\PYGZus{}c1 e deriv\PYGZus{}c2.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Se ci dovessero essere problemi come mancanza di misurazioni, vengono}
+\PYG{c+cm}{   * utilizzati solo i valori disponibili siccome è parecchio complesso}
+\PYG{c+cm}{   * interpolare e integrare i valori mancanti all\PYGZsq{}interno delle sommatorie.}
+\PYG{c+cm}{   * Inoltre il disturbo introdotto scompare totalmente all\PYGZsq{}aggiornamento}
+\PYG{c+cm}{   * successivo dell\PYGZsq{}output e la regressione rimane sempre una buona stima}
+\PYG{c+cm}{   * della derivata reale. L\PYGZsq{}unico svantaggio è che bisogna ricalcolare le}
+\PYG{c+cm}{   * costanti deriv\PYGZus{}c1 e deriv\PYGZus{}c2 in funzione del numero di dati disponibili.}
+\PYG{c+cm}{   * Nel caso in cui si ha un solo dato, la componente derivativa viene}
+\PYG{c+cm}{   * impostata a zero.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 5. anti\PYGZhy{}windup della componente integrale \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Si implementano tre opzioni per la gestione del windup della componente}
+\PYG{c+cm}{   * integrale del PID (no windup, clamping e back calculation) selezionabili}
+\PYG{c+cm}{   * tramite la flag anti\PYGZus{}windup della struct del PID:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *  0. no anti\PYGZhy{}windup:}
+\PYG{c+cm}{   *      la componente integrale viene sempre sommata all\PYGZsq{}output del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *  1. clamping:}
+\PYG{c+cm}{   *      se l\PYGZsq{}output del PID è superiore al limite massimo e l\PYGZsq{}errore è}
+\PYG{c+cm}{   *      positivo, o viceversa se l\PYGZsq{}output del PID è inferiore al limite}
+\PYG{c+cm}{   *      minimo e l\PYGZsq{}errore è negativo, il nuovo contributo della componente}
+\PYG{c+cm}{   *      integrale viene scartato sia per il calcolo dell\PYGZsq{}output del PID che}
+\PYG{c+cm}{   *      per l\PYGZsq{}accumulo dell\PYGZsq{}errore integrale}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *  2. back calculation:}
+\PYG{c+cm}{   *      la componente integrale viene compensata da un termine proporzionale}
+\PYG{c+cm}{   *      alla differenza tra l\PYGZsq{}output puro del PID e l\PYGZsq{}output limitato in modo}
+\PYG{c+cm}{   *      da far riportare l\PYGZsq{}output del PID all\PYGZsq{}interno dei limiti}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 6. limitazioni dell\PYGZsq{}output \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Prima di essere restituito al chiamante, l\PYGZsq{}output del PID viene limitato}
+\PYG{c+cm}{   * tra le due costanti PID\PYGZus{}MIN\PYGZus{}OUTPUT e PID\PYGZus{}MAX\PYGZus{}OUTPUT.}
+\PYG{c+cm}{   */}
+
+\PYG{+w}{  }\PYG{c+c1}{// 1. verifica dell\PYGZsq{}assenza di dati da elaborare}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0UL}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0UL}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// 2. calcolo della componente proporzionale}
+\PYG{+w}{  }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{mean\PYGZus{}error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{float}\PYG{p}{)}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum1}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{proportional}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kp}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{mean\PYGZus{}error}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// 3. calcolo del contributo della componente integrale}
+\PYG{+w}{  }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{integral\PYGZus{}contrib}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{ki}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{mean\PYGZus{}error}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}DATA\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{1000.0f}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{c+c1}{// 4. calcolo della componente derivativa}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{expected\PYGZus{}data\PYGZus{}count}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{derivative}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kd}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{deriv\PYGZus{}c1}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{deriv\PYGZus{}c2}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{derivative}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{c1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{\PYGZhy{}6.0f}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{1.0f}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}DATA\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{1000.0f}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{c2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{12.0f}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{1.0f}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}DATA\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{1000.0f}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{derivative}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kd}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{c1}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{c2}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// calcolo dell\PYGZsq{}output temporaneo del PID}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{proportional}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{integral}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{integral\PYGZus{}contrib}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{derivative}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// 5. anti\PYGZhy{}windup della componente integrale del PID}
+\PYG{+w}{  }\PYG{k}{switch}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{anti\PYGZus{}windup}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{case}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{:}\PYG{+w}{ }\PYG{c+c1}{// no anti\PYGZhy{}windup}
+\PYG{+w}{      }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{integral}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{integral\PYGZus{}contrib}\PYG{p}{;}
+\PYG{+w}{      }\PYG{k}{break}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{k}{case}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{+w}{ }\PYG{c+c1}{// clamping}
+\PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MAX\PYGZus{}OUTPUT}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{mean\PYGZus{}error}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{mean\PYGZus{}error}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mf}{0.0f}\PYG{p}{))}
+\PYG{+w}{        }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{integral}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{integral\PYGZus{}contrib}\PYG{p}{;}
+\PYG{+w}{      }\PYG{k}{break}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{k}{case}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{:}\PYG{+w}{ }\PYG{c+c1}{// back calculation}
+\PYG{+w}{      }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{integral}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{integral\PYGZus{}contrib}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{kw}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{constrain}\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MAX\PYGZus{}OUTPUT}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}UPDATE\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{1000.0f}\PYG{p}{);}
+\PYG{+w}{      }\PYG{k}{break}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// calcolo dell\PYGZsq{}output finale del PID}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{proportional}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{integral}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{derivative}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// azzeramento delle variabili per il prossimo ciclo del PID}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0UL}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0UL}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// 6. limitazione dell\PYGZsq{}output del PID tra PID\PYGZus{}MIN\PYGZus{}OUTPUT e PID\PYGZus{}MAX\PYGZus{}OUTPUT}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{constrain}\PYG{p}{(}\PYG{n}{pid}\PYG{p}{.}\PYG{n}{output}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MAX\PYGZus{}OUTPUT}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// azzera gli accumulatori del PID}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{pid\PYGZus{}reset\PYGZus{}accumulators}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pid}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{sum3}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0L}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{pid}\PYG{p}{.}\PYG{n}{data\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

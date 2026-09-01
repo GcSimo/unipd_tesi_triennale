@@ -45,23 +45,23 @@
 #define TEMP_POT_THLD 5   // soglia per soppressione del rumore
 #define TEMP_POT_MIN 10   // valore minimo del potenziometro (misurato 3-4)
 #define TEMP_POT_MAX 1015 // valore massimo del potenziometro (misurato 1019-1020)
-#define TEMP_DEF_SP 3600  // setpoint iniziale temperatura
-#define TEMP_MIN_SP 2500  // valore minimo del setpoint
-#define TEMP_MAX_SP 4000  // valore massimo del setpoint
-#define TEMP_STEP_SP 10   // passo di variazione del setpoint
-#define TEMP_ERR_THLD 200 // soglia di errore per temperatura
-#define TEMP_ERR_HYST 20 // isteresi per errore di temperatura
+#define TEMP_DEF_SP 3600  // setpoint iniziale temperatura (in cent. di °C)
+#define TEMP_MIN_SP 2500  // valore minimo del setpoint (in cent. di °C)
+#define TEMP_MAX_SP 4000  // valore massimo del setpoint (in cent. di °C)
+#define TEMP_STEP_SP 10   // passo di variazione del setpoint(in cent. di °C)
+#define TEMP_ERR_THLD 200 // soglia di errore per temperatura (in cent. di °C)
+#define TEMP_ERR_HYST 20  // isteresi per errore di temperatura (in cent. di °C)
 
 // parametri potenziometro e setpoint di umidità
 #define RH_POT_THLD 5     // soglia per soppressione del rumore
 #define RH_POT_MIN 10     // valore minimo del potenziometro (misurato 3-4)
 #define RH_POT_MAX 1015   // valore massimo del potenziometro (misurato 1019-1020)
-#define RH_DEF_SP 2000    // setpoint iniziale umidità
-#define RH_MIN_SP 2000    // valore minimo del setpoint
-#define RH_MAX_SP 9000    // valore massimo del setpoint
-#define RH_STEP_SP 100    // passo di variazione del setpoint
-#define RH_ERR_THLD 1000  // soglia di errore per umidità
-#define RH_ERR_HYST 100 // isteresi per errore di umidità
+#define RH_DEF_SP 2000    // setpoint iniziale umidità (in cent. di %)
+#define RH_MIN_SP 2000    // valore minimo del setpoint (in cent. di %)
+#define RH_MAX_SP 9000    // valore massimo del setpoint (in cent. di %)
+#define RH_STEP_SP 100    // passo di variazione del setpoint (in cent. di %)
+#define RH_ERR_THLD 1000  // soglia di errore per umidità (in cent. di %)
+#define RH_ERR_HYST 100   // isteresi per errore di umidità (in cent. di %)
 
 // parametri per la gestione dei timer
 #define SW_READ_PERIOD 50         // tempo di campionamento degli switch
@@ -77,16 +77,16 @@
 
 // parametri per il controllo della temperatura
 #define TEMP_CTRL 2        // 0 = no control | 1 = hysteresis | 2 = PID
-#define TEMP_HYS_THLD 25   // soglia di isteresi per temperatura
-#define TEMP_PID_KP 50.0f  // guadagno proporzionale del PID per temperatura
-#define TEMP_PID_KI 0.5f   // guadagno integrale del PID per temperatura
-#define TEMP_PID_KD 20.0f  // guadagno derivativo del PID per temperatura
+#define TEMP_HYS_THLD 25   // soglia di isteresi per temperatura (in cent. di °C)
+#define TEMP_PID_KP 0.5f  // guadagno proporzionale del PID per temperatura
+#define TEMP_PID_KI 0.01f   // guadagno integrale del PID per temperatura
+#define TEMP_PID_KD 0.0f  // guadagno derivativo del PID per temperatura
 #define TEMP_PID_KW 0.0f   // guadagno anti-windup del PID per temperatura
 #define TEMP_PID_WINDUP 1  // 0 = no windup | 1 = clamping | 2 = back calculation
 
 // parametri per il controllo dell'umidità
 #define RH_CTRL 2        // 0 = no control | 1 = hysteresis | 2 = PID
-#define RH_HYS_THLD 200  // soglia di isteresi per umidità
+#define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
 #define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità
 #define RH_PID_KI 0.0f   // guadagno integrale del PID per umidità
 #define RH_PID_KD 0.0f   // guadagno derivativo del PID per umidità
@@ -94,7 +94,7 @@
 #define RH_PID_WINDUP 0  // 0 = no windup | 1 = clamping | 2 = back calculation
 
 // parametri per la gestione del segnale pwm
-#define PWM_PERIOD 8000   // periodo del pwm per controllo attuatori (in ms) (max 30000 ms)
+#define PWM_PERIOD 8000 // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
 #define PWM_MIN_TIME_ON 500  // intervallo minimo di accensione attuatori (in ms)
 #define PWM_MIN_TIME_OFF 500 // intervallo minimo di spegnimento attuatori (in ms)
 

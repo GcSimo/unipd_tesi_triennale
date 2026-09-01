@@ -54,7 +54,8 @@ bool heat_turn_off() {
 
 // accensione umidificatore
 bool rh_turn_on() {
-  // se l'umidificatore è già acceso o serve refill, restituisce false senza fare nulla
+  // se l'umidificatore è già acceso o serve effettuare il refill dell'acqua,
+  // restituisce false senza fare nulla
   if (status.rh_relay || status.refill_led)
     return false;
 

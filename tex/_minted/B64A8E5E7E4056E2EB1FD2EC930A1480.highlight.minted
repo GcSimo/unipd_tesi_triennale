@@ -1,0 +1,427 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file lcd.cpp}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Gestione del display lcd dell\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Implementazione delle funzioni per la gestione del display lcd del pannello}
+\PYG{c+cm}{ * frontale dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}lcd.h\PYGZdq{}}
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}utils.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Controllo del display lcd.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Di seguito sono riportate le tecniche utilizzate per la gestione del}
+\PYG{c+cm}{ * display lcd adottate per evitare flickering e aggiornamenti troppo}
+\PYG{c+cm}{ * frequenti delle informazioni stampate sul display.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} gestione in pagine e temporizzazione delle pagine \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Le informazioni stampate sul display sono suddivise in pagine, ciascuna con}
+\PYG{c+cm}{ * il proprio indice. In questo modo è possibile sapere cosa è stato stampato}
+\PYG{c+cm}{ * sul display. Le pagine sono le seguenti:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 1. LCD\PYGZus{}DATA\PYGZus{}PAGE:    mostra temperatura, umidità relativi setpoint, stato}
+\PYG{c+cm}{ *                      del controllo attuatori ed eventuali codici di errore}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 2. LCD\PYGZus{}TEMP\PYGZus{}SP\PYGZus{}PAGE: mostra l\PYGZsq{}aggiornamento del setpoint di temperatura}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 3. LCD\PYGZus{}RH\PYGZus{}SP\PYGZus{}PAGE:   mostra l\PYGZsq{}aggiornamento del setpoint di umidità}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 4. LCD\PYGZus{}MESSAGE\PYGZus{}PAGE: mostra messaggi di accensione, spegnimento e refill}
+\PYG{c+cm}{ *                      degli attuatori e messaggi di errore del sensore SHT20}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Ad ogni aggiornamento del display viene aggiornato il timer lcd\PYGZus{}update,}
+\PYG{c+cm}{ * con l\PYGZsq{}istante dell\PYGZsq{}ultima stampa e l\PYGZsq{}indice di pagina lcd\PYGZus{}page in base}
+\PYG{c+cm}{ * al contenuto stampato sul display.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * La pagina relativa alla visualizzazione dei dati (LCD\PYGZus{}DATA\PYGZus{}PAGE) viene}
+\PYG{c+cm}{ * aggiornata solo dopo LCD\PYGZus{}UPDATE\PYGZus{}PERIOD millisecondi dall\PYGZsq{}ultima stampa.}
+\PYG{c+cm}{ * In questo modo l\PYGZsq{}utente ha il tempo di leggere le informazioni stampate}
+\PYG{c+cm}{ * precedentemente sul display lcd, prima che vengano sovrascritte dalle}
+\PYG{c+cm}{ * nuove informazioni.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Tutte le restanti pagine non hanno temporizzazione, per cui le nuove}
+\PYG{c+cm}{ * informazioni vengono subito stampate sul display lcd sovrascrivendo quelle}
+\PYG{c+cm}{ * precedentemente stampate. Questo comportamento è stato scelto perché le}
+\PYG{c+cm}{ * informazioni stampate su queste pagine coincidono con eventi specifici}
+\PYG{c+cm}{ * che richiedono un aggiornamento immediato del display, come ad esempio}
+\PYG{c+cm}{ * l\PYGZsq{}accensione o lo spegnimento di un attuatore o la visualizzazione di un}
+\PYG{c+cm}{ * messaggio di errore del sensore SHT20.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * NOTA: il messaggio di avvio non ha temporizzazione, viene mostrato solo}
+\PYG{c+cm}{ *       durante la fase di avvio e inizializzazione dell\PYGZsq{}incubatrice.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} gestione dei flickering per rapido aggiornamento \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Per evitare flickering dovuti a frequenti e continui aggiornamenti di tutte}
+\PYG{c+cm}{ * le informazioni stampate sul display, è stato scelto di tenere traccia di}
+\PYG{c+cm}{ * ciò che è stato precedentemente stampato e aggiornare selettivamente solo}
+\PYG{c+cm}{ * i dati modificati.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Di fronte ad un cambio di pagina, il display viene completamente aggiornato}
+\PYG{c+cm}{ * con le nuove informazioni. Viceversa, se la nuova pagina da stampare è la}
+\PYG{c+cm}{ * stessa attualmente stampata, si aggiorneranno solo i dati modificati.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Per memorizzare i valori dei dati precedentemente stampati si utilizzano}
+\PYG{c+cm}{ * delle apposite variabili che sono mantenute aggiornate all\PYGZsq{}ultimo valore}
+\PYG{c+cm}{ * stampato sul display. Di seguito sono elencati i dati variabili di ogni}
+\PYG{c+cm}{ * pagina e le relative variabili che ne tengono traccia:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} LCD\PYGZus{}DATA\PYGZus{}PAGE:}
+\PYG{c+cm}{ *    \PYGZhy{} temperatura ed umidità misurate con relativi setpoint tracciati dalle}
+\PYG{c+cm}{ *      variabili old\PYGZus{}temp, old\PYGZus{}rh, old\PYGZus{}temp\PYGZus{}setpoint e old\PYGZus{}rh\PYGZus{}setpoint}
+\PYG{c+cm}{ *    \PYGZhy{} codice di errore tracciato dalla variabile old\PYGZus{}error\PYGZus{}code}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} LCD\PYGZus{}TEMP\PYGZus{}SETPOINT\PYGZus{}PAGE e LCD\PYGZus{}RH\PYGZus{}SETPOINT\PYGZus{}PAGE:}
+\PYG{c+cm}{ *   ad ogni chiamata delle funzioni di aggiornamento del setpoint corrisponde}
+\PYG{c+cm}{ *   ad un aggiornamento del setpoint, quindi andrà sempre aggiornato e non}
+\PYG{c+cm}{ *   è necessario memorizzare il valore precedentemente stampato}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} LCD\PYGZus{}MESSAGE\PYGZus{}PAGE:}
+\PYG{c+cm}{ *   non contengono dati, per cui andrà sempre aggiornata l\PYGZsq{}intera pagina}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} gestione dei messaggi di errore del sensore SHT20 \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * I messaggi di errore del sensore SHT20 sono salvati sotto forma di struct}
+\PYG{c+cm}{ * lcd\PYGZus{}message formate di 4 stringhe di 21 caratteri ciascuna, che permettono}
+\PYG{c+cm}{ * di salvare il testo suddiviso nelle 4 righe del display lcd.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Siccome i codici di errore del sensore SHT20 vanno da 0x80 a 0x8A, è stato}
+\PYG{c+cm}{ * scelto di rappresentare le struct con le descrizioni in un array tale per}
+\PYG{c+cm}{ * cui la struct all\PYGZsq{}indice \PYGZdq{}i\PYGZdq{} corrisponde al codice di errore \PYGZdq{}0x80 +i\PYGZdq{}.}
+\PYG{c+cm}{ * In questo modo risulta immediato trovare il messaggio di errore da stampare}
+\PYG{c+cm}{ * sul display lcd in base al codice di errore restituito dal sensore SHT20.}
+\PYG{c+cm}{ */}
+
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} variabili e flag per la paginazione \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+
+\PYG{c+cp}{\PYGZsh{}define LCD\PYGZus{}DATA\PYGZus{}PAGE 1}
+\PYG{c+cp}{\PYGZsh{}define LCD\PYGZus{}TEMP\PYGZus{}SETPOINT\PYGZus{}PAGE 2}
+\PYG{c+cp}{\PYGZsh{}define LCD\PYGZus{}RH\PYGZus{}SETPOINT\PYGZus{}PAGE 3}
+\PYG{c+cp}{\PYGZsh{}define LCD\PYGZus{}MESSAGE\PYGZus{}PAGE 4}
+
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} variabili per memorizzare dati stampati \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{old\PYGZus{}temp}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0U}\PYG{p}{;}
+\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{old\PYGZus{}rh}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0U}\PYG{p}{;}
+\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{old\PYGZus{}temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0U}\PYG{p}{;}
+\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{old\PYGZus{}rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0U}\PYG{p}{;}
+\PYG{k+kt}{uint16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{old\PYGZus{}error\PYGZus{}code}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0U}\PYG{p}{;}
+
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} messaggi di errore del sensore SHT20 \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+c1}{// struct per memorizzare i messaggi da stampare sul display lcd}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{lcd\PYGZus{}message}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{line1}\PYG{p}{[}\PYG{l+m+mi}{21}\PYG{p}{];}\PYG{+w}{ }\PYG{c+c1}{// prima riga del messaggio}
+\PYG{+w}{  }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{line2}\PYG{p}{[}\PYG{l+m+mi}{21}\PYG{p}{];}\PYG{+w}{ }\PYG{c+c1}{// seconda riga del messaggio}
+\PYG{+w}{  }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{line3}\PYG{p}{[}\PYG{l+m+mi}{21}\PYG{p}{];}\PYG{+w}{ }\PYG{c+c1}{// terza riga del messaggio}
+\PYG{+w}{  }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{line4}\PYG{p}{[}\PYG{l+m+mi}{21}\PYG{p}{];}\PYG{+w}{ }\PYG{c+c1}{// quarta riga del messaggio}
+\PYG{p}{\PYGZcb{};}
+
+\PYG{c+c1}{// messaggi di errore del sensore SHT20 da stampare sul display lcd}
+\PYG{k}{const}\PYG{+w}{ }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{lcd\PYGZus{}message}\PYG{+w}{ }\PYG{n}{sht20\PYGZus{}error\PYGZus{}lcd\PYGZus{}message}\PYG{p}{[}\PYG{l+m+mi}{11}\PYG{p}{]}\PYG{+w}{ }\PYG{n}{PROGMEM}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  Error during I2C  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}   write command    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}                    \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  Error during I2C  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}     read bytes     \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}                    \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  Failed to switch  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  off the internal  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}       heater       \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Sensor not connected\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  or does not ack   \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}   on the I2C bus   \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  CRC check failed  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}for the temperature \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}      reading       \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  CRC check failed  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  for the humidity  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}      reading       \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  CRC check failed  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}   for the status   \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}      register      \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  Heater is in its  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}mandatory cool\PYGZhy{}down \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}       period       \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  Failed to switch  \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}  on the internal   \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}       heater       \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} Invalid resolution \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} parameter provided \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}                    \PYGZdq{}}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZdq{}    SHT20 Error:    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}   Unknown error    \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}      occurred      \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}                    \PYGZdq{}}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{};}
+
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} funzioni per la gestione del display \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+c1}{// stampa messaggio di avvio sul display lcd}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}boot\PYGZus{}message}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} Neonatal incubator \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}     prototype      \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Navlab \PYGZhy{} DEI \PYGZhy{} UNIPD\PYGZdq{}}\PYG{p}{));}
+\PYG{p}{\PYGZcb{}}
+
+
+\PYG{c+c1}{// stampa lo stato dell\PYGZsq{}incubatrice sul display lcd}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}print\PYGZus{}status}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// timer per visualizzazione messaggi sul display}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}UPDATE\PYGZus{}PERIOD}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+cm}{/*}
+\PYG{c+cm}{   * Mappa dei dati stampati sul display lcd per facilitare}
+\PYG{c+cm}{   * l\PYGZsq{}individuazione delle relative posizioni.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *    | 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 |}
+\PYG{c+cm}{   *    | 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 |}
+\PYG{c+cm}{   *  \PYGZhy{} | \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} |}
+\PYG{c+cm}{   *  0 | T :   x x . x x ° C   /   x x . x x ° C |}
+\PYG{c+cm}{   *  1 | H :   x x . x x \PYGZpc{}     /   x x . x x \PYGZpc{}   |}
+\PYG{c+cm}{   *  2 | C t r l   s t a t u s :   M A N U A L   | per controllo manuale}
+\PYG{c+cm}{   *  2 | C t r l   s t a t u s :   A U T O       | per controllo automatico}
+\PYG{c+cm}{   *  3 | N o   e r r o r s   d e t e c t e d     | in assenza di errori}
+\PYG{c+cm}{   *  3 | E r r o r   c o d e :   x x x x         | in presenza di errori}
+\PYG{c+cm}{   *  \PYGZhy{} | \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} \PYGZhy{} |}
+\PYG{c+cm}{   */}
+
+\PYG{+w}{  }\PYG{c+c1}{// pulizia e stampa intestazioni per cambio pagina}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}T:\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{((}\PYG{k+kt}{char}\PYG{p}{)}\PYG{l+m+mi}{223}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}C / \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{18}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{((}\PYG{k+kt}{char}\PYG{p}{)}\PYG{l+m+mi}{223}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}C\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}H:\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZpc{}  / \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{18}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZpc{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Ctrl status: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}MAN \PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}AUTO\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// aggiornamento temperatura}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}temp}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}temp}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// aggiornamento setpoint di temperatura}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{13}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// aggiornamento umidità}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}rh}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}rh}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// aggiornamento setpoint di umidità}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{13}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// aggiornamento errori}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{error\PYGZus{}code}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}error\PYGZus{}code}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{c+c1}{// pulizia della riga dei messaggi di errore}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}                    \PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{    }\PYG{c+c1}{// stampa codice di errore se presente, altrimenti messaggio di assenza errori}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{error\PYGZus{}code}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}No errors detected  \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Error code: \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{error\PYGZus{}code}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{c+c1}{// aggiornamento variabile di stato}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}error\PYGZus{}code}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{error\PYGZus{}code}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}DATA\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// visualizzazione del nuovo setpoint di temperatura}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// pulizia e stampa intestazioni per cambio pagina}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}TEMP\PYGZus{}SETPOINT\PYGZus{}PAGE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Nuovo setpoint temp:\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{11}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{((}\PYG{k+kt}{char}\PYG{p}{)}\PYG{l+m+mi}{223}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}C\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}precedente: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{((}\PYG{k+kt}{char}\PYG{p}{)}\PYG{l+m+mi}{223}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}C\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// stampa nuovo setpoint temperatura}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}TEMP\PYGZus{}SETPOINT\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}TEMP\PYGZus{}SETPOINT\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// visualizzazione del nuovo setpoint di umidità}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{(}\PYG{k+kt}{float}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// pulizia e stampa intestazioni per cambio pagina}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}RH\PYGZus{}SETPOINT\PYGZus{}PAGE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Nuovo setpoint RH:\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{11}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZpc{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}precedente: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZpc{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// aggiornamento setpoint di umidità}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}RH\PYGZus{}SETPOINT\PYGZus{}PAGE}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{old\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{old\PYGZus{}rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}RH\PYGZus{}SETPOINT\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// accensione manuale del riscaldatore}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}heat\PYGZus{}on}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Accensione manuale\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}del riscaldatore!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// spegnimento manuale del riscaldatore}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}heat\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Spegnimento manuale\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}del riscaldatore!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// accensione manuale dell\PYGZsq{}umidificatore}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}rh\PYGZus{}on}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Accensione manuale\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}dell\PYGZsq{}umidificatore!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// spegnimento manuale dell\PYGZsq{}umidificatore}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}rh\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Spegnimento manuale\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}dell\PYGZsq{}umidificatore!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// accensione manuale dell\PYGZsq{}illuminazione}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}light\PYGZus{}on}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Accensione manuale\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}dell\PYGZsq{}illuminazione!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// spegnimento manuale dell\PYGZsq{}illuminazione}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}man\PYGZus{}light\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Spegnimento manuale\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}dell\PYGZsq{}illuminazione!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// stampa il messaggio di refill sul display lcd}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}refill\PYGZus{}message}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Ricaricare l\PYGZsq{}acqua\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}nell\PYGZsq{}umidificatore!\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// stampa il messaggio di errore del sensore SHT20}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{lcd\PYGZus{}sht20\PYGZus{}error}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{errorCode}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{errorCode}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mh}{0x81}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{errorCode}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mh}{0x8B}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{errorCode}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mh}{0x8B}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// errore sconosciuto}
+
+\PYG{+w}{  }\PYG{c+c1}{// recupero del messaggio dalla memoria flash}
+\PYG{+w}{  }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{lcd\PYGZus{}message}\PYG{+w}{ }\PYG{n}{message}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{memcpy\PYGZus{}P}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{message}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{sht20\PYGZus{}error\PYGZus{}lcd\PYGZus{}message}\PYG{p}{[}\PYG{n}{errorCode}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mh}{0x81}\PYG{p}{],}\PYG{+w}{ }\PYG{k}{sizeof}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{lcd\PYGZus{}message}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{c+c1}{// stampa del messaggio sul display}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{message}\PYG{p}{.}\PYG{n}{line1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{message}\PYG{p}{.}\PYG{n}{line2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{message}\PYG{p}{.}\PYG{n}{line3}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{setCursor}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{lcd}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{message}\PYG{p}{.}\PYG{n}{line4}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{n}{lcd\PYGZus{}page}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{LCD\PYGZus{}MESSAGE\PYGZus{}PAGE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento pagina}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{lcd\PYGZus{}update}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

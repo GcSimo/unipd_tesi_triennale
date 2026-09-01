@@ -1,0 +1,192 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file error.h}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Gestione degli errori dell\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Dichiarazione delle funzioni e dei flag necessari per il controllo degli}
+\PYG{c+cm}{ * errori dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}ifndef ERROR\PYGZus{}H}
+\PYG{c+cp}{\PYGZsh{}define ERROR\PYGZus{}H}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Gestione degli errori dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Gli errori si dividono in due categorie:}
+\PYG{c+cm}{ * \PYGZhy{} errori senza timer \PYGZhy{} non temporizzati:}
+\PYG{c+cm}{ *   errori che rimangono attivi fino a quando non vengono risolti, hanno}
+\PYG{c+cm}{ *   specifiche condizioni di attivazione e di disattivazione, ad esempio}
+\PYG{c+cm}{ *   gli errori di temperatura e umidità fuori dai range di sicurezza}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} errori con timer \PYGZhy{} temporizzati:}
+\PYG{c+cm}{ *   errori che vengono impostati quando si verifica un evento specifico}
+\PYG{c+cm}{ *   e rimangono attivi per uno specifico tempo limitato, dato da un timer}
+\PYG{c+cm}{ *   ad esempio gli errori di overflow nella stampa dei valori di temperatura}
+\PYG{c+cm}{ *   e umidità su display lcd e serial monitor}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Gli errori sono gestiti tramite un codice di stato a 16 bit, dove ogni bit}
+\PYG{c+cm}{ * rappresenta un errore specifico. I primi 10 bit sono riservati agli errori}
+\PYG{c+cm}{ * non temporizzati, mentre gli ultimi 6 bit sono riservati agli errori}
+\PYG{c+cm}{ * temporizzati. I bit sono definiti come segue:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{}\PYGZhy{}\PYGZhy{} errori non temporizzati \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit0:  temperatura troppo bassa (1)}
+\PYG{c+cm}{ *          la temperatura misurata dal sensore SHT20 è inferiore al range di}
+\PYG{c+cm}{ *          sicurezza impostato dal setpoint di temperatura e dalla soglia di}
+\PYG{c+cm}{ *          errore TEMP\PYGZus{}ERR\PYGZus{}THLD}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit1:  temperatura troppo alta (2)}
+\PYG{c+cm}{ *          la temperatura misurata dal sensore SHT20 è superiore al range di}
+\PYG{c+cm}{ *          di sicurezza impostato dal setpoint di temperatura e dalla soglia}
+\PYG{c+cm}{ *          di errore TEMP\PYGZus{}ERR\PYGZus{}THLD}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit2:  umidità troppo bassa (3)}
+\PYG{c+cm}{ *          l\PYGZsq{}umidità misurata dal sensore SHT20 è inferiore al range di}
+\PYG{c+cm}{ *          sicurezza impostato dal setpoint di umidità e dalla soglia di}
+\PYG{c+cm}{ *          di errore RH\PYGZus{}ERR\PYGZus{}THLD}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit3:  umidità troppo alta (4)}
+\PYG{c+cm}{ *          l\PYGZsq{}umidità misurata dal sensore SHT20 è superiore al range di}
+\PYG{c+cm}{ *          sicurezza impostato dal setpoint di umidità e dalla soglia di}
+\PYG{c+cm}{ *          errore RH\PYGZus{}ERR\PYGZus{}THLD}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit4:  overflow nella lettura della temperatura (5)}
+\PYG{c+cm}{ *          la temperatura misurata dal sensore SHT20 è minore di 0°C}
+\PYG{c+cm}{ *          o superiore a 100°C, assumerà il valore valido più vicino:}
+\PYG{c+cm}{ *          0°C se negativa o 99.99°C se maggiore di 100°C}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit5:  overflow nella lettura dell\PYGZsq{}umidità (6)}
+\PYG{c+cm}{ *          l\PYGZsq{}umidità misurata dal sensore SHT20 è minore di 0\PYGZpc{} o maggiore}
+\PYG{c+cm}{ *          di 100\PYGZpc{}, assumerà il valore valido più vicino: 0\PYGZpc{} se negativa}
+\PYG{c+cm}{ *          o 99.99\PYGZpc{} se maggiore di 100\PYGZpc{}}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit6:  non utilizzato (7)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit7:  non utilizzato (8)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit8:  non utilizzato (9)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit9:  non utilizzato (10)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{}\PYGZhy{}\PYGZhy{} errori temporizzati \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit10: errore di comunicazione con il sensore SHT20 (11)}
+\PYG{c+cm}{ *          si sono verificati problemi di comunicazione con il sensore SHT20,}
+\PYG{c+cm}{ *          ad esempio quando il sensore non risponde alle richieste I2C}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit11: overflow nella stampa dei valori (12)}
+\PYG{c+cm}{ *          il valore di temperatura o umidità da stampare su display lcd}
+\PYG{c+cm}{ *          o serial monitor è minore di 0 o maggiore di 100, verrà stampata}
+\PYG{c+cm}{ *          la stringa \PYGZdq{}xx.xx\PYGZdq{} al posto del valore reale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit12: non utilizzato (13)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit13: non utilizzato (14)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit14: non utilizzato (15)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * \PYGZhy{} bit15: non utilizzato (16)}
+\PYG{c+cm}{ */}
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} definizione codici di errore \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+c1}{// codici di errore non temporizzati}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}LOW\PYGZus{}TEMP uint8\PYGZus{}t(0)        }\PYG{c+c1}{// temperatura troppo bassa}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}HIGH\PYGZus{}TEMP uint8\PYGZus{}t(1)       }\PYG{c+c1}{// temperatura troppo alta}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}LOW\PYGZus{}RH uint8\PYGZus{}t(2)          }\PYG{c+c1}{// umidità troppo bassa}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}HIGH\PYGZus{}RH uint8\PYGZus{}t(3)         }\PYG{c+c1}{// umidità troppo alta}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}TEMP\PYGZus{}OVERFLOW uint8\PYGZus{}t(4)   }\PYG{c+c1}{// overflow nella lettura della temperatura}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}RH\PYGZus{}OVERFLOW uint8\PYGZus{}t(5)     }\PYG{c+c1}{// overflow nella lettura dell\PYGZsq{}umidità}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED1 uint8\PYGZus{}t(6)         }\PYG{c+c1}{// non utilizzato}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED2 uint8\PYGZus{}t(7)         }\PYG{c+c1}{// non utilizzato}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED3 uint8\PYGZus{}t(8)         }\PYG{c+c1}{// non utilizzato}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED4 uint8\PYGZus{}t(9)         }\PYG{c+c1}{// non utilizzato}
+
+\PYG{c+c1}{// codici di errore temporizzati}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}SHT20 uint8\PYGZus{}t(10)          }\PYG{c+c1}{// errore sensore SHT20}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}PRINT\PYGZus{}OVERFLOW uint8\PYGZus{}t(11) }\PYG{c+c1}{// overflow nella stampa dei valori}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED5 uint8\PYGZus{}t(12)        }\PYG{c+c1}{// non utilizzato}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED6 uint8\PYGZus{}t(13)        }\PYG{c+c1}{// non utilizzato}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED7 uint8\PYGZus{}t(14)        }\PYG{c+c1}{// non utilizzato}
+\PYG{c+cp}{\PYGZsh{}define ERR\PYGZus{}UNUSED8 uint8\PYGZus{}t(15)        }\PYG{c+c1}{// non utilizzato}
+
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} definizione timer errori \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+c1}{// array dei timer per gli errori temporizzati, in millisecondi}
+\PYG{k}{extern}\PYG{+w}{ }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{err\PYGZus{}timers}\PYG{p}{[}\PYG{l+m+mi}{6}\PYG{p}{];}
+
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} dichiarazione funzioni errori \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Imposta un errore nel codice di stato.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param error\PYGZus{}code flag del codice di errore da impostare}
+\PYG{c+cm}{ * @return true errore impostato correttamente}
+\PYG{c+cm}{ * @return false errore già presente, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{err\PYGZus{}set}\PYG{p}{(}\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{error\PYGZus{}code}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Rimuove un errore dal codice di stato.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param error\PYGZus{}code flag del codice di errore da rimuovere}
+\PYG{c+cm}{ * @return true errore rimosso correttamente}
+\PYG{c+cm}{ * @return false errore non presente, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{err\PYGZus{}clear}\PYG{p}{(}\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{error\PYGZus{}code}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Verifica se un errore è presente nel codice di stato.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @param error\PYGZus{}code flag del codice di errore da verificare}
+\PYG{c+cm}{ * @return true errore presente nel codice di stato}
+\PYG{c+cm}{ * @return false errore non presente nel codice di stato}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{err\PYGZus{}check}\PYG{p}{(}\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{error\PYGZus{}code}\PYG{p}{);}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Aggiorna lo stato del led di allarme.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Il led di allarme viene acceso se è presente almeno un errore nel codice}
+\PYG{c+cm}{ * di stato, altrimenti viene spento.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{update\PYGZus{}alarm\PYGZus{}led}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Verifica se ci sono errori temporizzati da rimuovere.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Verifica ogni timer degli errori temporizzati presenti}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{update\PYGZus{}temporized\PYGZus{}errors}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Controlla se la temperatura misurata rientra nel range di sicurezza.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Verifica se la temperatura misurata rientra nel range di sicurezza definito}
+\PYG{c+cm}{ * dal setpoint di temperatura e dalla soglia di errore TEMP\PYGZus{}ERR\PYGZus{}THLD.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{check\PYGZus{}temp\PYGZus{}range}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Controlla se l\PYGZsq{}umidità misurata rientra nel range di sicurezza.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Verifica se l\PYGZsq{}umidità misurata rientra nel range di sicurezza definito}
+\PYG{c+cm}{ * dal setpoint di umidità e dalla soglia di errore RH\PYGZus{}ERR\PYGZus{}THLD.}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{check\PYGZus{}rh\PYGZus{}range}\PYG{p}{();}
+
+\PYG{c+cp}{\PYGZsh{}endif }\PYG{c+c1}{// ERROR\PYGZus{}H}
+\end{MintedVerbatim}

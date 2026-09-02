@@ -51,6 +51,10 @@
 #define AUTO_CTRL 0   // controllo automatico tramite PID o isteresi
 #define MANUAL_CTRL 1 // controllo manuale tramite switch
 
+// istanze dei controllori PID (template)
+#define TEMP 0 // controllore PID della temperatura
+#define RH 1   // controllore PID dell'umidità
+
 // tipi di controllori
 #define NONE 0 // nessun controllo
 #define HYST 1 // controllore ad isteresi ON/OFF
@@ -99,24 +103,6 @@
 // per ora è impostato genericamente a 1 ora, poi servirà andare a tararla
 // utilizzando il dato di 0,1017 g/s di acqua nebulizzata dalla tesi di Vanni
 
-// parametri per il controllo della temperatura
-#define TEMP_CTRL PID       // tipo di controllore per la temperatura
-#define TEMP_HYS_THLD 25    // soglia di isteresi per temperatura (in cent. di °C)
-#define TEMP_PID_KP 0.5f    // guadagno proporzionale del PID per temperatura
-#define TEMP_PID_KI 0.0075f // guadagno integrale del PID per temperatura
-#define TEMP_PID_KD 10.0f   // guadagno derivativo del PID per temperatura
-#define TEMP_PID_KW 0.0f    // guadagno anti-windup del PID per temperatura
-#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup del PID per temperatura
-
-// parametri per il controllo dell'umidità
-#define RH_CTRL PID      // tipo di controllore per l'umidità
-#define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
-#define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità
-#define RH_PID_KI 0.0f   // guadagno integrale del PID per umidità
-#define RH_PID_KD 0.0f   // guadagno derivativo del PID per umidità
-#define RH_PID_KW 0.0f   // guadagno anti-windup del PID per umidità
-#define RH_PID_WINDUP CLAMPING // tipo di anti-windup del PID per umidità
-
 // parametri per la gestione del segnale pwm
 #define PWM_PERIOD 8000 // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
 #define PWM_MIN_TIME_ON 500  // intervallo minimo di accensione attuatori (in ms)
@@ -127,6 +113,30 @@
 #define PID_MAX_OUTPUT 100 // limite massimo dell'output del PID
 #define PID_DATA_PERIOD SHT20_READ_PERIOD // periodo di acquisizione dei dati
 #define PID_UPDATE_PERIOD PWM_PERIOD      // periodo di aggiornamento dell'output
+
+// parametri per il controllo della temperatura
+#define TEMP_CTRL PID       // tipo di controllore per la temperatura
+#define TEMP_HYS_THLD 25    // soglia di isteresi per temperatura (in cent. di °C)
+#define TEMP_PID_KP 0.5f    // guadagno proporzionale del PID per temperatura
+#define TEMP_PID_KI 0.0075f // guadagno integrale del PID per temperatura
+#define TEMP_PID_KD 10.0f   // guadagno derivativo del PID per temperatura
+#define TEMP_PID_KW 0.0f    // guadagno anti-windup del PID per temperatura
+#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup del PID per temperatura
+#define TEMP_PID_P_SAMPLES 2 // campioni per calcolo della componente proporzionale
+#define TEMP_PID_D_SAMPLES 10 // campioni per calcolo della componente derivativa
+#define TEMP_PID_I_SAMPLES (PID_UPDATE_PERIOD / PID_DATA_PERIOD) // campioni per calcolo della componente integrale
+
+// parametri per il controllo dell'umidità
+#define RH_CTRL PID      // tipo di controllore per l'umidità
+#define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
+#define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità
+#define RH_PID_KI 0.0f   // guadagno integrale del PID per umidità
+#define RH_PID_KD 0.0f   // guadagno derivativo del PID per umidità
+#define RH_PID_KW 0.0f   // guadagno anti-windup del PID per umidità
+#define RH_PID_WINDUP CLAMPING // tipo di anti-windup del PID per umidità
+#define RH_PID_P_SAMPLES 2 // campioni per calcolo della componente proporzionale
+#define RH_PID_D_SAMPLES 10 // campioni per calcolo della componente derivativa
+#define RH_PID_I_SAMPLES (PID_UPDATE_PERIOD / PID_DATA_PERIOD) // campioni per calcolo della componente integrale
 
 
 // ----------------------------------------------------------------------------
@@ -207,12 +217,12 @@ struct timers {
 };
 
 // parametri del controllore PID
-struct pid {
+template <uint8_t C> struct pid {
   // guadagni del controllore PID
-  float kp;  // guadagno proporzionale
-  float ki;  // guadagno integrale
-  float kd;  // guadagno derivativo
-  float kw;  // guadagno windup
+  //float kp;  // guadagno proporzionale
+  //float ki;  // guadagno integrale
+  //float kd;  // guadagno derivativo
+  //float kw;  // guadagno windup
 
   // componenti del controllore PID
   float proportional; // componente proporzionale
@@ -220,19 +230,25 @@ struct pid {
   float derivative;   // componente derivativa
   float output;       // output puro del PID non limitato
 
+  // errori e misurazioni passate per calcolo PID
+  float errors[(C == TEMP) ? max(TEMP_PID_P_SAMPLES, TEMP_PID_I_SAMPLES) : max(RH_PID_P_SAMPLES, RH_PID_I_SAMPLES)];
+  float measures[(C == TEMP) ? TEMP_PID_D_SAMPLES : RH_PID_D_SAMPLES];
+  uint8_t error_idx;
+  uint8_t measure_idx;
+
   // variabili e accumulatori intermedi per calcolo PID
-  float deriv_c1; // primo coefficiente per calcolo derivata
-  float deriv_c2; // secondo coefficiente per calcolo derivata
-  int32_t sum1;   // somma degli errori tra setpoint e valore misurato
-  int32_t sum2;  // somma dei valori misurati
-  int32_t sum3;  // somma dei prodotti tra indice e valore misurato
+  //float deriv_c1; // primo coefficiente per calcolo derivata
+  //float deriv_c2; // secondo coefficiente per calcolo derivata
+  //int32_t sum1;   // somma degli errori tra setpoint e valore misurato
+  //int32_t sum2;  // somma dei valori misurati
+  //int32_t sum3;  // somma dei prodotti tra indice e valore misurato
 
   // numero di misurazioni
-  uint8_t data_count; // misurazioni ricevute ed elaborate
-  uint8_t expected_data_count; // misurazioni attese
+  //uint8_t data_count; // misurazioni ricevute ed elaborate
+  //uint8_t expected_data_count; // misurazioni attese
 
   // metodo di anti-windup da utilizzare
-  uint8_t anti_windup; // 0 = no windup | 1 = clamping | 2 = back calculation
+  //uint8_t anti_windup; // 0 = no windup | 1 = clamping | 2 = back calculation
 };
 
 // ----------------------------------------------------------------------------
@@ -242,7 +258,7 @@ struct pid {
 // variabili globali di stato dell'incubatrice neonatale
 extern struct status status; // variabili di stato dell'incubatrice
 extern struct timers timers; // variabili per i timer dell'incubatrice
-extern struct pid temp_pid;  // variabili per il PID della temperatura
-extern struct pid rh_pid;    // variabili per il PID dell'umidità
+extern struct pid<TEMP> temp_pid;  // variabili per il PID della temperatura
+extern struct pid<RH> rh_pid;    // variabili per il PID dell'umidità
 
 #endif // CONFIG_H

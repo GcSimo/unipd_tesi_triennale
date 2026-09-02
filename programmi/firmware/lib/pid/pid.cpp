@@ -7,8 +7,10 @@
  * temperatura e l'umidità dell'incubatrice neonatale.
  */
 
+
 #include "pid.h"
 
+/*
 // inizializza i parametri per i controllori PID
 void pid_init(struct pid &pid, const float &kp, const float &ki, const float &kd, const float &kw, const uint8_t &anti_windup) {
   // inizializzazione dei guadagni del PID
@@ -37,10 +39,11 @@ void pid_init(struct pid &pid, const float &kp, const float &ki, const float &kd
   // inizializzazione del metodo di anti-windup da utilizzare
   pid.anti_windup = anti_windup;
 }
+*/
 
 
 // salva una nuova misurazione negli accumulatori del PID
-void pid_add_data(struct pid &pid, const int16_t &error, const int16_t &measure) {
+//void pid_add_data(struct pid &pid, const int16_t &error, const int16_t &measure) {
 
   /**
    * NOTE IMPLEMENTATIVE:
@@ -62,15 +65,16 @@ void pid_add_data(struct pid &pid, const int16_t &error, const int16_t &measure)
    *   numero di misurazioni ricevute ed elaborate, utilizzato per il calcolo
    *   delle componenti proporzionale, integrale e derivativa del PID
    */
-
+/*
   pid.sum1 += error;
   pid.sum2 += measure;
   pid.sum3 += (int32_t)pid.data_count * (int32_t)measure;
   pid.data_count++;
 }
+*/
 
 // aggiorna l'output del controllore PID
-float pid_update_output(struct pid &pid) {
+//float pid_update_output(struct pid &pid) {
 
   /**
    * NOTE IMPLEMENTATIVE:
@@ -189,7 +193,7 @@ float pid_update_output(struct pid &pid) {
    * Prima di essere restituito al chiamante, l'output del PID viene limitato
    * tra le due costanti PID_MIN_OUTPUT e PID_MAX_OUTPUT.
    */
-
+/*
   // 1. verifica dell'assenza di dati da elaborare
   if (pid.data_count == 0) {
     pid.sum1 = 0L;
@@ -255,3 +259,4 @@ void pid_reset_accumulators(struct pid &pid) {
   pid.sum3 = 0L;
   pid.data_count = 0;
 }
+*/

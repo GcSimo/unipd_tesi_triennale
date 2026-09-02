@@ -139,10 +139,10 @@ void setup() {
 
   // inizializzazione controllori PID
   #if TEMP_CTRL == PID
-    pid_init(temp_pid, TEMP_PID_KP, TEMP_PID_KI, TEMP_PID_KD, TEMP_PID_KW, TEMP_PID_WINDUP);
+    pid_init<TEMP>(temp_pid);
   #endif
   #if RH_CTRL == PID
-    pid_init(rh_pid, RH_PID_KP, RH_PID_KI, RH_PID_KD, RH_PID_KW, RH_PID_WINDUP);
+    pid_init<RH>(rh_pid);
   #endif
 
   // inizializzazione sensore SHT20 e controllo errori del sensore
@@ -444,7 +444,7 @@ void loop() {
 
       // controllo tramite PID della temperatura
       #if TEMP_CTRL == PID
-        pid_add_data(temp_pid, status.temp_setpoint - status.temp_sht20, status.temp_sht20);
+        pid_add_data<TEMP>(temp_pid, status.temp_setpoint - status.temp_sht20, status.temp_sht20);
       #endif
 
       // controllo ad isteresi ON/OFF dell'umidità
@@ -461,7 +461,7 @@ void loop() {
 
       // controllo tramite PID dell'umidità
       #if RH_CTRL == PID
-        pid_add_data(rh_pid, status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint), status.rh_sht20);
+        pid_add_data<RH>(rh_pid, status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint), status.rh_sht20);
       #endif
     }
 
@@ -518,7 +518,7 @@ void loop() {
         // aggiornamento dei valori del duty cycle
         #if TEMP_CTRL == PID // PID per la temperatura
           // conversione output del PID della temperatura in duty cycle
-          status.temp_pwm_value = (pid_update_output(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
+          status.temp_pwm_value = (pid_update_output<TEMP>(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
 
           // applicazione dei vincoli sul duty cycle
           if (status.temp_pwm_value < PWM_MIN_TIME_ON)
@@ -528,7 +528,7 @@ void loop() {
         #endif
         #if RH_CTRL == PID // PID per l'umidità
           // conversione output del PID dell'umidità in duty cycle
-          status.rh_pwm_value = (pid_update_output(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
+          status.rh_pwm_value = (pid_update_output<RH>(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
 
           // applicazione dei vincoli sul duty cycle
           if (status.rh_pwm_value < PWM_MIN_TIME_ON)
@@ -653,12 +653,12 @@ void set_auto_ctrl() {
 
   // reset vecchi dati accumulati nel PID temperatura
   #if TEMP_CTRL == PID
-  pid_reset_accumulators(temp_pid);
+  pid_reset_buffers<TEMP>(temp_pid, status.temp_setpoint - status.temp_sht20, status.temp_sht20);
   #endif
 
   // reset vecchi dati accumulati nel PID umidità
   #if RH_CTRL == PID
-  pid_reset_accumulators(rh_pid);
+  pid_reset_buffers<RH>(rh_pid, status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint), status.rh_sht20);
   #endif
 
   // reset timer pwm

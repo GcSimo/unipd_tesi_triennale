@@ -33,7 +33,6 @@
  * accumulatori interni del PID tramite la funzione apposita.
  */
 
-
 /**
  * @brief Inizializza i parametri del PID.
  *
@@ -50,7 +49,20 @@
  * @param kw const reference al guadagno della back calculation (anti-windup)
  * @param anti_windup const reference all'opzione di anti-windup da utilizzare
  */
-void pid_init(struct pid &pid, const float &kp, const float &ki, const float &kd, const float &kw, const uint8_t &anti_windup = CLAMPING);
+template <uint8_t C>
+void pid_init(pid<C> &pid) {
+  // inizializzazione delle componenti del PID
+  pid.proportional = 0.0f;
+  pid.integral = 0.0f;
+  pid.derivative = 0.0f;
+  pid.output = 0.0f;
+
+  // inizializzazione buffer e indici per errori e misurazioni passate
+  memset(pid.errors, 0, sizeof(pid.errors));
+  memset(pid.measures, 0, sizeof(pid.measures));
+  pid.error_idx = 0;
+  pid.measure_idx = 0;
+}
 
 /**
  * @brief Salva una nuova misurazione negli accumulatori del PID.
@@ -71,7 +83,28 @@ void pid_init(struct pid &pid, const float &kp, const float &ki, const float &kd
  * @param error const reference all'errore tra setpoint e valore misurato
  * @param measure const reference al valore misurato dal sensore
  */
-void pid_add_data(struct pid &pid, const int16_t &error, const int16_t &measure);
+template <uint8_t C> void pid_add_data(pid<C> &pid, const int16_t &error, const int16_t &measure) {
+  // inserimento dei nuovi dati
+  pid.errors[pid.error_idx] = error;
+  pid.measures[pid.measure_idx] = measure;
+
+  // aggiornamento indici
+  pid.error_idx = (pid.error_idx + 1) % ((C == TEMP) ? max(TEMP_PID_P_SAMPLES, TEMP_PID_I_SAMPLES) : max(RH_PID_P_SAMPLES, RH_PID_I_SAMPLES));
+  pid.measure_idx = (pid.measure_idx + 1) % ((C == TEMP) ? TEMP_PID_D_SAMPLES : RH_PID_D_SAMPLES);
+
+  // gli indici puntano all'elemento più vecchio
+  // l'elemento più recente è quello all'indice precedente
+}
+
+template <uint8_t C> uint8_t error_idx_offset(const pid<C> &pid, int8_t offset) {
+  constexpr uint8_t size = (C == TEMP) ? max(TEMP_PID_P_SAMPLES, TEMP_PID_I_SAMPLES) : max(RH_PID_P_SAMPLES, RH_PID_I_SAMPLES);
+  return (pid.error_idx + offset + size) % size;
+}
+
+template <uint8_t C> uint8_t measure_idx_offset(const pid<C> &pid, int8_t offset) {
+  constexpr uint8_t size = (C == TEMP) ? TEMP_PID_D_SAMPLES : RH_PID_D_SAMPLES;
+  return (pid.measure_idx + offset + size) % size;
+}
 
 /**
  * @brief Aggiorna l'output del controllore PID.
@@ -86,9 +119,64 @@ void pid_add_data(struct pid &pid, const int16_t &error, const int16_t &measure)
  * condizione è responsabilità del chiamante.
  *
  * @param pid reference alla struct del PID da aggiornare
- * @return float output del PID limitato tra CTRL_MIN_OUTPUT e CTRL_MAX_OUTPUT
+ * @return float output del PID limitato tra PID_MIN_OUTPUT e PID_MAX_OUTPUT
  */
-float pid_update_output(struct pid &pid);
+template <uint8_t C> float pid_update_output(pid<C> &pid) {
+  constexpr float kp = (C == TEMP) ? TEMP_PID_KP : RH_PID_KP;
+  constexpr float ki = (C == TEMP) ? TEMP_PID_KI : RH_PID_KI;
+  constexpr float kd = (C == TEMP) ? TEMP_PID_KD : RH_PID_KD;
+  constexpr float kw = (C == TEMP) ? TEMP_PID_KW : RH_PID_KW;
+  constexpr uint8_t p_samples = (C == TEMP) ? TEMP_PID_P_SAMPLES : RH_PID_P_SAMPLES;
+  constexpr uint8_t i_samples = (C == TEMP) ? TEMP_PID_I_SAMPLES : RH_PID_I_SAMPLES;
+  constexpr uint8_t d_samples = (C == TEMP) ? TEMP_PID_D_SAMPLES : RH_PID_D_SAMPLES;
+  constexpr float deriv_c1 = -6.0f / d_samples / (d_samples + 1.0f) / (PID_DATA_PERIOD / 1000.0f);
+  constexpr float deriv_c2 = 12.0f / d_samples / (d_samples * d_samples - 1.0f) / (PID_DATA_PERIOD / 1000.0f);
+  constexpr uint8_t windup = (C == TEMP) ? TEMP_PID_WINDUP : RH_PID_WINDUP;
+
+  // calcolo della componente proporzionale
+  float mean_error = 0.0f;
+  for (uint8_t i = 0; i < p_samples; i++) {
+    mean_error += pid.errors[error_idx_offset(pid, -(i+1))];
+  }
+
+  pid.proportional = kp * mean_error / p_samples;
+
+  // calcolo del contributo della componente integrale
+  float sum_integral = 0.0f;
+  for (uint8_t i = 0; i < i_samples; i++) {
+    sum_integral += pid.errors[error_idx_offset(pid, -(i+1))];
+  }
+  float integral_contrib = ki * sum_integral * (PID_DATA_PERIOD / 1000.0f);
+
+  // calcolo della componente derivativa
+  float sum1 = 0.0f;
+  float sum2 = 0.0f;
+  for (uint8_t i = 0; i < d_samples; i++) {
+    sum1 += pid.measures[measure_idx_offset(pid, i)];
+    sum2 += i * pid.measures[measure_idx_offset(pid, i)];
+  }
+
+  pid.derivative = kd * (deriv_c1 * sum1 + deriv_c2 * sum2);
+
+  // calcolo dell'output temporaneo del PID
+  pid.output = pid.proportional + pid.integral + integral_contrib - pid.derivative;
+
+  // 5. anti-windup della componente integrale del PID
+  if (windup == 0) { // no anti-windup
+    pid.integral += integral_contrib;
+  } else if (windup == 1) { // clamping
+    if (!(pid.output > PID_MAX_OUTPUT && mean_error > 0.0f) && !(pid.output < PID_MIN_OUTPUT && mean_error < 0.0f))
+      pid.integral += integral_contrib;
+  } else if (windup == 2) { // back calculation
+    pid.integral += integral_contrib + kw * (constrain(pid.output, PID_MIN_OUTPUT, PID_MAX_OUTPUT) - pid.output) * (PID_UPDATE_PERIOD / 1000.0f);
+  }
+
+  // ricalcolo dell'output finale del PID
+  pid.output = pid.proportional + pid.integral - pid.derivative;
+
+  // limitazione dell'output del PID tra PID_MIN_OUTPUT e PID_MAX_OUTPUT
+  return constrain(pid.output, PID_MIN_OUTPUT, PID_MAX_OUTPUT);
+}
 
 /**
  * @brief Resetta gli accumulatori del PID.
@@ -101,7 +189,14 @@ float pid_update_output(struct pid &pid);
  * dati memorizzati influenzino il successivo calcolo dell'output del PID.
  *
  * @param pid reference alla struct del PID da resettare
+ * @param error valore iniziale per i buffer degli errori
+ * @param measure valore iniziale per i buffer delle misure
  */
-void pid_reset_accumulators(struct pid &pid);
+template <uint8_t C> void pid_reset_buffers(pid<C> &pid, const int16_t &error, const int16_t &measure) {
+  memset(pid.errors, error, sizeof(pid.errors));
+  memset(pid.measures, measure, sizeof(pid.measures));
+  pid.error_idx = 0;
+  pid.measure_idx = 0;
+}
 
 #endif // PID_H

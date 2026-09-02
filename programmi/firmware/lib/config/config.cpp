@@ -12,8 +12,8 @@
 // variabili globali di stato dell'incubatrice neonatale
 struct status status; // variabili di stato dell'incubatrice
 struct timers timers; // variabili per i timer dell'incubatrice
-struct pid temp_pid;  // variabili per il PID della temperatura
-struct pid rh_pid;    // variabili per il PID dell'umidità
+struct pid<TEMP> temp_pid; // variabili per il PID della temperatura
+struct pid<RH> rh_pid;     // variabili per il PID dell'umidità
 
 // sensore SHT20 per temperatura e umidità
 sht20 sensor(SHT20_READ_PERIOD);

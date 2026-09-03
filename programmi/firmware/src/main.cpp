@@ -518,23 +518,31 @@ void loop() {
         // aggiornamento dei valori del duty cycle
         #if TEMP_CTRL == PID // PID per la temperatura
           // conversione output del PID della temperatura in duty cycle
-          status.temp_pwm_value = (pid_update_output<TEMP>(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
+          status.temp_pwm_value = (uint16_t)((pid_update_output<TEMP>(temp_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f);
 
           // applicazione dei vincoli sul duty cycle
           if (status.temp_pwm_value < PWM_MIN_TIME_ON)
             status.temp_pwm_value = 0;
           else if (status.temp_pwm_value > PWM_PERIOD - PWM_MIN_TIME_OFF)
             status.temp_pwm_value = PWM_PERIOD;
+
+          // richiesta di spegnimento ventola di omogeneizzazione se il pwm va a 0
+          if (status.temp_pwm_value == 0 && status.fan_relay)
+            fan_turn_off();
         #endif
         #if RH_CTRL == PID // PID per l'umidità
           // conversione output del PID dell'umidità in duty cycle
-          status.rh_pwm_value = (pid_update_output<RH>(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f;
+          status.rh_pwm_value = (uint16_t)((pid_update_output<RH>(rh_pid) - PID_MIN_OUTPUT) * PWM_PERIOD / (PID_MAX_OUTPUT - PID_MIN_OUTPUT) + 0.5f);
 
           // applicazione dei vincoli sul duty cycle
           if (status.rh_pwm_value < PWM_MIN_TIME_ON)
             status.rh_pwm_value = 0;
           else if (status.rh_pwm_value > PWM_PERIOD - PWM_MIN_TIME_OFF)
             status.rh_pwm_value = PWM_PERIOD;
+
+          // spegnimento ventola di omogeneizzazione se il pwm va a 0
+          if (status.temp_pwm_value == 0 && status.fan_relay)
+            fan_turn_off();
         #endif
       }
 

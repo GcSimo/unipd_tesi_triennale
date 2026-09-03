@@ -1,5 +1,5 @@
-\Title{Sviluppo firmware per la gestione del sistema di riscaldamento e umidificazione di un prototipo di incubatrice neonatale}
+\Title{Sviluppo firmware per la gestione del sistema di riscaldamento di un prototipo di incubatrice neonatale}
 \Author{Giacomo Simonetto}
 \Subject{Tesi triennale}
-\Keywords{firmware, microcontrollore, incubatrice, temperatura, umidità}
+\Keywords{firmware, microcontrollore, incubatrice, temperatura, pid}
 \Publisher{Università di Padova}

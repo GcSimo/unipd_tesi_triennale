@@ -22,7 +22,6 @@
 \usepackage{amsmath} % per l'ambiente matematico
 \usepackage{amssymb} % per l'ambiente matematico
 
-
 % se il sistema contiene il font times new roman
 %\usepackage{fontspec} % per font richiesti dall'università
 %\setmainfont{Times New Roman}
@@ -45,14 +44,22 @@
 \usepackage{setspace} % per interlinea richiesta dall'università
 \onehalfspacing
 
+\usepackage{hyperref} % per link ipertestuali
+
 \usepackage{enumitem} % per elenchi puntati
 \usepackage{multirow} % per celle che si espandono su più righe
 \usepackage{tabularx} % per tabelle con larghezza flessibile
 \usepackage{booktabs} % per linee orizzontali tabelle
 \usepackage{graphicx} % per immagini
+
 \usepackage{caption} % per le didascalie
 \usepackage{subcaption} % per subfigure
-\usepackage{csquotes} % per le citazioni
+
+% nei codici dei programmi non sono stati usati ambienti flottanti perché altrimenti non sarebbe stato possibile far
+% estendere il codice correttamente su più pagine. Inoltre se vengono inseriti caption fuori da ambienti flottanti,
+% come avviene nel codice, si generano dei warning di compilazione. Per evitare questi warning, si indica di non
+% associare le caption dei listing a un ambiente flottante (cosa che latex tenta di fare in automatico).
+\captionsetup[listing]{hypcap=false}
 
 \usepackage{minted} % per il codice con la colorazione della sintassi
 %\usemintedstyle{vs} % Stile simile a Visual Studio Code
@@ -72,7 +79,11 @@
 %\usepackage{svg}                                % per inserire file SVG
 
 \usepackage[backend=biber,style=ieee]{biblatex} % per la bibliografia
+\usepackage{csquotes} % per le citazioni
 \addbibresource{bibliografia.bib}
+
+% per non spaziare i paragrafi tra di loro per far arrivare il testo fino a fine pagina
+\raggedbottom
 
 % per centrare testo nelle tabelleX
 \renewcommand\tabularxcolumn[1]{m{#1}}
@@ -183,7 +194,10 @@
 	\input{capitoli/6_controllore}
     \cleardoublepage
 
-	\input{capitoli/7_appendice}
+	\input{capitoli/7_conclusioni}
+    \cleardoublepage
+
+	\input{capitoli/8_appendice}
     \cleardoublepage
 
     \printbibliography[heading=bibintoc]

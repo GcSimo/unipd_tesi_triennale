@@ -1,0 +1,185 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file actuators.cpp}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Controllo degli attuatori dell\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Implementazione delle funzioni di controllo degli attuatori dell\PYGZsq{}incubatrice}
+\PYG{c+cm}{ * neonatale e dei relativi led di stato del pannello frontale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}actuators.h\PYGZdq{}}
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}utils.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * NOTE IMPLEMENTATIVE sullo spegnimento della ventola di omogeneizzazione:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * La condizione di spegnimento è la seguente:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *  ON = heat\PYGZus{}on || rh\PYGZus{}on || (auto\PYGZus{}ctrl \PYGZam{}\PYGZam{} TEMP\PYGZus{}CTRL == 2 \PYGZam{}\PYGZam{} temp\PYGZus{}pwm\PYGZus{}value != 0) || (auto\PYGZus{}ctrl \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL == 2 \PYGZam{}\PYGZam{} rh\PYGZus{}pwm\PYGZus{}value != 0)}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *  OFF = !ON =}
+\PYG{c+cm}{ *      = !heat\PYGZus{}on \PYGZam{}\PYGZam{} !rh\PYGZus{}on \PYGZam{}\PYGZam{} !(auto\PYGZus{}ctrl \PYGZam{}\PYGZam{} TEMP\PYGZus{}CTRL == 2 \PYGZam{}\PYGZam{} temp\PYGZus{}pwm\PYGZus{}value != 0) \PYGZam{}\PYGZam{} !(auto\PYGZus{}ctrl \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL == 2 \PYGZam{}\PYGZam{} rh\PYGZus{}pwm\PYGZus{}value != 0) =}
+\PYG{c+cm}{ *      = heat\PYGZus{}off \PYGZam{}\PYGZam{} rh\PYGZus{}off \PYGZam{}\PYGZam{} (manual\PYGZus{}ctrl || TEMP\PYGZus{}CTRL != 2 || temp\PYGZus{}pwm\PYGZus{}value == 0) \PYGZam{}\PYGZam{} (manual\PYGZus{}ctrl || RH\PYGZus{}CTRL != 2 || rh\PYGZus{}pwm\PYGZus{}value == 0) =}
+\PYG{c+cm}{ *      = heat\PYGZus{}off \PYGZam{}\PYGZam{} rh\PYGZus{}off \PYGZam{}\PYGZam{} (manual\PYGZus{}ctrl || ((TEMP\PYGZus{}CTRL != 2 || temp\PYGZus{}pwm\PYGZus{}value == 0) \PYGZam{}\PYGZam{} (RH\PYGZus{}CTRL != 2 || rh\PYGZus{}pwm\PYGZus{}value == 0)))}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Analizzando i 4 casi possibili per le configurazioni dei controllori degli}
+\PYG{c+cm}{ * attuatori, si ottengono le seguenti condizioni di spegnimento:}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 1. entrambi gli attuatori sono controllati da un pid con segnale pwm,}
+\PYG{c+cm}{ *    ovvero per TEMP\PYGZus{}CTRL == PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL == PID}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *    OFF = heat\PYGZus{}off \PYGZam{}\PYGZam{} rh\PYGZus{}off \PYGZam{}\PYGZam{} (manual\PYGZus{}ctrl || (temp\PYGZus{}pwm\PYGZus{}value == 0 \PYGZam{}\PYGZam{} rh\PYGZus{}pwm\PYGZus{}value == 0))}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 2. solo il riscaldatore è controllato da un pid con segnale pwm, ovvero}
+\PYG{c+cm}{ *    per TEMP\PYGZus{}CTRL == PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL != PID}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *    OFF = heat\PYGZus{}off \PYGZam{}\PYGZam{} rh\PYGZus{}off \PYGZam{}\PYGZam{} (manual\PYGZus{}ctrl || temp\PYGZus{}pwm\PYGZus{}value == 0))}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 3. solo l\PYGZsq{}umidificatore è controllato da un pid con segnale pwm, ovvero}
+\PYG{c+cm}{ *    per TEMP\PYGZus{}CTRL != PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL == PID}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *    OFF = heat\PYGZus{}off \PYGZam{}\PYGZam{} rh\PYGZus{}off \PYGZam{}\PYGZam{} (manual\PYGZus{}ctrl || rh\PYGZus{}pwm\PYGZus{}value == 0))}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * 4. nessuno dei due attuatori è controllato da un pid con segnale pwm,}
+\PYG{c+cm}{ *    ovvero per TEMP\PYGZus{}CTRL != PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL != PID}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ *    OFF = heat\PYGZus{}off \PYGZam{}\PYGZam{} rh\PYGZus{}off}
+\PYG{c+cm}{ */}
+
+\PYG{c+c1}{// accensione riscaldatore}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{heat\PYGZus{}turn\PYGZus{}on}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se il riscaldatore è già acceso, restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione riscaldatore e LED di stato}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{HEAT\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// accensione riscaldatore}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{HEAT\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LED\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{     }\PYG{c+c1}{// accensione LED riscaldatore}
+\PYG{+w}{  }\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato riscaldatore}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione ventola di omogeneizzazione se spenta}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{FAN\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// accensione ventola di omogeneizzazione}
+\PYG{+w}{    }\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato ventola di omogeneizzazione}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione avvenuta con successo}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// spegnimento riscaldatore}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{heat\PYGZus{}turn\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se il riscaldatore è già spento, restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// spegnimento riscaldatore e LED di stato}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{HEAT\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}OFF}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// spegnimento riscaldatore}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{HEAT\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LED\PYGZus{}OFF}\PYG{p}{);}\PYG{+w}{     }\PYG{c+c1}{// spegnimento LED riscaldatore}
+\PYG{+w}{  }\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato riscaldatore}
+
+\PYG{+w}{  }\PYG{c+c1}{// richiesta di spegnimento ventola di omogeneizzazione}
+\PYG{+w}{  }\PYG{n}{fan\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+
+\PYG{+w}{  }\PYG{c+c1}{// spegnimento avvenuto con successo}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// accensione umidificatore}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}turn\PYGZus{}on}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se l\PYGZsq{}umidificatore è già acceso o serve effettuare il refill dell\PYGZsq{}acqua,}
+\PYG{+w}{  }\PYG{c+c1}{// restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{refill\PYGZus{}led}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione umidificatore e LED di stato}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{RH\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// accensione umidificatore}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{RH\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LED\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{     }\PYG{c+c1}{// accensione LED umidificatore}
+\PYG{+w}{  }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato umidificatore}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione ventola di omogeneizzazione se spenta}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{FAN\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// accensione ventola di omogeneizzazione}
+\PYG{+w}{    }\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato ventola di omogeneizzazione}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// gestione contatore refill}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{last\PYGZus{}rh\PYGZus{}on}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione avvenuta con successo}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// spegnimento umidificatore}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}turn\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se l\PYGZsq{}umidificatore è già spento, restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// spegnimento umidificatore e LED di stato}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{RH\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}OFF}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// spegnimento umidificatore}
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{RH\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LED\PYGZus{}OFF}\PYG{p}{);}\PYG{+w}{     }\PYG{c+c1}{// spegnimento LED umidificatore}
+\PYG{+w}{  }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato umidificatore}
+
+\PYG{+w}{  }\PYG{c+c1}{// richiesta di spegnimento ventola di omogeneizzazione}
+\PYG{+w}{  }\PYG{n}{fan\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+
+\PYG{+w}{  }\PYG{c+c1}{// gestione contatore refill}
+\PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{refill\PYGZus{}counter}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{last\PYGZus{}rh\PYGZus{}on}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// spegnimento avvenuto con successo}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// richiesta di spegnimento ventola di omogeneizzazione}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{fan\PYGZus{}turn\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se la ventola di omogeneizzazione è già spenta, restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// verifica se è possibile spegnere la ventola di omogeneizzazione}
+\PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}if TEMP\PYGZus{}CTRL == PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL == PID}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}pwm\PYGZus{}value}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}pwm\PYGZus{}value}\PYG{p}{)))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}elif TEMP\PYGZus{}CTRL == PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL != PID}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}pwm\PYGZus{}value}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}elif TEMP\PYGZus{}CTRL != PID \PYGZam{}\PYGZam{} RH\PYGZus{}CTRL == PID}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}pwm\PYGZus{}value}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}else}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}endif}
+\PYG{+w}{    }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{FAN\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}OFF}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// spegnimento ventola di omogeneizzazione}
+\PYG{+w}{    }\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato ventola di omogeneizzazione}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// spegnimento avvenuto con successo}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// ventola di omogeneizzazione non spenta, nessuna azione eseguita}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// accensione illuminazione}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{light\PYGZus{}turn\PYGZus{}on}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se l\PYGZsq{}illuminazione è già accesa, restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{light\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{LIGHT\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}ON}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// accensione illuminazione}
+\PYG{+w}{  }\PYG{n}{status}\PYG{p}{.}\PYG{n}{light\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato illuminazione}
+
+\PYG{+w}{  }\PYG{c+c1}{// accensione avvenuta con successo}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// spegnimento illuminazione}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{light\PYGZus{}turn\PYGZus{}off}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// se l\PYGZsq{}illuminazione è già spenta, restituisce false senza fare nulla}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{light\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{LIGHT\PYGZus{}RELAY}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RELAY\PYGZus{}OFF}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// spegnimento illuminazione}
+\PYG{+w}{  }\PYG{n}{status}\PYG{p}{.}\PYG{n}{light\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato illuminazione}
+
+\PYG{+w}{  }\PYG{c+c1}{// spegnimento avvenuto con successo}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

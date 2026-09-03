@@ -32,6 +32,11 @@
  * La gestione dell'accensione e dello spegnimento avviene all'interno delle
  * funzioni di accensione e spegnimento del riscaldatore e dell'umidificatore,
  * in modo da eseguire tutto in maniera automatica e centralizzata.
+ *
+ * Siccome può capitare che il pwm del riscaldatore e dell'umidificatore
+ * diventi nullo quando entrambi gli attuatori sono spenti, è stata creata
+ * una funzione apposita per gestire lo spegnimento della ventola, che deve
+ * essere invocata ogni volta che uno dei due pwm diventa nullo.
  */
 
 /**
@@ -87,6 +92,17 @@ bool rh_turn_on();
  * @return false umidificatore già spento, nessuna azione eseguita
  */
 bool rh_turn_off();
+
+/**
+ * @brief Spegnimento della ventola di omogeneizzazione.
+ *
+ * Questa funzione spegne la ventola di omogeneizzazione dell'aria se vengono
+ * soddisfatte le condizioni per farlo.
+ *
+ * @return true ventola spenta con successo
+ * @return false ventola già spenta o non è possibile spegnerla
+ */
+bool fan_turn_off();
 
 /**
  * @brief Accensione dell'illuminazione.

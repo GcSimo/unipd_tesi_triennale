@@ -1,8 +1,47 @@
 \chapter{Introduzione}
 \section{Contesto}
-\begin{itemize}
-	\item scopo di una incubatrice neonatale
-\end{itemize}
+Con il termine di neonati prematuri si intendono tutti i bambini nati prima della 37\textsuperscript{a} settimana di
+gestazione. A causa del loro mancato sviluppo, non dispongono di un sistema di termoregolazione adeguato a mantenere la
+temperatura corporea compresa tra i 36,5 °C e i 37,5 °C. Già quando la temperatura corporea scende al di sotto dei 36°C,
+il neonato entra in ipotermia e se tale condizione si protrae nel tempo, si possono verificare gravi conseguenze sulla
+salute del neonato, fino a portare alla morte.
+
+Si identifica la temperatura critica come la temperatura a cui un essere umano non è più in grado di regolare la propria
+temperatura corporea. Per un adulto si aggira attorno agli 0°C mentre per un neonato prematuro è compresa tra i 20°C e
+i 23°C. Dato che questo valore è particolarmente elevato, casi di ipotermia sono molto frequenti nei neonati prematuri
+in qualsiasi parte del mondo, anche nei paesi tropicali.
+
+Per mantenere il neonato in condizioni di salute ottimali, risulta, quindi, necessario adottare misure per limitare
+la dispersione di calore. Queste possono essere l'uso di incubatrici neonatali o di culle riscaldate, ma anche misure
+più semplici come il mantenimento del neonato asciutto ed avvolto da indumenti caldi e il contatto pelle a pelle con
+la madre. \cite{world1993thermal}
+
+La prima incubatrice aperta per neonati prematuri venne realizzata da Jean-Louis-Paul Denucé nel 1857, ma non ebbe grande
+diffusione. Venne poi migliorata da Stéphane Tarnier nel 1881, che introdusse il coperchio in vetro rendendola chiusa
+e più efficace. Negli anni immediatamente successivi, Alfred Auvard rese la struttura più semplice ed economica, rendendola
+più accessibile e favorendone una rapida diffusione. \cite{DunnF137} Degno di nota è anche il contributo del medico americano
+Joseph Bolivar DeLee, che nel 1899 introdusse la prima incubatrice portatile per offire assistenza ai neonati prematuri nati
+a casa. Ad oggi le incubatrici neonatali sono molto diffuse e sono costruite da una struttura trasparente di policarbonato
+con delle aperture per l'accesso rapido al neonato. Dispongono di sistemi di riscaldamento, ventilazione e umidificazione,
+oltre che a numerosi sensori per controllare lo stato dell'incubatrice e del neonato e a sistemi di allarme per segnalare
+eventuali malfunzionamenti o criticità.
+
+%\subsection{Storia dell'incubatrice}
+%La prima idea di incubatrice neonatale venne stata proposta nel 1857 da Jean-Louis-Paul Denucé (1824 - 1889), un medico
+%belga, che, per mantenere in vita (senza successo) un neonato prematuro, costruì e per primo descrisse formalmente una
+%culla di metallo a doppia parete senza coperchio superiore, in cui, nella cavità tra le due pareti, veniva versata acqua
+%calda. Tale struttura di incubatrice, però, non ebbe grande diffusione.
+%
+%Nel 1881, un medico francese, Stéphane Tarnier (1828 - 1897), durante una visita allo Zoo di Parigi notò un'incubatrice
+%chiusa usata per le uova di uccelli esotici e subito ne capì le potenzialità per i neonati prematuri. Fece costruire un
+%modello simile con pareti in legno, un compartimento inferiore per contenere l'acqua calda e introdusse per la prima volta
+%il coperchio in vetro rendendola chiusa. La struttura di Tarnier venne poi resa più semplice ed economica da Alfred Auvard
+%(1855-1940) negli anni successivi, rendendola più accessibile agli ospedali. Grazie a questo modello, Tarner riuscì a far
+%aumentare la probabilità di sopravvivenza dei neonati di peso inferiore ai 2kg dal 35\% al 62\%. \cite{DunnF137}
+%
+%Infine, il medico americano Joseph Bolivar DeLee (1869 - 1942), nel 1899 durante il suo lavoro presso Chicago Lying-In
+%Hospital, introdusse la prima incubatrice portatile. Notò infatti la necessità di fornire assistenza ai neonati prematuri,
+%che nascevano a casa e, per fare ciò, modificò ancora la struttura rendendola più leggera e portatile.
 
 \section{Obiettivi della tesi}
 \begin{itemize}
@@ -12,8 +51,26 @@
 \end{itemize}
 
 \section{Struttura dell'elaborato}
-\begin{itemize}
-	\item analisi della parte hardware
-	\item analisi della parte software
-	\item analisi della parte di controllo
-\end{itemize}
+Il seguente elaborato è organizzato in quattro capitoli principali, oltre al primo capitolo di introduzione. In ognuno di
+essi viene trattato un argomento specifico corrispondente ad una fase dello sviluppo del prototipo di incubatrice neonatale.
+
+Nel secondo capitolo vengono descritti i vari componenti elettronici del prototipo come il microcontrollore, i sensori
+ed i vari attuatori. Vengono inoltre presentate le connessioni realizzate tra di essi in modo da permettere il corretto
+funzionamento di ogni componente del sistema.
+
+Nel terzo capitolo si affronta lo sviluppo del firmware per il microcontrollore. Vengono enunciati i requisiti che hanno
+guidato le scelte implementative e si analizzano i vari moduli in cui è stato suddiviso il codice.
+
+Nel quarto capitolo si tratta il sistema di controllo usato per la gestione della temperatura. Viene prima descritto un
+semplice controllore ad isteresi e successivamente si passa ad un controllore PID. Si conclude con un confronto tra i due
+metodi di controllo, evidenziando i vantaggi, gli svantaggi ed i limiti di ognuno.
+
+Nel quinto capitolo si discute in maniera critica del risultato raggiunto rispetto agli obiettivi prefissati all'inizio
+e si propongono possibili sviluppi futuri per migliorare ulteriormente il prototipo di incubatrice neonatale.
+
+A concludere è presente un'appendice in cui sono riportati la dimostrazione matematica di una formula usata nel controllore
+PID e il codice sorgente completo del firmware.
+
+In questa tesi si tratterà solo della gestione del sistema di riscaldamento. Siccome, però, il prototipo di incubatrice neonatale
+dispone anche di un sistema di umidificazione, tale sistema è stato comunque incluso nella circuitazione hardware e nel
+software, ma non è stato ancora implementato un sistema di controllo per la gestione dell'umidità.

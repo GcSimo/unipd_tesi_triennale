@@ -87,14 +87,14 @@ void check_temp_range() {
 // verifica se l'umidità misurata rientra nel range di sicurezza
 void check_rh_range() {
   // umidità troppo bassa
-  if (!err_check(ERR_LOW_RH) && status.rh_sht20 < status.rh_setpoint - RH_ERR_THLD - RH_ERR_HYST)
+  if (!err_check(ERR_LOW_RH) && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) < status.rh_setpoint - RH_ERR_THLD - RH_ERR_HYST)
     err_set(ERR_LOW_RH); // errore umidità troppo bassa
-  else if (err_check(ERR_LOW_RH) && status.rh_sht20 >= status.rh_setpoint - RH_ERR_THLD + RH_ERR_HYST)
+  else if (err_check(ERR_LOW_RH) && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) >= status.rh_setpoint - RH_ERR_THLD + RH_ERR_HYST)
     err_clear(ERR_LOW_RH); // rimozione errore umidità troppo bassa
 
   // umidità troppo alta
-  else if (!err_check(ERR_HIGH_RH) && status.rh_sht20 > status.rh_setpoint + RH_ERR_THLD + RH_ERR_HYST)
+  else if (!err_check(ERR_HIGH_RH) && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) > status.rh_setpoint + RH_ERR_THLD + RH_ERR_HYST)
     err_set(ERR_HIGH_RH); // errore umidità troppo alta
-  else if (err_check(ERR_HIGH_RH) && status.rh_sht20 <= status.rh_setpoint + RH_ERR_THLD - RH_ERR_HYST)
+  else if (err_check(ERR_HIGH_RH) && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) <= status.rh_setpoint + RH_ERR_THLD - RH_ERR_HYST)
     err_clear(ERR_HIGH_RH); // rimozione errore umidità troppo alta
 }

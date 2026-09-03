@@ -1,7 +1,7 @@
 function serial_read_2(showPlot, portName, baudRate, filename)
 	% --- 1. impostazione parametri di default se non forniti dall'utente ---
 	if nargin < 1 || isempty(showPlot)
-		showPlot = true; % Di default mostra il grafico
+		showPlot = 3; % 0 = nessuno, 1 = temp, 2 = rh, 3 = entrambi
 	end
 	if nargin < 2 || isempty(portName)
 		%portName = "/dev/cu.usbserial-110";
@@ -50,7 +50,8 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 	cleanupObj = onCleanup(@() cleanUpRoutine(arduinoObj, fileID));
 
 	% --- 5. setup grafico in tempo reale ---
-	if showPlot
+	if showPlot > 0
+		% crea una finestra grafica per stampare il grafico in tempo reale
 		fig = figure('Name', 'Monitoraggio Real-Time Arduino', 'Color', 'w', 'Position', [100, 100, 1000, 700]);
 
 		% flag di controllo e Pulsante di stop ---
@@ -61,8 +62,12 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 				%'BackgroundColor', [0.8 0.2 0.2], 'ForegroundColor', 'w', ...
 				%'FontWeight', 'bold', 'FontSize', 10, ...
 
-%		t_layout = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
-		t_layout = tiledlayout(1, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+		% crea 2 righe se showPlot è 3, altrimenti 1 riga
+		if showPlot == 3
+			t_layout = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+		else
+			t_layout = tiledlayout(1, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+		end
 
 		maxPts = 3600;
 
@@ -72,51 +77,58 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 		c_Out = [0.4660 0.6740 0.1880];
 
 		% -- Riquadro 1: Temperatura --
-		ax1 = nexttile(t_layout);
-		title('Controllo Temperatura');
-		grid on; hold on;
+		if showPlot == 1 || showPlot == 3
+			ax1 = nexttile(t_layout);
+			title('Controllo Temperatura');
+			grid on; hold on;
 
-		yyaxis left;
-		ylabel('Temperatura (°C)');
-		line_temp  = animatedline('Color', 'r', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
-		line_set_t = animatedline('Color', 'r', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+			yyaxis left;
+			ylabel('Temperatura (°C)');
+			line_temp  = animatedline('Color', 'r', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
+			line_set_t = animatedline('Color', 'r', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
 
-		yyaxis right;
-		ylabel('Segnali (PWM/PID)');
-		line_t_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
-		line_t_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
-		line_t_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
-		line_t_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
-		line_t_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
-		legend('Location', 'westoutside');
+			yyaxis right;
+			ylabel('Segnali (PWM/PID)');
+			line_t_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
+			line_t_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+			legend('Location', 'westoutside');
+
+			ax1.XLimMode = 'auto';
+		end
 
 		% -- Riquadro 2: Umidità --
-%		ax2 = nexttile(t_layout);
-%		title('Controllo Umidità');
-%		grid on; hold on;
-%
-%		yyaxis left;
-%		ylabel('Umidità (%)');
-%		line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
-%		line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
-%
-%		yyaxis right;
-%		ylabel('Segnali (PWM/PID)');
-%		line_rh_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}', 'MaximumNumPoints', maxPts);
-%		line_rh_p   = animatedline('Color', c_P, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
-%		line_rh_i   = animatedline('Color', c_I, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
-%		line_rh_d   = animatedline('Color', c_D, 'LineStyle', ':', 'LineWidth', 1.2, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
-%		line_rh_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1.2, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
-%		legend('Location', 'westoutside');
-%
-%		linkaxes([ax1, ax2], 'x');
-%
-		ax1.XLimMode = 'auto';
-%		ax2.XLimMode = 'auto';
+		if showPlot == 2 || showPlot == 3
+			ax2 = nexttile(t_layout);
+			title('Controllo Umidità');
+			grid on; hold on;
 
-		% Etichette asse X
-		%xlabel(ax1, 'Tempo trascorso (secondi)');
-		%xlabel(ax2, 'Tempo trascorso (secondi)');
+			yyaxis left;
+			ylabel('Umidità (%)');
+			line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
+			line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+
+			yyaxis right;
+			ylabel('Segnali (PWM/PID)');
+			line_rh_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}', 'MaximumNumPoints', maxPts);
+			line_rh_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+			line_rh_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+			line_rh_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+			line_rh_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1.2, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+			legend('Location', 'westoutside');
+
+
+			ax2.XLimMode = 'auto';
+		end
+
+		% sincronizza l'asse X solo se entrambi i grafici sono presenti
+		if showPlot == 3
+			linkaxes([ax1, ax2], 'x');
+		end
+
+		% etichetta asse X
 		xlabel(t_layout, 'Tempo trascorso (secondi)');
 	end
 
@@ -131,7 +143,7 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 
 			% controllo uscita sicura
 			% esce dal ciclo se la finestra è stata chiusa (X) o se hai premuto il tasto di arresto
-			if showPlot
+			if showPlot > 0
 				if ~isvalid(fig) || isequal(fig.UserData, false)
 					disp('Acquisizione interrotta dal grafico. Salvataggio in corso...');
 					break;
@@ -181,23 +193,28 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 					t_p, t_i, t_d, t_out, rh_p, rh_i, rh_d, rh_out);
 
 				% Aggiornamento Grafico
-				if showPlot && isvalid(fig)
+				if showPlot > 0 && isvalid(fig)
 					% Dati temperatura
-					addpoints(line_temp, t_elapsed, temp);
-					addpoints(line_set_t, t_elapsed, set_t);
-					addpoints(line_t_pwm, t_elapsed, t_pwm);
-					addpoints(line_t_p, t_elapsed, t_p);
-					addpoints(line_t_i, t_elapsed, t_i);
-					addpoints(line_t_d, t_elapsed, t_d);
-					addpoints(line_t_out, t_elapsed, t_out);
+					if showPlot == 1 || showPlot == 3
+						addpoints(line_temp, t_elapsed, temp);
+						addpoints(line_set_t, t_elapsed, set_t);
+						addpoints(line_t_pwm, t_elapsed, t_pwm);
+						addpoints(line_t_p, t_elapsed, t_p);
+						addpoints(line_t_i, t_elapsed, t_i);
+						addpoints(line_t_d, t_elapsed, t_d);
+						addpoints(line_t_out, t_elapsed, t_out);
+					end
 
-%					addpoints(line_rh, t_elapsed, rh);
-%					addpoints(line_set_rh, t_elapsed, set_rh);
-%					addpoints(line_rh_pwm, t_elapsed, rh_pwm);
-%					addpoints(line_rh_p, t_elapsed, rh_p);
-%					addpoints(line_rh_i, t_elapsed, rh_i);
-%					addpoints(line_rh_d, t_elapsed, rh_d);
-%					addpoints(line_rh_out, t_elapsed, rh_out);
+					% Dati umidità
+					if showPlot == 2 || showPlot == 3
+						addpoints(line_rh, t_elapsed, rh);
+						addpoints(line_set_rh, t_elapsed, set_rh);
+						addpoints(line_rh_pwm, t_elapsed, rh_pwm);
+						addpoints(line_rh_p, t_elapsed, rh_p);
+						addpoints(line_rh_i, t_elapsed, rh_i);
+						addpoints(line_rh_d, t_elapsed, rh_d);
+						addpoints(line_rh_out, t_elapsed, rh_out);
+					end
 
 					% limitrate forza MATLAB a non aggiornare l'UI più di 20 volte
 					% al secondo, prevenendo lag e crash in caso di alta frequenza di dati
@@ -244,7 +261,7 @@ end
 % Funzione chiamata automaticamente in caso di errore o quando premi Ctrl+C
 function cleanUpRoutine(arduinoObj, fileID)
 	fprintf('\nChiusura connessione seriale e salvataggio file CSV in corso...\n');
-	clear arduinoObj;
+	clear(arduinoObj);
 	if fileID ~= -1
 		fclose(fileID);
 	end

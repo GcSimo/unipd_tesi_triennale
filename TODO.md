@@ -8,12 +8,13 @@
 - [x] integrare derivative kick
 - [x] creare classe per gestire sht20
 - [x] verifica glitch iniziale dei relè e invertire digitalWrite con pinMode per i relè nella funzione di setup()
-- [ ] aggiungere conversione °C in potenza
-- [ ] verificare massima durata di un loop
-- [ ] verificare derivata al variare del setpoint (derivative kick test)
-- [ ] verificare temporizzazione display, led allarme
+- [x] tarare timer di refill
 - [ ] tarare parametri PID
-- [ ] tarare timer di refill
+- [ ] verificare massima durata di un loop
+- [ ] verificare temporizzazione display, led allarme
+- [ ] verificare derivata al variare del setpoint (derivative kick test)
+- [ ] aggiungere conversione °C in potenza
+- [ ] aggiungere static_assert per verificare parametri di configurazione dell'incubatrice
 - [ ] gestione output nel passaggio da automatico a manuale -> non necessaria
 - [ ] implementare il pid come oggetto -> non necessaria (peggiorativa)
 
@@ -21,15 +22,21 @@
 - [x] creare script matlab per interpretare comandi seriali
 
 ## documento tesi:
-- [ ] scattare foto del prototipo da inserire nel documento
-- [ ] scaricare template per presentazione powerpoint
+- [x] scaricare template per presentazione powerpoint
+- [ ] scattare foto del prototipo da inserire nel documento:
+  - [ ] foto solo riscaldatore montato con ventola dietro
+  - [ ] foto solo ventola di omogeneizzazione
+  - [ ] foto umidificatore con ventola
+  - [ ] foto solo scheda arduino
+  - [ ] foto solo stepdown in uso accanto ad uno nuovo
+  - [ ] foto interno del pannello frontale (lato pannello e lato incubatrice)
 - [ ] modificare titolo della tesi per eliminare controllo di umidità
 
 ## hardware:
 - [x] correggere connessioni relay e switch
+- [x] misurare distanze per supporto dell'arduino e della millefori
+- [x] verificare dimensione della millefori e componenti già presenti
 - [ ] bloccaggio del coperchio in plexiglass
-- [ ] misurare distanze per supporto dell'arduino e della millefori
-- [ ] verificare dimensione della millefori e componenti già presenti
 - [ ] aggiungere switch di reset per il refill
 - [ ] fare elenco del materiale da acquistare
 

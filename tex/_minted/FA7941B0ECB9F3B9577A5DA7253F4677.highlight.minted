@@ -1,0 +1,125 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file actuators.h}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Controllo degli attuatori dell\PYGZsq{}incubatrice neonatale}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Dichiarazione delle funzioni di controllo degli attuatori dell\PYGZsq{}incubatrice}
+\PYG{c+cm}{ * neonatale e dei relativi led di stato del pannello frontale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}ifndef ACTUATORS\PYGZus{}H}
+\PYG{c+cp}{\PYGZsh{}define ACTUATORS\PYGZus{}H}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Gestione della ventola di omogeneizzazione dell\PYGZsq{}aria.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Il modo più semplice per gestire la ventola di omogeneizzazione dell\PYGZsq{}aria}
+\PYG{c+cm}{ * è quello di accenderla quando almeno uno dei due attuatori (riscaldatore}
+\PYG{c+cm}{ * o umidificatore) è acceso e di spegnerla quando entrambi sono spenti.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Quando, però, tali attuatori sono controllati da un pid con un segnale pwm,}
+\PYG{c+cm}{ * la ventola deve fare continui e rapidi cicli di accensione\PYGZhy{}spegnimento che}
+\PYG{c+cm}{ * risultano totalmente inutili. Provocano, infatti, l\PYGZsq{}usura delle componenti}
+\PYG{c+cm}{ * elettriche e meccaniche della ventola e non permettono un efficiente}
+\PYG{c+cm}{ * ricircolo dell\PYGZsq{}aria all\PYGZsq{}interno dell\PYGZsq{}incubatrice.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Per questo motivo, è stato deciso di non vincolare l\PYGZsq{}accensione della}
+\PYG{c+cm}{ * ventola alla sola accensione degli attuatori, ma di mantenerla attiva}
+\PYG{c+cm}{ * se uno dei due attuatori viene pilotato da un segnale pwm non nullo.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * La gestione dell\PYGZsq{}accensione e dello spegnimento avviene all\PYGZsq{}interno delle}
+\PYG{c+cm}{ * funzioni di accensione e spegnimento del riscaldatore e dell\PYGZsq{}umidificatore,}
+\PYG{c+cm}{ * in modo da eseguire tutto in maniera automatica e centralizzata.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Siccome può capitare che il pwm del riscaldatore e dell\PYGZsq{}umidificatore}
+\PYG{c+cm}{ * diventi nullo quando entrambi gli attuatori sono spenti, è stata creata}
+\PYG{c+cm}{ * una funzione apposita per gestire lo spegnimento della ventola, che deve}
+\PYG{c+cm}{ * essere invocata ogni volta che uno dei due pwm diventa nullo.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione del riscaldatore.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Questa funzione accende il riscaldatore e il led di stato corrispondente.}
+\PYG{c+cm}{ * Accende anche la ventola di omogeneizzazione dell\PYGZsq{}aria se è spenta.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true riscaldatore acceso con successo}
+\PYG{c+cm}{ * @return false riscaldatore già acceso, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{heat\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento del riscaldatore.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Questa funzione spegne il riscaldatore e il led di stato corrispondente.}
+\PYG{c+cm}{ * Spegne anche la ventola di omogeneizzazione dell\PYGZsq{}aria se è possibile farlo.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true riscaldatore spento con successo}
+\PYG{c+cm}{ * @return false riscaldatore già spento, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{heat\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Questa funzione accende l\PYGZsq{}umidificatore e il led di stato corrispondente.}
+\PYG{c+cm}{ * Accende anche la ventola di omogeneizzazione dell\PYGZsq{}aria se è spenta.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Se è necessario fare un refill dell\PYGZsq{}acqua, l\PYGZsq{}umidificatore non viene acceso}
+\PYG{c+cm}{ * e la funzione restituisce false senza fare nulla.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * All\PYGZsq{}accensione dell\PYGZsq{}umidificatore, viene aggiornato il timer che tiene}
+\PYG{c+cm}{ * traccia dell\PYGZsq{}ultima accensione dell\PYGZsq{}umidificatore, per poter gestire}
+\PYG{c+cm}{ * il timer di refill dell\PYGZsq{}acqua.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true umidificatore acceso con successo}
+\PYG{c+cm}{ * @return false umidificatore già acceso, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Questa funzione spegne l\PYGZsq{}umidificatore e il led di stato corrispondente.}
+\PYG{c+cm}{ * Spegne anche la ventola di omogeneizzazione dell\PYGZsq{}aria se è possibile farlo.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Aggiorna il timer di refill dell\PYGZsq{}acqua, aggiungendo il tempo trascorso}
+\PYG{c+cm}{ * dall\PYGZsq{}ultima accensione dell\PYGZsq{}umidificatore.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true umidificatore spento con successo}
+\PYG{c+cm}{ * @return false umidificatore già spento, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento della ventola di omogeneizzazione.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Questa funzione spegne la ventola di omogeneizzazione dell\PYGZsq{}aria se vengono}
+\PYG{c+cm}{ * soddisfatte le condizioni per farlo.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true ventola spenta con successo}
+\PYG{c+cm}{ * @return false ventola già spenta o non è possibile spegnerla}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{fan\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Accensione dell\PYGZsq{}illuminazione.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true illuminazione accesa con successo}
+\PYG{c+cm}{ * @return false illuminazione già accesa, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{light\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @brief Spegnimento dell\PYGZsq{}illuminazione.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * @return true illuminazione spenta con successo}
+\PYG{c+cm}{ * @return false illuminazione già spenta, nessuna azione eseguita}
+\PYG{c+cm}{ */}
+\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{light\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+
+\PYG{c+cp}{\PYGZsh{}endif }\PYG{c+c1}{// ACTUATORS\PYGZus{}H}
+\end{MintedVerbatim}

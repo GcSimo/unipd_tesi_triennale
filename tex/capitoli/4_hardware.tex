@@ -2,7 +2,7 @@
 \section{Architettura del sistema}
 In questo capitolo vengono descritte le caratteristiche fisiche del prototipo di incubatrice neonatale. Si parte dalla descrizione
 della struttura fisica, si prosegue con la descrizione dei componenti elettronici presenti ed infine si analizzano le connessioni
-tra i vari componenti e il microcontrollore. Per una migliore organizzazione dell'elaborato, l'insieme delle componenti elettriche
+tra i vari componenti e il microcontrollore. Per una migliore organizzazione, l'insieme delle componenti elettriche
 ed elettroniche è stato suddiviso in tre macrocategorie, affrontate nei successivi paragrafi:
 \begin{enumerate}
 	\item attuatori e relè;
@@ -24,6 +24,14 @@ alla camera interna senza provocare grandi dispersioni di calore e umidità.
 Il cassetto inferiore è realizzato con una struttura in legno estraibile dove sono posizionati i vari componenti elettronici
 e la vasca con l'acqua per l'umidificazione.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth, trim={0cm 7cm 0cm 8cm}, clip]{immagini/1_incubatrice.jpg}
+	\caption[Foto del prototipo di incubatrice neonatale]{Foto del prototipo di incubatrice neonatale dove si può apprezzare
+	la camera interna illuminata, il cassetto inferiore con i componenti elettronici, i due oblò per l'accesso rapido, il
+	pannello in policarbonato superiore e il pannello frontale.}
+	\label{fig:interno_incubatrice}
+\end{figure}
 
 \subsection{Attuatori e relè}
 Di seguito sono analizzati i vari attuatori presenti nel prototipo di incubatrice neonatale che permettono di agire sul sistema
@@ -83,7 +91,7 @@ utilizzando l'energia erogata dall'alimentatore esterno a 12 V.
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        %\includegraphics[width=\textwidth]{1_barra_led.jpg}
+        \includegraphics[width=0.9\textwidth, trim={0cm 25cm 0cm 25cm}, clip]{immagini/1_barra_led.jpg}
         \caption{Barra LED per l'illuminazione della camera interna.}
         \label{fig:barra_led}
     \end{subfigure}
@@ -94,10 +102,22 @@ utilizzando l'energia erogata dall'alimentatore esterno a 12 V.
 
 \begin{figure}[htbp]
 	\centering
-	%\includegraphics[width=0.9\textwidth]{immagini/1_rele.jpg}
-	\caption[Foto dei relè e dello step down]{Foto dei relè per il controllo degli attuatori del prototipo di incubatrice
-	neonatale e dello step down per alimentare le bobine dei relè a 5 V.}
-	\label{fig:rele}
+	\begin{subfigure}[b]{0.65\textwidth}
+        \centering
+		\includegraphics[width=0.9\textwidth, trim={1cm 2cm 2cm 20cm}, clip]{immagini/1_rele.jpg}
+        \caption{Foto dei relè per il controllo degli attuatori del prototipo di incubatrice neonatale.}
+        \label{fig:rele}
+    \end{subfigure}
+    \hfill % Spinge le immagini verso i margini, creando spazio al centro
+    \begin{subfigure}[b]{0.34\textwidth}
+        \centering
+        %\includegraphics[width=\textwidth]{immagini/1_step_down.jpg}
+        \caption{Foto dello step down per alimentare le bobine dei relè a 5 V.}
+        \label{fig:step_down}
+    \end{subfigure}
+	\caption[Foto dei relè e dello step down]{Foto dei relè e dello step down per il controllo degi attuatori
+	del prototipo di incubatrice neonatale.}
+	\label{fig:rele_step_down}
 \end{figure}
 
 
@@ -116,7 +136,7 @@ componenti:
 
 \begin{figure}[htbp]
 	\centering
-	%\includegraphics[width=0.9\textwidth]{immagini/1_pannello_frontale_1.jpg}
+	\includegraphics[width=0.9\textwidth, trim={0cm 7cm 0cm 6cm}, clip]{immagini/1_pannello_frontale_1.jpg}
 	\caption[Foto del pannello frontale]{Foto del pannello frontale del prototipo di incubatrice neonatale con i vari componenti
 	presenti.}
 	\label{fig:pannello_frontale}
@@ -125,11 +145,11 @@ componenti:
 Il sensore di temperatura e umidità SHT20 è un sensore digitale che permette di misurare la temperatura e l'umidità relativa
 dell'ambiente in cui si trova. Esso è posizionato all'interno della camera interna del prototipo di incubatrice neonatale.
 Per i test effettuati, il sensore è stato posizionato a 20 cm dalle pareti laterali lunghe, a 17 cm dalla parete corta opposta
-al riscaldatore e alla ventola di omogeneizzazione dell'aria e a 10 cm di altezza dal piano della base della camera interna.
+al riscaldatore e alla ventola di omogeneizzazione dell'aria e a 7.5 cm di altezza dal piano della base della camera interna.
 
 \begin{figure}[htbp]
 	\centering
-	%\includegraphics[width=0.9\textwidth]{immagini/1_sht20.jpg}
+	\includegraphics[width=0.9\textwidth, trim={5cm 20cm 10cm 25cm}, clip]{immagini/1_sht20.jpg}
 	\caption[Foto del sensore SHT20]{Sensore di temperatura e umidità SHT20 posizionato all'interno della camera interna del
 	prototipo di incubatrice neonatale.}
 	\label{fig:sht20}
@@ -172,13 +192,13 @@ al minimo le interferenze dovute a sbalzi di corrente in corrispondenza delle co
 	\label{fig:circuito_1}
 \end{figure}
 
-\begin{figure}[htbp]
-	\centering
-	%\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_1.png}
-	\caption[Foto delle connessioni tra relè e attuatori]{Foto delle connessioni tra i relè e gli attuatori presenti nel
-	prototipo di incubatrice neonatale.}
-	\label{fig:foto_circuito_1}
-\end{figure}
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_1.png}
+%	\caption[Foto delle connessioni tra relè e attuatori]{Foto delle connessioni tra i relè e gli attuatori presenti nel
+%	prototipo di incubatrice neonatale.}
+%	\label{fig:foto_circuito_1}
+%\end{figure}
 
 \subsection{Connessioni del pannello frontale e del sensore SHT20}
 I componenti del pannello frontale e il sensore SHT20 sono collegati al microcontrollore tramite due cavi multipolari da 10
@@ -206,13 +226,13 @@ led di refill al microcontrollore. Si nota che non tutti i conduttori di questo 
     \label{fig:circuito_2}
 \end{figure}
 
-\begin{figure}[htbp]
-    \centering
-    %\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_2.png}
-    \caption[Foto delle connessioni nel pannello frontale]{Foto delle connessioni tra i vari componenti presenti nel pannello
-	frontale del prototipo di incubatrice neonatale.}
-    \label{fig:foto_circuito_2}
-\end{figure}
+%\begin{figure}[htbp]
+%    \centering
+%    \includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_2.png}
+%    \caption[Foto delle connessioni nel pannello frontale]{Foto delle connessioni tra i vari componenti presenti nel pannello
+%	frontale del prototipo di incubatrice neonatale.}
+%    \label{fig:foto_circuito_2}
+%\end{figure}
 
 \subsection{Connessioni dei vari componenti al microcontrollore}
 Nel seguente schema elettrico sono riportate tutte le connessioni tra i cavi multipolari provenienti dai vari componenti
@@ -250,10 +270,28 @@ di corrente, i led rossi risultano più luminosi rispetto a quelli verdi.
     \label{fig:circuito_3}
 \end{figure}
 
+%\begin{figure}[htbp]
+%    \centering
+%    %\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_3.png}
+%    \caption[Foto delle connessioni del microcontrollore]{Foto delle connessioni dei cavi provenienti dai vari componenti
+%	al microcontrollore Arduino Mega 2560.}
+%    \label{fig:foto_circuito_3}
+%\end{figure}
+
 \begin{figure}[htbp]
     \centering
-    %\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_3.png}
-    \caption[Foto delle connessioni del microcontrollore]{Foto delle connessioni dei cavi provenienti dai vari componenti
-	al microcontrollore Arduino Mega 2560.}
+    %\includegraphics[width=0.9\textwidth]{immagini/1_pannello_frontale_2.png}
+    \caption[Foto delle connessioni nel pannello frontale]{Foto delle connessioni tra i vari componenti presenti nel pannello
+	frontale del prototipo di incubatrice neonatale.}
+    \label{fig:foto_circuito_2}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/1_cassetto.jpg}
+    \caption[Foto delle connessioni del cassetto]{Foto delle connessioni presenti nel cassetto inferiore del prototipo di
+	incubatrice neonatale in cui si possono notare la scheda Arduino Mega 2560, il modulo relè, lo step down, i cavi provenienti
+	dal pannello frontale e dal sensore, la breadboard dove convergono tutti i cavi e il morsetto marrone per la distribuzione
+	della massa.}
     \label{fig:foto_circuito_3}
 \end{figure}

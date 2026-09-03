@@ -63,13 +63,14 @@
 // tipi di windup per i controllori PID
 #define NO_WINDUP 0 // nessun anti-windup
 #define CLAMPING 1  // anti-windup con clamping
-#define BACK_CALC 2 // anti-windup con back calculation
+#define LIMITING 2 // anti-windup con limiting
+#define BACK_CALC 3 // anti-windup con back calculation
 
 // ----------------------------------------------------------------------------
-// -------------------- configurazione parametri programma --------------------
+// ------------ configurazione parametri per gestione dei setpoint ------------
 // ----------------------------------------------------------------------------
 
-// parametri per potenziometro e setpoint di temperatura
+// parametri per lettura potenziometro e scelta del setpoint di temperatura
 #define TEMP_POT_THLD 5   // soglia per soppressione del rumore
 #define TEMP_POT_MIN 10   // valore minimo del potenziometro (misurato 3-4)
 #define TEMP_POT_MAX 1015 // valore massimo del potenziometro (misurato 1019-1020)
@@ -77,10 +78,8 @@
 #define TEMP_MIN_SP 2500  // valore minimo del setpoint (in cent. di °C)
 #define TEMP_MAX_SP 4000  // valore massimo del setpoint (in cent. di °C)
 #define TEMP_STEP_SP 10   // passo di variazione del setpoint(in cent. di °C)
-#define TEMP_ERR_THLD 200 // soglia di errore per temperatura (in cent. di °C)
-#define TEMP_ERR_HYST 20  // isteresi per errore di temperatura (in cent. di °C)
 
-// parametri potenziometro e setpoint di umidità
+// parametri per lettura del potenziometro e scelta del setpoint di umidità
 #define RH_POT_THLD 5     // soglia per soppressione del rumore
 #define RH_POT_MIN 10     // valore minimo del potenziometro (misurato 3-4)
 #define RH_POT_MAX 1015   // valore massimo del potenziometro (misurato 1019-1020)
@@ -88,8 +87,24 @@
 #define RH_MIN_SP 2000    // valore minimo del setpoint (in cent. di %)
 #define RH_MAX_SP 9000    // valore massimo del setpoint (in cent. di %)
 #define RH_STEP_SP 100    // passo di variazione del setpoint (in cent. di %)
+
+
+// ----------------------------------------------------------------------------
+// ------------ configurazione parametri per gestione degli errori ------------
+// ----------------------------------------------------------------------------
+
+// parametri per gestione errori sul range di temperatura valido
+#define TEMP_ERR_THLD 200 // soglia di errore per temperatura (in cent. di °C)
+#define TEMP_ERR_HYST 20  // isteresi per errore di temperatura (in cent. di °C)
+
+// parametri per gestione errori sul range di umidità valido
 #define RH_ERR_THLD 1000  // soglia di errore per umidità (in cent. di %)
 #define RH_ERR_HYST 100   // isteresi per errore di umidità (in cent. di %)
+
+
+// ----------------------------------------------------------------------------
+// ----------- configurazione parametri per la gestione dei timers ------------
+// ----------------------------------------------------------------------------
 
 // parametri per la gestione dei timer
 #define SW_READ_PERIOD 50         // tempo di campionamento degli switch
@@ -99,12 +114,18 @@
 #define SHT20_READ_PERIOD 1000    // tempo di campionamento dell'SHT20
 #define LCD_UPDATE_PERIOD 1000    // tempo di aggiornamento dell'lcd
 #define ERR_TIMER 1100            // tempo di durata degli errori temporizzati
-#define REFILL_INTERVAL 3600000UL // durata dell'acqua prima del refill
-// per ora è impostato genericamente a 1 ora, poi servirà andare a tararla
-// utilizzando il dato di 0,1017 g/s di acqua nebulizzata dalla tesi di Vanni
+#define REFILL_INTERVAL 2500000UL // durata dell'acqua prima del refill
+// 250ml capacità (da 750ml a 500ml) -> 250g di acqua
+// 0.1g/sec dalla tesi magistrale di Vanni
+// 250g / 0.1g/sec = 2500 sec = 41.6 min = 2500000 ms
+
+
+// ----------------------------------------------------------------------------
+// -------- configurazione parametri per la gestione del pwm e dei pid --------
+// ----------------------------------------------------------------------------
 
 // parametri per la gestione del segnale pwm
-#define PWM_PERIOD 8000 // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
+#define PWM_PERIOD 15000 // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
 #define PWM_MIN_TIME_ON 500  // intervallo minimo di accensione attuatori (in ms)
 #define PWM_MIN_TIME_OFF 500 // intervallo minimo di spegnimento attuatori (in ms)
 
@@ -114,25 +135,36 @@
 #define PID_DATA_PERIOD SHT20_READ_PERIOD // periodo di acquisizione dei dati
 #define PID_UPDATE_PERIOD PWM_PERIOD      // periodo di aggiornamento dell'output
 
+
+// ----------------------------------------------------------------------------
+// ------- configurazione parametri per i controllori ad isteresi e pid -------
+// ----------------------------------------------------------------------------
+
 // parametri per il controllo della temperatura
 #define TEMP_CTRL PID       // tipo di controllore per la temperatura
 #define TEMP_HYS_THLD 25    // soglia di isteresi per temperatura (in cent. di °C)
-#define TEMP_PID_KP 0.5f    // guadagno proporzionale del PID per temperatura
-#define TEMP_PID_KI 0.0075f // guadagno integrale del PID per temperatura
-#define TEMP_PID_KD 10.0f   // guadagno derivativo del PID per temperatura
-#define TEMP_PID_KW 0.0f    // guadagno anti-windup del PID per temperatura
-#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup del PID per temperatura
+#define TEMP_PID_BIAS 0.0f   // bias di feedforward
+#define TEMP_PID_KP 40.0f    // guadagno proporzionale
+#define TEMP_PID_KI 0.45f // guadagno integrale
+#define TEMP_PID_KD 500.0f   // guadagno derivativo
+#define TEMP_PID_KW 0.0f    // guadagno anti-windup
+#define TEMP_MIN_INTEGRAL 0.0f // limite minimo della componente integrale
+#define TEMP_MAX_INTEGRAL 100.0f  // limite massimo della componente integrale
+#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup
 #define TEMP_PID_P_SAMPLES 2 // campioni per calcolo della componente proporzionale
-#define TEMP_PID_D_SAMPLES 10 // campioni per calcolo della componente derivativa
+#define TEMP_PID_D_SAMPLES 20 // campioni per calcolo della componente derivativa
 #define TEMP_PID_I_SAMPLES (PID_UPDATE_PERIOD / PID_DATA_PERIOD) // campioni per calcolo della componente integrale
 
 // parametri per il controllo dell'umidità
-#define RH_CTRL PID      // tipo di controllore per l'umidità
+#define RH_CTRL NONE     // tipo di controllore per l'umidità
 #define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
+#define RH_PID_BIAS 0.0f   // bias del PID per umidità
 #define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità
 #define RH_PID_KI 0.0f   // guadagno integrale del PID per umidità
 #define RH_PID_KD 0.0f   // guadagno derivativo del PID per umidità
 #define RH_PID_KW 0.0f   // guadagno anti-windup del PID per umidità
+#define RH_MIN_INTEGRAL 0.0f // limite minimo della componente integrale
+#define RH_MAX_INTEGRAL 100.0f  // limite massimo della componente integrale
 #define RH_PID_WINDUP CLAMPING // tipo di anti-windup del PID per umidità
 #define RH_PID_P_SAMPLES 2 // campioni per calcolo della componente proporzionale
 #define RH_PID_D_SAMPLES 10 // campioni per calcolo della componente derivativa
@@ -218,12 +250,6 @@ struct timers {
 
 // parametri del controllore PID
 template <uint8_t C> struct pid {
-  // guadagni del controllore PID
-  //float kp;  // guadagno proporzionale
-  //float ki;  // guadagno integrale
-  //float kd;  // guadagno derivativo
-  //float kw;  // guadagno windup
-
   // componenti del controllore PID
   float proportional; // componente proporzionale
   float integral;     // componente integrale
@@ -231,24 +257,13 @@ template <uint8_t C> struct pid {
   float output;       // output puro del PID non limitato
 
   // errori e misurazioni passate per calcolo PID
-  float errors[(C == TEMP) ? max(TEMP_PID_P_SAMPLES, TEMP_PID_I_SAMPLES) : max(RH_PID_P_SAMPLES, RH_PID_I_SAMPLES)];
-  float measures[(C == TEMP) ? TEMP_PID_D_SAMPLES : RH_PID_D_SAMPLES];
+  int16_t errors[(C == TEMP) ? (max(TEMP_PID_P_SAMPLES, TEMP_PID_I_SAMPLES)) : (max(RH_PID_P_SAMPLES, RH_PID_I_SAMPLES))];
+  int16_t measures[(C == TEMP) ? TEMP_PID_D_SAMPLES : RH_PID_D_SAMPLES];
   uint8_t error_idx;
   uint8_t measure_idx;
 
-  // variabili e accumulatori intermedi per calcolo PID
-  //float deriv_c1; // primo coefficiente per calcolo derivata
-  //float deriv_c2; // secondo coefficiente per calcolo derivata
-  //int32_t sum1;   // somma degli errori tra setpoint e valore misurato
-  //int32_t sum2;  // somma dei valori misurati
-  //int32_t sum3;  // somma dei prodotti tra indice e valore misurato
-
-  // numero di misurazioni
-  //uint8_t data_count; // misurazioni ricevute ed elaborate
-  //uint8_t expected_data_count; // misurazioni attese
-
-  // metodo di anti-windup da utilizzare
-  //uint8_t anti_windup; // 0 = no windup | 1 = clamping | 2 = back calculation
+  // flag per primi dati forniti (per inizializzare i valori nei buffer)
+  bool initialized;
 };
 
 // ----------------------------------------------------------------------------

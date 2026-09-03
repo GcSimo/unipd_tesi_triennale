@@ -190,3 +190,81 @@
 ### data_20260901_184203.csv
 - test pid con kp = 0.5, ki = 0.01, kd = 20
 - sovraelongazione fino a 36.5°C, scende a 35.8°C e continua con lente e leggere oscillazioni
+
+
+## set prove 5
+
+### data_20260902_131756.csv
+- test pid con ...
+- ...
+
+### data_20260902_132207.csv
+- test pid con ...
+- ...
+
+### data_20260902_133434.csv
+- test pid con ...
+- ...
+
+### data_20260902_152137.csv
+- test pid con kp = 50, ki = 0.5, kd = 1000
+- cambio scalatura parametri * 100
+- si ha una sovraelongazione a 36.2°C con lento ritorno al setpoint
+
+### data_20260902_155002.csv
+- test pid con kp = 50, ki = 0.5, kd = 500
+- buono, leggero overshoot a 36.1°C per integrale troppo alto
+
+### data_20260902_161512.csv
+- test pid con kp = 50, ki = 0.5, kd = 500, 16 secondi di pwm e 16 campioni derivativi
+- lento raggiungimento del setpoint per problemi integrativi, buono il pwm cycle
+
+### data_20260902_163605.csv
+- test pid con kp = 50, ki = 0.75, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- overshoot per integrale troppo alto e oscillazioni a regime
+- buono il pwm cycle
+
+### data_20260902_164735.csv
+- test pid con kp = 75, ki = 0.75, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- overshoot per integrale troppo alto, sottoelongazione e poi stabilità
+- buono il pwm cycle
+
+### data_20260902_170301.csv
+- test pid con kp = 50, ki = 0.5, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- no overshoot, ma integrativo troppo bassa
+
+### data_20260902_172233.csv
+- test pid con kp = 50, ki = 0.6, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- leggero overshoot
+
+### data_20260902_173923.csv
+- test pid con kp = 50, ki = 0.6, kd = 300, 15 secondi di pwm e 20 campioni derivativi
+- arriva a regime, poi cala e ritorna a salire per integrale troppo lento
+
+### data_20260902_175843.csv
+- test pid con kp = 50, ki = 0.6, kd = 750, 15 secondi di pwm e 20 campioni derivativi
+- arriva con overshoot
+
+### data_20260902_181144.csv
+- test pid con kp = 35, ki = 0.6, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- sovraelongazione con oscllazioni a regime
+
+### data_20260902_181958.csv
+- test pid con kp = 75, ki = 0.6, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- arriva a regime ma l'integrale è troppo basso per cui si ha sottoelongazione e poi lenta salita al setpoint
+
+### data_20260902_183525.csv
+- test pid con kp = 30, ki = 0.3, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- integrale troppo grande
+
+### data_20260902_184328.csv
+- test pid con kp = 40, ki = 0.2, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- integrale troppo basso
+
+### data_20260902_184844.csv
+- test pid con kp = 40, ki = 0.3, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- integrale troppo basso
+
+#### data_20260902_185452.csv
+- test pid con kp = 40, ki = 0.45, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- integrale di poco troppo grande

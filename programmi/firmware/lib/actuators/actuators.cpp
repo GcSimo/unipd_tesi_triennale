@@ -78,19 +78,8 @@ bool heat_turn_off() {
   digitalWrite(HEAT_LED, LED_OFF);     // spegnimento LED riscaldatore
   status.heat_relay = false; // aggiornamento stato riscaldatore
 
-  // spegnimento ventola di omogeneizzazione come descritto sopra
-  #if TEMP_CTRL == PID && RH_CTRL == PID
-  if (!status.rh_relay && (status.manual_ctrl || (!status.temp_pwm_value && !status.rh_pwm_value))) {
-  #elif TEMP_CTRL == PID && RH_CTRL != PID
-  if (!status.rh_relay && (status.manual_ctrl || !status.temp_pwm_value)) {
-  #elif TEMP_CTRL != PID && RH_CTRL == PID
-  if (!status.rh_relay && (status.manual_ctrl || !status.rh_pwm_value)) {
-  #else
-  if (!status.rh_relay) {
-  #endif
-    digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola di omogeneizzazione
-    status.fan_relay = false; // aggiornamento stato ventola di omogeneizzazione
-  }
+  // richiesta di spegnimento ventola di omogeneizzazione
+  fan_turn_off();
 
   // spegnimento avvenuto con successo
   return true;
@@ -132,7 +121,23 @@ bool rh_turn_off() {
   digitalWrite(RH_LED, LED_OFF);     // spegnimento LED umidificatore
   status.rh_relay = false; // aggiornamento stato umidificatore
 
-  // spegnimento ventola di omogeneizzazione come descritto sopra
+  // richiesta di spegnimento ventola di omogeneizzazione
+  fan_turn_off();
+
+  // gestione contatore refill
+  timers.refill_counter += millis() - timers.last_rh_on;
+
+  // spegnimento avvenuto con successo
+  return true;
+}
+
+// richiesta di spegnimento ventola di omogeneizzazione
+bool fan_turn_off() {
+  // se la ventola di omogeneizzazione è già spenta, restituisce false senza fare nulla
+  if (!status.fan_relay)
+    return false;
+
+  // verifica se è possibile spegnere la ventola di omogeneizzazione
   #if TEMP_CTRL == PID && RH_CTRL == PID
   if (!status.heat_relay && (status.manual_ctrl || (!status.temp_pwm_value && !status.rh_pwm_value))) {
   #elif TEMP_CTRL == PID && RH_CTRL != PID
@@ -144,13 +149,11 @@ bool rh_turn_off() {
   #endif
     digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola di omogeneizzazione
     status.fan_relay = false; // aggiornamento stato ventola di omogeneizzazione
+    return true; // spegnimento avvenuto con successo
   }
 
-  // gestione contatore refill
-  timers.refill_counter += millis() - timers.last_rh_on;
-
-  // spegnimento avvenuto con successo
-  return true;
+  // ventola di omogeneizzazione non spenta, nessuna azione eseguita
+  return false;
 }
 
 // accensione illuminazione

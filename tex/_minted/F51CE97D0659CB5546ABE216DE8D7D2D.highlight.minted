@@ -1,0 +1,264 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file pid.cpp}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Implementazione dei controllori PID.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Implementazione delle funzioni per la gestione dei controllori PID per la}
+\PYG{c+cm}{ * temperatura e l\PYGZsq{}umidità dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}pid.h\PYGZdq{}}
+
+\PYG{c+cm}{/*}
+\PYG{c+cm}{// inizializza i parametri per i controllori PID}
+\PYG{c+cm}{void pid\PYGZus{}init(struct pid \PYGZam{}pid, const float \PYGZam{}kp, const float \PYGZam{}ki, const float \PYGZam{}kd, const float \PYGZam{}kw, const uint8\PYGZus{}t \PYGZam{}anti\PYGZus{}windup) \PYGZob{}}
+\PYG{c+cm}{  // inizializzazione dei guadagni del PID}
+\PYG{c+cm}{  pid.kp = kp;}
+\PYG{c+cm}{  pid.ki = ki;}
+\PYG{c+cm}{  pid.kd = kd;}
+\PYG{c+cm}{  pid.kw = kw;}
+
+\PYG{c+cm}{  // inizializzazione delle componenti del PID}
+\PYG{c+cm}{  pid.proportional = 0.0f;}
+\PYG{c+cm}{  pid.integral = 0.0f;}
+\PYG{c+cm}{  pid.derivative = 0.0f;}
+\PYG{c+cm}{  pid.output = 0.0f;}
+
+\PYG{c+cm}{  // inizializzazione del numero di misurazioni}
+\PYG{c+cm}{  pid.data\PYGZus{}count = 0;}
+\PYG{c+cm}{  pid.expected\PYGZus{}data\PYGZus{}count = PID\PYGZus{}UPDATE\PYGZus{}PERIOD / PID\PYGZus{}DATA\PYGZus{}PERIOD;}
+
+\PYG{c+cm}{  // inizializzazione delle variabili e accumulatori intermedi per calcolo PID}
+\PYG{c+cm}{  pid.deriv\PYGZus{}c1 = \PYGZhy{}6.0f / pid.expected\PYGZus{}data\PYGZus{}count / (pid.expected\PYGZus{}data\PYGZus{}count + 1) / (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f);}
+\PYG{c+cm}{  pid.deriv\PYGZus{}c2 = 12.0f / pid.expected\PYGZus{}data\PYGZus{}count / (pid.expected\PYGZus{}data\PYGZus{}count * pid.expected\PYGZus{}data\PYGZus{}count \PYGZhy{} 1) / (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f);}
+\PYG{c+cm}{  pid.sum1 = 0L;}
+\PYG{c+cm}{  pid.sum2 = 0L;}
+\PYG{c+cm}{  pid.sum3 = 0L;}
+
+\PYG{c+cm}{  // inizializzazione del metodo di anti\PYGZhy{}windup da utilizzare}
+\PYG{c+cm}{  pid.anti\PYGZus{}windup = anti\PYGZus{}windup;}
+\PYG{c+cm}{\PYGZcb{}}
+\PYG{c+cm}{*/}
+
+
+\PYG{c+c1}{// salva una nuova misurazione negli accumulatori del PID}
+\PYG{c+c1}{//void pid\PYGZus{}add\PYGZus{}data(struct pid \PYGZam{}pid, const int16\PYGZus{}t \PYGZam{}error, const int16\PYGZus{}t \PYGZam{}measure) \PYGZob{}}
+
+\PYG{+w}{  }\PYG{c+cm}{/**}
+\PYG{c+cm}{   * NOTE IMPLEMENTATIVE:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Le grandezze richieste per aggiornare l\PYGZsq{}output sono:}
+\PYG{c+cm}{   * \PYGZhy{} sum1:}
+\PYG{c+cm}{   *   somma degli errori tra setpoint e valore misurato, utilizzato per}
+\PYG{c+cm}{   *   la componente proporzionale, integrale e derivativa del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{} sum2:}
+\PYG{c+cm}{   *   somma dei valori misurati, utilizzato per la componente derivativa}
+\PYG{c+cm}{   *   del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{} sum3:}
+\PYG{c+cm}{   *   somma dei prodotti tra indice della misurazione e valore misurato,}
+\PYG{c+cm}{   *   utilizzato per la componente derivativa del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{} data\PYGZus{}count:}
+\PYG{c+cm}{   *   numero di misurazioni ricevute ed elaborate, utilizzato per il calcolo}
+\PYG{c+cm}{   *   delle componenti proporzionale, integrale e derivativa del PID}
+\PYG{c+cm}{   */}
+\PYG{c+cm}{/*}
+\PYG{c+cm}{  pid.sum1 += error;}
+\PYG{c+cm}{  pid.sum2 += measure;}
+\PYG{c+cm}{  pid.sum3 += (int32\PYGZus{}t)pid.data\PYGZus{}count * (int32\PYGZus{}t)measure;}
+\PYG{c+cm}{  pid.data\PYGZus{}count++;}
+\PYG{c+cm}{\PYGZcb{}}
+\PYG{c+cm}{*/}
+
+\PYG{c+c1}{// aggiorna l\PYGZsq{}output del controllore PID}
+\PYG{c+c1}{//float pid\PYGZus{}update\PYGZus{}output(struct pid \PYGZam{}pid) \PYGZob{}}
+
+\PYG{+w}{  }\PYG{c+cm}{/**}
+\PYG{c+cm}{   * NOTE IMPLEMENTATIVE:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * L\PYGZsq{}output \PYGZdq{}puro\PYGZdq{} è calcolato dalla successiva formula:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   pid.output = pid.proportional + pid.integral + pid.derivative}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Per calcolare l\PYGZsq{}output del PID, si effettuano i seguenti passaggi:}
+\PYG{c+cm}{   *  1. verifica assenza di dati da elaborare}
+\PYG{c+cm}{   *  2. calcolo della componente proporzionale}
+\PYG{c+cm}{   *  3. calcolo della componente integrale}
+\PYG{c+cm}{   *  4. calcolo della componente derivativa}
+\PYG{c+cm}{   *  5. anti\PYGZhy{}windup della componente integrale}
+\PYG{c+cm}{   *  6. limitazioni dell\PYGZsq{}output}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 1. verifica dell\PYGZsq{}assenza di dati da elaborare \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * In caso di problemi come mancanza totale di misurazioni, l\PYGZsq{}output del PID}
+\PYG{c+cm}{   * viene impostato al valore minimo, in modo da spegnere l\PYGZsq{}attuatore e non}
+\PYG{c+cm}{   * far peggiorare la situazione.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 2. calcolo della componente proporzionale \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * La componente proporzionale è calcolata come il prodotto tra il guadagno}
+\PYG{c+cm}{   * proporzionale kp e l\PYGZsq{}errore medio del ciclo di aggiornamento del PID.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Se ci dovessero essere problemi come mancanza di misurazioni, l\PYGZsq{}errore}
+\PYG{c+cm}{   * medio calcolato con i dati disponibili è comunque una buona stima di}
+\PYG{c+cm}{   * quello reale e il disturbo introdotto scompare totalmente al successivo}
+\PYG{c+cm}{   * aggiornamento dell\PYGZsq{}output del PID.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   mean\PYGZus{}error = sum\PYGZus{}error / data\PYGZus{}count}
+\PYG{c+cm}{   *   pid.proportional = kp * mean\PYGZus{}error}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 3. calcolo della componente integrale \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * La componente integrale è calcolata come il prodotto tra il guadagno}
+\PYG{c+cm}{   * integrale ki, l\PYGZsq{}errore accumulato nel ciclo di aggiornamento del PID e}
+\PYG{c+cm}{   * l\PYGZsq{}intervallo tra due misurazioni consecutive.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Se ci dovessero essere problemi come mancanza di misurazioni, i valori}
+\PYG{c+cm}{   * mancanti vengono sostituiti con l\PYGZsq{}errore medio calcolato per la parte}
+\PYG{c+cm}{   * proporzionale, essendo una buona stima. Il disturbo introdotto verrà}
+\PYG{c+cm}{   * propagato anche nei cicli successivi, ma verrà corretto grazie alla}
+\PYG{c+cm}{   * presenza del feedback del controllore PID.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   pid.integral = ki * mean\PYGZus{}error * expected\PYGZus{}data\PYGZus{}count * (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f)}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 4. calcolo della componente derivativa \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * La componente derivativa è calcolata come il prodotto tra il guadagno}
+\PYG{c+cm}{   * derivativo kd e la derivata della grandezza da controllare, calcolata}
+\PYG{c+cm}{   * tramite la formula ottenuta applicando il metodo dei minimi quadrati}
+\PYG{c+cm}{   * alla regressione lineare sulle misurazioni passate.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Si calcola la derivata della grandezza da controllare e non dell\PYGZsq{}errore}
+\PYG{c+cm}{   * tra setpoint e valore misurato in modo da evitare i \PYGZdq{}derivative kick\PYGZdq{}}
+\PYG{c+cm}{   * che si verificano al cambiamento del setpoint.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *   pid.derivative = kd * ( \PYGZhy{}deriv\PYGZus{}c1 * sum2 + deriv\PYGZus{}c2 * sum3);}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *                    6         N\PYGZhy{}1               12          N\PYGZhy{}1}
+\PYG{c+cm}{   *   dy/dt = \PYGZhy{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} * SUM  y\PYGZus{}i + \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} * SUM  (i * y\PYGZus{}i)}
+\PYG{c+cm}{   *             Ts * N (N + 1)   i=0        Ts * N (N\PYGZca{}2 \PYGZhy{} 1)   i=0}
+\PYG{c+cm}{   *           \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/   \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/   \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/   \PYGZbs{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}\PYGZus{}/}
+\PYG{c+cm}{   *               deriv\PYGZus{}c1         sum2        deriv\PYGZus{}c2           sum3}
+\PYG{c+cm}{   *   con:}
+\PYG{c+cm}{   *    \PYGZhy{} N   = numero di dati passati}
+\PYG{c+cm}{   *    \PYGZhy{} Ts  = intervallo tra due misurazioni consecutive}
+\PYG{c+cm}{   *    \PYGZhy{} y\PYGZus{}i = valore misurato i\PYGZhy{}esimo istante}
+\PYG{c+cm}{   *    \PYGZhy{} i   = indice del dato passato (0 = più vecchio, N\PYGZhy{}1 = più recente)}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Siccome i due coefficienti coeff1 e coeff2 sono costanti, vengono}
+\PYG{c+cm}{   * precalcolati in fase di inizializzazione e memorizzati in due apposite}
+\PYG{c+cm}{   * costanti deriv\PYGZus{}c1 e deriv\PYGZus{}c2.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Se ci dovessero essere problemi come mancanza di misurazioni, vengono}
+\PYG{c+cm}{   * utilizzati solo i valori disponibili siccome è parecchio complesso}
+\PYG{c+cm}{   * interpolare e integrare i valori mancanti all\PYGZsq{}interno delle sommatorie.}
+\PYG{c+cm}{   * Inoltre il disturbo introdotto scompare totalmente all\PYGZsq{}aggiornamento}
+\PYG{c+cm}{   * successivo dell\PYGZsq{}output e la regressione rimane sempre una buona stima}
+\PYG{c+cm}{   * della derivata reale. L\PYGZsq{}unico svantaggio è che bisogna ricalcolare le}
+\PYG{c+cm}{   * costanti deriv\PYGZus{}c1 e deriv\PYGZus{}c2 in funzione del numero di dati disponibili.}
+\PYG{c+cm}{   * Nel caso in cui si ha un solo dato, la componente derivativa viene}
+\PYG{c+cm}{   * impostata a zero.}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 5. anti\PYGZhy{}windup della componente integrale \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Si implementano tre opzioni per la gestione del windup della componente}
+\PYG{c+cm}{   * integrale del PID (no windup, clamping e back calculation) selezionabili}
+\PYG{c+cm}{   * tramite la flag anti\PYGZus{}windup della struct del PID:}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *  0. no anti\PYGZhy{}windup:}
+\PYG{c+cm}{   *      la componente integrale viene sempre sommata all\PYGZsq{}output del PID}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *  1. clamping:}
+\PYG{c+cm}{   *      se l\PYGZsq{}output del PID è superiore al limite massimo e l\PYGZsq{}errore è}
+\PYG{c+cm}{   *      positivo, o viceversa se l\PYGZsq{}output del PID è inferiore al limite}
+\PYG{c+cm}{   *      minimo e l\PYGZsq{}errore è negativo, il nuovo contributo della componente}
+\PYG{c+cm}{   *      integrale viene scartato sia per il calcolo dell\PYGZsq{}output del PID che}
+\PYG{c+cm}{   *      per l\PYGZsq{}accumulo dell\PYGZsq{}errore integrale}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *  2. back calculation:}
+\PYG{c+cm}{   *      la componente integrale viene compensata da un termine proporzionale}
+\PYG{c+cm}{   *      alla differenza tra l\PYGZsq{}output puro del PID e l\PYGZsq{}output limitato in modo}
+\PYG{c+cm}{   *      da far riportare l\PYGZsq{}output del PID all\PYGZsq{}interno dei limiti}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 6. limitazioni dell\PYGZsq{}output \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+cm}{   *}
+\PYG{c+cm}{   * Prima di essere restituito al chiamante, l\PYGZsq{}output del PID viene limitato}
+\PYG{c+cm}{   * tra le due costanti PID\PYGZus{}MIN\PYGZus{}OUTPUT e PID\PYGZus{}MAX\PYGZus{}OUTPUT.}
+\PYG{c+cm}{   */}
+\PYG{c+cm}{/*}
+\PYG{c+cm}{  // 1. verifica dell\PYGZsq{}assenza di dati da elaborare}
+\PYG{c+cm}{  if (pid.data\PYGZus{}count == 0) \PYGZob{}}
+\PYG{c+cm}{    pid.sum1 = 0L;}
+\PYG{c+cm}{    pid.sum2 = 0UL;}
+\PYG{c+cm}{    pid.sum3 = 0UL;}
+\PYG{c+cm}{    return PID\PYGZus{}MIN\PYGZus{}OUTPUT;}
+\PYG{c+cm}{  \PYGZcb{}}
+
+\PYG{c+cm}{  // 2. calcolo della componente proporzionale}
+\PYG{c+cm}{  float mean\PYGZus{}error = (float)pid.sum1 / pid.data\PYGZus{}count;}
+\PYG{c+cm}{  pid.proportional = pid.kp * mean\PYGZus{}error;}
+
+\PYG{c+cm}{  // 3. calcolo del contributo della componente integrale}
+\PYG{c+cm}{  float integral\PYGZus{}contrib = pid.ki * mean\PYGZus{}error * pid.expected\PYGZus{}data\PYGZus{}count * (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f);}
+
+\PYG{c+cm}{  // 4. calcolo della componente derivativa}
+\PYG{c+cm}{  if (pid.data\PYGZus{}count == pid.expected\PYGZus{}data\PYGZus{}count) \PYGZob{}}
+\PYG{c+cm}{    pid.derivative = pid.kd * (pid.deriv\PYGZus{}c1 * pid.sum2 + pid.deriv\PYGZus{}c2 * pid.sum3);}
+\PYG{c+cm}{  \PYGZcb{} else if (pid.data\PYGZus{}count == 1) \PYGZob{}}
+\PYG{c+cm}{    pid.derivative = 0.0f;}
+\PYG{c+cm}{  \PYGZcb{} else \PYGZob{}}
+\PYG{c+cm}{    float c1 = \PYGZhy{}6.0f / pid.data\PYGZus{}count / (pid.data\PYGZus{}count + 1.0f) / (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f);}
+\PYG{c+cm}{    float c2 = 12.0f / pid.data\PYGZus{}count / (pid.data\PYGZus{}count * pid.data\PYGZus{}count \PYGZhy{} 1.0f) / (PID\PYGZus{}DATA\PYGZus{}PERIOD / 1000.0f);}
+\PYG{c+cm}{    pid.derivative = pid.kd * (c1 * pid.sum2 + c2 * pid.sum3);}
+\PYG{c+cm}{  \PYGZcb{}}
+
+\PYG{c+cm}{  // calcolo dell\PYGZsq{}output temporaneo del PID}
+\PYG{c+cm}{  pid.output = pid.proportional + pid.integral + integral\PYGZus{}contrib \PYGZhy{} pid.derivative;}
+
+\PYG{c+cm}{  // 5. anti\PYGZhy{}windup della componente integrale del PID}
+\PYG{c+cm}{  switch (pid.anti\PYGZus{}windup) \PYGZob{}}
+\PYG{c+cm}{    case NO\PYGZus{}WINDUP: // no anti\PYGZhy{}windup}
+\PYG{c+cm}{      pid.integral += integral\PYGZus{}contrib;}
+\PYG{c+cm}{      break;}
+
+\PYG{c+cm}{    case CLAMPING: // clamping}
+\PYG{c+cm}{      if (!(pid.output \PYGZgt{} PID\PYGZus{}MAX\PYGZus{}OUTPUT \PYGZam{}\PYGZam{} mean\PYGZus{}error \PYGZgt{} 0.0f) \PYGZam{}\PYGZam{} !(pid.output \PYGZlt{} PID\PYGZus{}MIN\PYGZus{}OUTPUT \PYGZam{}\PYGZam{} mean\PYGZus{}error \PYGZlt{} 0.0f))}
+\PYG{c+cm}{        pid.integral += integral\PYGZus{}contrib;}
+\PYG{c+cm}{      break;}
+
+\PYG{c+cm}{    case BACK\PYGZus{}CALC: // back calculation}
+\PYG{c+cm}{      pid.integral += integral\PYGZus{}contrib + pid.kw * (constrain(pid.output, PID\PYGZus{}MIN\PYGZus{}OUTPUT, PID\PYGZus{}MAX\PYGZus{}OUTPUT) \PYGZhy{} pid.output) * (PID\PYGZus{}UPDATE\PYGZus{}PERIOD / 1000.0f);}
+\PYG{c+cm}{      break;}
+\PYG{c+cm}{  \PYGZcb{}}
+
+\PYG{c+cm}{  // calcolo dell\PYGZsq{}output finale del PID}
+\PYG{c+cm}{  pid.output = pid.proportional + pid.integral \PYGZhy{} pid.derivative;}
+
+\PYG{c+cm}{  // azzeramento delle variabili per il prossimo ciclo del PID}
+\PYG{c+cm}{  pid.sum1 = 0L;}
+\PYG{c+cm}{  pid.sum2 = 0UL;}
+\PYG{c+cm}{  pid.sum3 = 0UL;}
+\PYG{c+cm}{  pid.data\PYGZus{}count = 0;}
+
+\PYG{c+cm}{  // 6. limitazione dell\PYGZsq{}output del PID tra PID\PYGZus{}MIN\PYGZus{}OUTPUT e PID\PYGZus{}MAX\PYGZus{}OUTPUT}
+\PYG{c+cm}{  return constrain(pid.output, PID\PYGZus{}MIN\PYGZus{}OUTPUT, PID\PYGZus{}MAX\PYGZus{}OUTPUT);}
+\PYG{c+cm}{\PYGZcb{}}
+
+\PYG{c+cm}{// azzera gli accumulatori del PID}
+\PYG{c+cm}{void pid\PYGZus{}reset\PYGZus{}accumulators(struct pid \PYGZam{}pid) \PYGZob{}}
+\PYG{c+cm}{  pid.sum1 = 0L;}
+\PYG{c+cm}{  pid.sum2 = 0L;}
+\PYG{c+cm}{  pid.sum3 = 0L;}
+\PYG{c+cm}{  pid.data\PYGZus{}count = 0;}
+\PYG{c+cm}{\PYGZcb{}}
+\PYG{c+cm}{*/}
+\end{MintedVerbatim}

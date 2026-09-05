@@ -31,7 +31,6 @@
 \PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// setpoint appena calcolato}
 \PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// setpoint appena calcolato}
 
-
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} helper functions per il main \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
@@ -148,7 +147,7 @@
 \PYG{+w}{    }\PYG{n}{light\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// accensione illuminazione}
 
 \PYG{+w}{  }\PYG{c+c1}{// inizializzazione timers del sensore SHT20}
-\PYG{+w}{  }\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{init\PYGZus{}timer}\PYG{p}{();}
+\PYG{+w}{  }\PYG{c+c1}{//sensor.init\PYGZus{}timer();}
 
 \PYG{+w}{  }\PYG{c+c1}{// inizializzazione timer per ciclo PWM: il successivo ciclo inizierà con}
 \PYG{+w}{  }\PYG{c+c1}{// un ritardo di SHT20\PYGZus{}READ\PYGZus{}PERIOD millisecondi per permettere al sensore}
@@ -163,6 +162,7 @@
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 
 \PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{loop}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
 \PYG{+w}{  }\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{+w}{  }\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} gestione switch riscaldatore, umidificatore e illuminazione \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{+w}{  }\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
@@ -372,16 +372,17 @@
 \PYG{+w}{  }\PYG{c+c1}{// aggiorna il sensore e verifica la presenza di nuovi dati}
 \PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{update}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{c+c1}{// verifica presenza di nuovi errori nel sensore SHT20}
-\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{get\PYGZus{}error}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{err\PYGZus{}check}\PYG{p}{(}\PYG{n}{ERR\PYGZus{}SHT20}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{get\PYGZus{}error}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{      }\PYG{n}{serial\PYGZus{}sht20\PYGZus{}error}\PYG{p}{(}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{get\PYGZus{}error}\PYG{p}{());}\PYG{+w}{ }\PYG{c+c1}{// stampa errore su serial monitor}
 \PYG{+w}{      }\PYG{n}{lcd\PYGZus{}sht20\PYGZus{}error}\PYG{p}{(}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{get\PYGZus{}error}\PYG{p}{());}\PYG{+w}{ }\PYG{c+c1}{// stampa errore su display lcd}
 \PYG{+w}{      }\PYG{n}{err\PYGZus{}set}\PYG{p}{(}\PYG{n}{ERR\PYGZus{}SHT20}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// impostazione bit di errore per il sensore SHT20}
 \PYG{+w}{    }\PYG{p}{\PYGZcb{}}
 \PYG{+w}{  }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{    }\PYG{c+c1}{// 1. lettura della temperatura dal sensore e conversione in intero a 4 cifre}
+
+\PYG{+w}{    }\PYG{c+c1}{// 1.a lettura della temperatura e conversione in intero a 4 cifre}
 \PYG{+w}{    }\PYG{n}{sensor\PYGZus{}read}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int16\PYGZus{}t}\PYG{p}{)(}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{get\PYGZus{}temperature}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{);}
 
-\PYG{+w}{    }\PYG{c+c1}{// 2. verifica overflow della temperatura e gestione errori}
+\PYG{+w}{    }\PYG{c+c1}{// 2.a verifica overflow della temperatura e gestione errori}
 \PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{sensor\PYGZus{}read}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{        }\PYG{c+c1}{// verifica temperatura negativa}
 \PYG{+w}{      }\PYG{n}{err\PYGZus{}set}\PYG{p}{(}\PYG{n}{ERR\PYGZus{}TEMP\PYGZus{}OVERFLOW}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{//  \PYGZhy{} impostazione bit di errore}
 \PYG{+w}{      }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{      }\PYG{c+c1}{//  \PYGZhy{} assegnazione valore minimo}
@@ -395,10 +396,10 @@
 \PYG{+w}{      }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sensor\PYGZus{}read}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{//  \PYGZhy{} salvataggio valore}
 \PYG{+w}{    }\PYG{p}{\PYGZcb{}}
 
-\PYG{+w}{    }\PYG{c+c1}{// 1. lettura dell\PYGZsq{}umidità dal sensore e conversione in intero a 4 cifre}
+\PYG{+w}{    }\PYG{c+c1}{// 1.b lettura dell\PYGZsq{}umidità e conversione in intero a 4 cifre}
 \PYG{+w}{    }\PYG{n}{sensor\PYGZus{}read}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int16\PYGZus{}t}\PYG{p}{)(}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{get\PYGZus{}humidity}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{);}
 
-\PYG{+w}{    }\PYG{c+c1}{// 2. verifica overflow dell\PYGZsq{}umidità e gestione errori}
+\PYG{+w}{    }\PYG{c+c1}{// 2.b verifica overflow dell\PYGZsq{}umidità e gestione errori}
 \PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{sensor\PYGZus{}read}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{      }\PYG{c+c1}{// verifica umidità negativa}
 \PYG{+w}{      }\PYG{n}{err\PYGZus{}set}\PYG{p}{(}\PYG{n}{ERR\PYGZus{}RH\PYGZus{}OVERFLOW}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{//  \PYGZhy{} impostazione bit di errore}
 \PYG{+w}{      }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{      }\PYG{c+c1}{//  \PYGZhy{} assegnazione valore minimo}

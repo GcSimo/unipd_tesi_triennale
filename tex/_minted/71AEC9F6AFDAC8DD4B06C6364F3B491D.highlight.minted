@@ -92,23 +92,30 @@
 \PYG{+w}{  }\PYG{k}{switch}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{state}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{} 0. sensore in attesa}
 \PYG{+w}{    }\PYG{k}{case}\PYG{+w}{ }\PYG{n+no}{SHT20\PYGZus{}IDLE}\PYG{p}{:}
+
+\PYG{+w}{      }\PYG{c+c1}{// se è passato più del doppio del periodo di lettura, vuol dire che}
+\PYG{+w}{      }\PYG{c+c1}{// è stata saltata una misurazione, quindi si resetta il timer per}
+\PYG{+w}{      }\PYG{c+c1}{// evitare misurazioni a raffica}
+\PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{read\PYGZus{}timer}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{read\PYGZus{}period}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{read\PYGZus{}timer}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer richiesta}
+\PYG{+w}{        }\PYG{n}{state}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}READY\PYGZus{}FOR\PYGZus{}TEMP\PYGZus{}REQ}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+
 \PYG{+w}{      }\PYG{c+c1}{// verifica se sia trascorso il periodo tra due letture consecutive}
-\PYG{+w}{      }\PYG{c+c1}{//if (read\PYGZus{}timer == 0UL) \PYGZob{}}
-\PYG{+w}{      }\PYG{c+c1}{//  read\PYGZus{}timer = millis(); // inizializzazione timer}
-\PYG{+w}{      }\PYG{c+c1}{//\PYGZcb{} else}
-\PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{read\PYGZus{}timer}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{read\PYGZus{}period}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{read\PYGZus{}timer}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{read\PYGZus{}period}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{        }\PYG{n}{read\PYGZus{}timer}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{read\PYGZus{}period}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento timer richiesta}
 \PYG{+w}{        }\PYG{n}{state}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}READY\PYGZus{}FOR\PYGZus{}TEMP\PYGZus{}REQ}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato}
 \PYG{+w}{      }\PYG{p}{\PYGZcb{}}
 
-\PYG{+w}{      }\PYG{c+c1}{// nessun nuovo dato disponibile}
-\PYG{+w}{      }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+\PYG{+w}{      }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// reset codice di errore}
+\PYG{+w}{      }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{  }\PYG{c+c1}{// nessun nuovo dato disponibile}
 
 \PYG{+w}{    }\PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{} 1. sensore pronto per inviare la richiesta di lettura della temperatura}
 \PYG{+w}{    }\PYG{k}{case}\PYG{+w}{ }\PYG{n+no}{SHT20\PYGZus{}READY\PYGZus{}FOR\PYGZus{}TEMP\PYGZus{}REQ}\PYG{p}{:}
 \PYG{+w}{      }\PYG{c+c1}{// invio richiesta al sensore e verifica errori}
 \PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{requestTemperature}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{        }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{getError}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// recupero codice di errore}
+\PYG{+w}{        }\PYG{n}{state}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}IDLE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato}
 \PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// nessun nuovo dato disponibile}
 \PYG{+w}{      }\PYG{p}{\PYGZcb{}}
 
@@ -125,6 +132,7 @@
 \PYG{+w}{        }\PYG{c+c1}{// recupero temperatura dal sensore e verifica errori}
 \PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{readTemperature}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{          }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{getError}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// recupero codice di errore}
+\PYG{+w}{          }\PYG{n}{state}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}IDLE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato}
 \PYG{+w}{          }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// nessun nuovo dato disponibile}
 \PYG{+w}{        }\PYG{p}{\PYGZcb{}}
 
@@ -138,6 +146,7 @@
 \PYG{+w}{      }\PYG{c+c1}{// invio richiesta al sensore e verifica errori}
 \PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{requestHumidity}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{        }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{getError}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// recupero codice di errore}
+\PYG{+w}{        }\PYG{n}{state}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}IDLE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato}
 \PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// nessun nuovo dato disponibile}
 \PYG{+w}{      }\PYG{p}{\PYGZcb{}}
 
@@ -154,6 +163,7 @@
 \PYG{+w}{        }\PYG{c+c1}{// recupero umidità dal sensore e verifica errori}
 \PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{readHumidity}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{          }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sensor}\PYG{p}{.}\PYG{n}{getError}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// recupero codice di errore}
+\PYG{+w}{          }\PYG{n}{state}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}IDLE}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento stato}
 \PYG{+w}{          }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// nessun nuovo dato disponibile}
 \PYG{+w}{        }\PYG{p}{\PYGZcb{}}
 

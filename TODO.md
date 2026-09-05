@@ -23,7 +23,7 @@
 
 ## documento tesi:
 - [x] scaricare template per presentazione powerpoint
-- [ ] scattare foto del prototipo da inserire nel documento:
+- [x] scattare foto del prototipo da inserire nel documento:
   - [x] foto solo riscaldatore montato con ventola dietro
   - [x] foto solo ventola di omogeneizzazione
   - [x] foto solo scheda arduino

@@ -59,14 +59,14 @@
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} | RH\PYGZus{}PID\PYGZus{}out: \PYGZdq{}}\PYG{p}{));}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{rh\PYGZus{}pid}\PYG{p}{.}\PYG{n}{output}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} | RH\PYGZus{}PWM\PYGZus{}norm: \PYGZdq{}}\PYG{p}{));}
-\PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{((}\PYG{k+kt}{float}\PYG{p}{)(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}pwm\PYGZus{}value}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}MAX\PYGZus{}OUTPUT}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{PWM\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{((}\PYG{k+kt}{float}\PYG{p}{)(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}pwm\PYGZus{}value}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{PID\PYGZus{}MAX\PYGZus{}OUTPUT}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{PWM\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{PID\PYGZus{}MIN\PYGZus{}OUTPUT}\PYG{p}{);}
 \PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}elif RH\PYGZus{}CTRL == HYST}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} | RH\PYGZus{}output: \PYGZdq{}}\PYG{p}{));}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} | RH\PYGZus{}min\PYGZus{}thld: \PYGZdq{}}\PYG{p}{));}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{));}
 \PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} | RH\PYGZus{}max\PYGZus{}thld: \PYGZdq{}}\PYG{p}{));}
-\PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{));}
+\PYG{+w}{    }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{));}
 \PYG{+w}{  }\PYG{c+cp}{\PYGZsh{}endif}
 \PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{();}
 \PYG{p}{\PYGZcb{}}

@@ -1,0 +1,57 @@
+\chapter{Sviluppo del firmware per la gestione dell'incubatrice neonatale}
+\section{Requisiti del firmware}
+Il firmware per il microcontrollore deve essere in grado di gestire in tempo reale ed in maniera concorrente tutti i
+componenti del prototipo di incubatrice neonatale, come il pannello informativo frontale, la gestione degli attuatori,
+il sensore di temperatura e umidità, la comunicazione seriale con il PC e i controllori per la gestione della temperatura.
+
+Per garantire la corretta sincronizzazione tra i vari processi, non è possibile impiegare codice bloccante come loop
+in attesa di soddisfare una certa condizione o l'utilizzo dela funzione \verb|delay()|. Serve usare un approccio basato
+su macchine a stati e condizioni che sfruttano la funzione \verb|millis()|. In questo modo, il microcontrollore può
+portare avanti più processi in parallelo senza rimanere occupato a concludere un determinato compito e trascurare gli altri.
+
+Siccome il firmware deve operare su un microcontrollore con risorse limitate, l'implementazione deve essere efficiente
+sia in termini di complessità computazionale che di memoria. Per questo motivo, si cerca di limitare il più possibile
+l'uso di variabili locali e di allocazioni dinamiche nello stack/heap, preferendo l'uso di variabili globali. In questo
+modo la memoria RAM utilizzata per le variabili è già conosciuta a tempo di compilazione e risulta facile accorgersi di
+possibili problemi di overflow della memoria. Inoltre, l'uso di variabili globali permette di condividere facilmente
+lo stato del sistema tra i vari moduli del firmware, senza dover ricorrere continuamente a passaggi di parametri tra
+le funzioni.
+
+Infine è richiesto che il codice sia modulare, leggibile, documentato e facilmente modificabile. Nello sviluppo di un
+prototipo orientato alla ricerca, infatti, capiterà sicuramente e molto spesso la necessità di modificare il codice
+per aggiungere nuove funzionalità, correggere scelte che si rivelano non ottimali o per adattarlo a nuove esigenze.
+
+\section{Configurazione generale}
+\begin{itemize}
+	\item variabili globali di stato
+	\item files e moduli del firmware
+	\item istruzioni di compilazione da arduino ide e platform.io
+\end{itemize}
+
+\section{Gestione degli attuatori}
+\begin{itemize}
+	\item controllo manuale o automatico degli attuatori
+	\item gestione centralizzata degli attuatori per aggiornare le variabili di stato
+	\item gestione della ventola di omogeneizzazione della temperatura
+	\item gestione del refill dell'acqua per il sistema di umidificazione
+\end{itemize}
+
+\section{Gestione del pannello frontale}
+\begin{itemize}
+	\item lettura degli switch, con impostazione controllo manuale
+	\item lettura dei potenziometri, con filtri per ridurre il rumore
+	\item gestione del display lcd con temporizzazioni
+	\item gestione degli errori e gestione del led di allarme
+\end{itemize}
+
+\section{Gestione della comunicazione seriale al PC}
+\begin{itemize}
+	\item comunicazioni seriali
+	\item codice matlab
+\end{itemize}
+
+\section{Gestione del sensore di temperatura e umidità}
+\begin{itemize}
+	\item gestione non bloccante
+	\item utilizzo di una macchina a stati
+\end{itemize}

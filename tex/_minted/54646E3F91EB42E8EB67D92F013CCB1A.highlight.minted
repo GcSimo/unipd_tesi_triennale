@@ -125,6 +125,11 @@
 \PYG{+w}{    }\PYG{c+cm}{/**}
 \PYG{c+cm}{     * @brief Restituisce il codice di errore del sensore SHT20.}
 \PYG{c+cm}{     *}
+\PYG{c+cm}{     * Il codice di errore è disponibile fino alla successiva invocazione}
+\PYG{c+cm}{     * con successo della funzione update(), che lo resetta a 0. Quindi per}
+\PYG{c+cm}{     * verificare l\PYGZsq{}esito di una invocazione di update() è necessario leggere}
+\PYG{c+cm}{     * il codice di errore prima di invocare nuovamente tale funzione.}
+\PYG{c+cm}{     *}
 \PYG{c+cm}{     * @return int codice di errore}
 \PYG{c+cm}{     */}
 \PYG{+w}{    }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}error}\PYG{p}{();}

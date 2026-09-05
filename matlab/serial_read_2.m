@@ -42,7 +42,8 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 	fprintf(fileID, ['Time_Seconds,Temperature,Humidity,Setpoint_Temperature,Setpoint_Humidity,', ...
 						'Ctrl,Error_Code,T_PWM,RH_PWM,', ...
 						'T_PID_p,T_PID_i,T_PID_d,T_PID_out,', ...
-						'RH_PID_p,RH_PID_i,RH_PID_d,RH_PID_out\n']);
+						'RH_PID_p,RH_PID_i,RH_PID_d,RH_PID_out,', ...
+						'T_output,RH_output,T_min_thld,T_max_thld,RH_min_thld,RH_max_thld\n']);
 
 	% --- 4. sistema di sicurezza per chiusura file e porta seriale ---
 	% onCleanup garantisce la chiusura del file CSV e della porta seriale non
@@ -86,10 +87,13 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 			ylabel('Temperatura (°C)');
 			line_temp  = animatedline('Color', 'r', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
 			line_set_t = animatedline('Color', 'r', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+			line_t_min_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{min_thld}', 'MaximumNumPoints', maxPts);
+			line_t_max_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{max_thld}', 'MaximumNumPoints', maxPts);
 
 			yyaxis right;
 			ylabel('Segnali (PWM/PID)');
 			line_t_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
+			line_t_output = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'Output_{T}', 'MaximumNumPoints', maxPts);
 			line_t_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
 			line_t_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
 			line_t_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
@@ -109,10 +113,12 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 			ylabel('Umidità (%)');
 			line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
 			line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
-
+			line_rh_min_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{min_thld}', 'MaximumNumPoints', maxPts);
+			line_rh_max_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{max_thld}', 'MaximumNumPoints', maxPts);
 			yyaxis right;
 			ylabel('Segnali (PWM/PID)');
 			line_rh_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}', 'MaximumNumPoints', maxPts);
+			line_rh_output = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'Output_{RH}', 'MaximumNumPoints', maxPts);
 			line_rh_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
 			line_rh_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
 			line_rh_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
@@ -187,10 +193,19 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 				rh_d    = extractNum(lineStr, 'RH_PID_d:\s*([-+]?\d*\.?\d+)');
 				rh_out  = extractNum(lineStr, 'RH_PID_out:\s*([-+]?\d*\.?\d+)');
 
+				t_output  = extractNum(lineStr, 'T_output:\s*(\d+)');
+				rh_output = extractNum(lineStr, 'RH_output:\s*(\d+)');
+
+				t_min_thld = extractNum(lineStr, 'T_min_thld:\s*([-+]?\d*\.?\d+)');
+				t_max_thld = extractNum(lineStr, 'T_max_thld:\s*([-+]?\d*\.?\d+)');
+				rh_min_thld = extractNum(lineStr, 'RH_min_thld:\s*([-+]?\d*\.?\d+)');
+				rh_max_thld = extractNum(lineStr, 'RH_max_thld:\s*([-+]?\d*\.?\d+)');
+
 				% --- Scrittura sul CSV ---
-				fprintf(fileID, '%.2f,%.2f,%.2f,%.2f,%.2f,%s,%d,%.0f,%.0f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n', ...
+				fprintf(fileID, '%.2f,%.2f,%.2f,%.2f,%.2f,%s,%d,%.0f,%.0f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.0f,%.0f,%.2f,%.2f,%.2f,%.2f\n', ...
 					t_elapsed, temp, rh, set_t, set_rh, ctrl, err, t_pwm, rh_pwm, ...
-					t_p, t_i, t_d, t_out, rh_p, rh_i, rh_d, rh_out);
+					t_p, t_i, t_d, t_out, rh_p, rh_i, rh_d, rh_out, ...
+					t_output, rh_output, t_min_thld, t_max_thld, rh_min_thld, rh_max_thld);
 
 				% Aggiornamento Grafico
 				if showPlot > 0 && isvalid(fig)
@@ -203,6 +218,9 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 						addpoints(line_t_i, t_elapsed, t_i);
 						addpoints(line_t_d, t_elapsed, t_d);
 						addpoints(line_t_out, t_elapsed, t_out);
+						addpoints(line_t_output, t_elapsed, t_output);
+						addpoints(line_t_min_thld, t_elapsed, t_min_thld);
+						addpoints(line_t_max_thld, t_elapsed, t_max_thld);
 					end
 
 					% Dati umidità
@@ -214,6 +232,9 @@ function serial_read_2(showPlot, portName, baudRate, filename)
 						addpoints(line_rh_i, t_elapsed, rh_i);
 						addpoints(line_rh_d, t_elapsed, rh_d);
 						addpoints(line_rh_out, t_elapsed, rh_out);
+						addpoints(line_rh_output, t_elapsed, rh_output);
+						addpoints(line_rh_min_thld, t_elapsed, rh_min_thld);
+						addpoints(line_rh_max_thld, t_elapsed, rh_max_thld);
 					end
 
 					% limitrate forza MATLAB a non aggiornare l'UI più di 20 volte
@@ -261,7 +282,7 @@ end
 % Funzione chiamata automaticamente in caso di errore o quando premi Ctrl+C
 function cleanUpRoutine(arduinoObj, fileID)
 	fprintf('\nChiusura connessione seriale e salvataggio file CSV in corso...\n');
-	clear(arduinoObj);
+	clear arduinoObj;
 	if fileID ~= -1
 		fclose(fileID);
 	end

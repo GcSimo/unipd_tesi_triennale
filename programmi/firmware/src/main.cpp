@@ -30,7 +30,6 @@ int16_t pot_read = 0;          // valore appena letto dai potenziometri
 int16_t new_temp_setpoint = 0; // setpoint appena calcolato
 int16_t new_rh_setpoint = 0;   // setpoint appena calcolato
 
-
 // ----------------------------------------------------------------------------
 // ----------------------- helper functions per il main -----------------------
 // ----------------------------------------------------------------------------
@@ -52,28 +51,6 @@ void set_manual_ctrl();
  * flag status.manual_ctrl a AUTO_CTRL.
  */
 void set_auto_ctrl();
-
-/**
- * @brief Verifica se è necessario un refill dell'acqua.
- *
- * Questa funzione verifica se è necessario effettuare un refill dell'acqua
- * dell'incubatrice. Controlla se il periodo di tempo in cui l'umidificatore
- * è stato acceso supera il valore di REFILL_INTERVAL. Se è necessario un
- * refill, la funzione spegne l'umidificatore e accende il led di refill,
- * attivando il blocco automatico dell'umidificatore.
- *
- * Per far ripristinare il funzionamento dell'umidificatore, è necessario
- * effettuare un refill dell'acqua e successivamente riavviare l'incubatrice
- * neonatale dal tasto reset della scheda Arduino. In questo modo tutti i
- * contatori vengono azzerati.
- *
- * Per funzionare correttamente, questa funzione deve essere invocata ad ogni
- * iterazione del loop principale.
- *
- * @return true refill necessario, umidificatore spento e led di refill acceso
- * @return false refill non necessario, nessuna azione eseguita
- */
-bool check_refill();
 
 
 // ----------------------------------------------------------------------------
@@ -168,9 +145,14 @@ void setup() {
   if (status.light_sw)
     light_turn_on(); // accensione illuminazione
 
-  // inizializzazione timers del sensore e del ciclo pwm
-  timers.start_pwm = millis();
-  sensor.init_timer();
+  // inizializzazione timers del sensore SHT20
+  //sensor.init_timer();
+
+  // inizializzazione timer per ciclo PWM: il successivo ciclo inizierà con
+  // un ritardo di SHT20_READ_PERIOD millisecondi per permettere al sensore
+  // di effettuare la prima lettura e inizializzare correttamente i buffer
+  // del controllore PID
+  timers.start_pwm = millis() - PWM_PERIOD + SHT20_READ_PERIOD;
 }
 
 
@@ -179,6 +161,7 @@ void setup() {
 // ----------------------------------------------------------------------------
 
 void loop() {
+
   // --------------------------------------------------------------------------
   // ------ gestione switch riscaldatore, umidificatore e illuminazione -------
   // --------------------------------------------------------------------------
@@ -388,16 +371,17 @@ void loop() {
   // aggiorna il sensore e verifica la presenza di nuovi dati
   if (!sensor.update()) {
     // verifica presenza di nuovi errori nel sensore SHT20
-    if (sensor.get_error() && !err_check(ERR_SHT20)) {
+    if (sensor.get_error()) {
       serial_sht20_error(sensor.get_error()); // stampa errore su serial monitor
       lcd_sht20_error(sensor.get_error()); // stampa errore su display lcd
       err_set(ERR_SHT20); // impostazione bit di errore per il sensore SHT20
     }
   } else {
-    // 1. lettura della temperatura dal sensore e conversione in intero a 4 cifre
+
+    // 1.a lettura della temperatura e conversione in intero a 4 cifre
     sensor_read = (int16_t)(sensor.get_temperature() * 100 + 0.5);
 
-    // 2. verifica overflow della temperatura e gestione errori
+    // 2.a verifica overflow della temperatura e gestione errori
     if (sensor_read < 0) {        // verifica temperatura negativa
       err_set(ERR_TEMP_OVERFLOW); //  - impostazione bit di errore
       status.temp_sht20 = 0;      //  - assegnazione valore minimo
@@ -411,10 +395,10 @@ void loop() {
       status.temp_sht20 = sensor_read; //  - salvataggio valore
     }
 
-    // 1. lettura dell'umidità dal sensore e conversione in intero a 4 cifre
+    // 1.b lettura dell'umidità e conversione in intero a 4 cifre
     sensor_read = (int16_t)(sensor.get_humidity() * 100 + 0.5);
 
-    // 2. verifica overflow dell'umidità e gestione errori
+    // 2.b verifica overflow dell'umidità e gestione errori
     if (sensor_read < 0) {      // verifica umidità negativa
       err_set(ERR_RH_OVERFLOW); //  - impostazione bit di errore
       status.rh_sht20 = 0;      //  - assegnazione valore minimo
@@ -577,8 +561,16 @@ void loop() {
   // -------------------- gestione errori e led di allarme --------------------
   // --------------------------------------------------------------------------
 
-  check_temp_range(); // controllo temperatura fuori dal range di sicurezza
-  check_rh_range();   // controllo umidità fuori dal range di sicurezza
+  // controllo temperatura fuori dal range di sicurezza (se soglia non nulla)
+  #if TEMP_ERR_THLD > 0
+  check_temp_range();
+  #endif
+
+  // controllo umidità fuori dal range di sicurezza (se soglia non nulla)
+  #if RH_ERR_THLD > 0
+  check_rh_range();
+  #endif
+
   update_temporized_errors(); // aggiornamento stato errori temporizzati
   update_alarm_led(); // aggiornamento stato led di allarme
 
@@ -587,11 +579,29 @@ void loop() {
   // ----------------- gestione refill acqua e led di refill ------------------
   // --------------------------------------------------------------------------
 
+
   /**
-   * @brief Verifica necessità di refill dell'acqua.
+   * @brief Gestione del refill dell'acqua dell'umidificatore.
    *
-   * Per capire se è necesasrio un refill dell'acqua, si verifica se la somma
-   * dei seguenti valori supera REFILL_INTERVAL:
+   * Il programma controlla periodicamente se è necessario effettuare un refill
+   * dell'acqua. La procedura di test consiste nel verificare se l'intervallo
+   * di tempo in cui l'umidificatore è stato acceso supera REFILL_INTERVAL.
+   * In caso affermativo, vuol dire che l'umidificatore ha consumato tutta
+   * l'acqua che ne garantisce il corretto funzionamento ed è necessario
+   * ricaricarne altra nell'apposita vaschetta.
+   *
+   * Quando il programma nota la necessità di un refill, spegne l'umidificatore
+   * accende il led di refill, mostra un messaggio di refill sul display lcd
+   * e sul monitor seriale e blocca ulteriori accensioni dell'umidificatore.
+   *
+   * Per far ripristinare il funzionamento dell'umidificatore, è necessario
+   * effettuare il refill dell'acqua e successivamente riavviare l'incubatrice
+   * neonatale dal tasto reset della scheda Arduino. In questo modo tutti i
+   * contatori vengono azzerati.
+   *
+   * Per calcolare il tempo totale in cui l'umidificatore è stato acceso
+   * (che poi verrà confrontato con REFILL_INTERVAL), si sommano i due
+   * seguenti contributi:
    *
    * 1. durata delle precedenti accensioni dell'umidificatore data dalla
    *   variabile timers.refill_counter
@@ -671,33 +681,4 @@ void set_auto_ctrl() {
 
   // reset timer pwm
   timers.start_pwm = millis() - PWM_PERIOD;
-}
-
-// verifica necessità di refill dell'acqua
-bool check_refill() {
-
-  /**
-   * NOTE IMPLEMENTATIVE:
-   *
-   * Si verifica se la somma dei seguenti valori supera REFILL_INTERVAL:
-   *
-   * - durata delle precedenti accensioni dell'umidificatore data dalla
-   *   variabile timers.refill_counter
-   * - tempo trascorso dall'ultima accensione, data dalla differenza
-   *   (millis() - timers.last_rh_on) moltiplicata per lo stato attuale
-   *   dell'umidificatore (status.rh_relay), così da considerare solo
-   *   il tempo trascorso se l'umidificatore è acceso
-   */
-
-  // verifica se è necessario un refill dell'acqua
-  if (!status.refill_led && timers.refill_counter + (millis() - timers.last_rh_on) * status.rh_relay >= REFILL_INTERVAL) {
-     rh_turn_off();                    // spegnimento umidificatore
-     lcd_refill_message();
-     serial_refill_message();
-     digitalWrite(REFILL_LED, LED_ON); // accensione led di refill
-     status.refill_led = true;         // aggiornamento stato led di refill
-  }
-
-  // restituisce lo stato del led di refill (true = refill, false = no refill)
-  return status.refill_led;
 }

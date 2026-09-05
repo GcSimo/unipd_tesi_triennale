@@ -265,6 +265,111 @@
 - test pid con kp = 40, ki = 0.3, kd = 500, 15 secondi di pwm e 20 campioni derivativi
 - integrale troppo basso
 
-#### data_20260902_185452.csv
+### data_20260902_185452.csv
 - test pid con kp = 40, ki = 0.45, kd = 500, 15 secondi di pwm e 20 campioni derivativi
 - integrale di poco troppo grande
+
+### data_20260903_123734.csv
+- test pid con kp = 40, ki = 0.4, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- primo test della giornata -> partenza da freddo
+- con sovraelongazione
+
+### data_20260903_125616.csv
+- test pid con kp = 40, ki = 0.4, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- stessa configurazione, ma partenza dopo raffreddamento parziale
+- nessuna sovraelongazione
+
+### data_20260903_130221.csv
+- test pid con kp = 40, ki = 0.4, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- stessa configurazione, ma con oblò aperti
+- con leggera sovraelongazione
+
+### data_20260903_140800.csv
+- test pid con kp = 50, ki = 0.55, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- partenza da freddo
+- con sovraelongazione
+
+### data_20260903_142528.csv
+- test pid con kp = 50, ki = 0.55, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- stessa configurazione, ma partenza dopo raffreddamento parziale
+- appena con sovraelongazione
+
+### data_20260903_143757.csv
+- test pid con kp = 50, ki = 0.55, kd = 500, 15 secondi di pwm e 20 campioni derivativi
+- stessa configurazione, ma con oblò aperti
+- leggera sovraelongazione
+
+### data_20260903_152539.csv
+- test isteresi temperatura - 1
+
+### data_20260903_154139.csv
+- test isteresi temperatura - 2
+- buono per tesi, risposta allo scalino, con condizione iniziale di 31 °C
+
+### data_20260903_163545.csv
+- test pid con kp = 40, ki = 0.4, kd = 500, clamping, 15 secondi di pwm e 20 campioni derivativi
+- buono per tesi, risposta allo scalino, con condizione iniziale di 31 °C
+
+### data_20260903_164924.csv
+- test pid con kp = 40, ki = 0.4, kd = 500, bias = 50, limiting [-30, +30], 15 secondi di pwm e 20 campioni derivativi
+- troppo overshoot perché l'integrale arriva subito a saturazione +30
+- a regime funziona solo l'azione di feedforward
+
+### data_20260903_170156.csv
+- test pid con kp = 40, ki = 0.4, kd = 500, bias = 50, clamping, 15 secondi di pwm e 20 campioni derivativi
+- troppo overshoot perché l'integrale cresce fino a 17/18
+- leggere oscillazioni prima di stabilizzarsi
+- a regime funziona solo l'azione di feedforward
+
+## set prove 6
+### data_20260904_125808.csv
+- test cambio setpoint temperatura
+
+### data_20260904_131119.csv
+- test evoluzione libera, alla fine temperatura esterna di 25.8°C
+- polo e costante per setpoint a:
+  - 25°C -> -0.0010 - 12.5703
+  - 26°C -> -0.0011 - 11.4769
+  - 27°C -> -0.0013 - 10.2818
+  - 28°C -> -0.0014 - 8.8870
+  - 29°C -> -0.0014 - 7.0738
+  - 30°C -> -0.0011 - 4.4205
+
+### data_20260904_135951.csv
+- test evoluzione libera, alla fine temperatura esterna di 25.7 °C
+- polo e costante per setpoint a:
+  - 25°C -> -0.0012 - 14.7070
+  - 26°C -> -0.0013 - 13.6616
+  - 27°C -> -0.0015 - 12.5631
+  - 28°C -> -0.0017 - 11.3731
+  - 29°C -> -0.0019 - 10.0085
+  - 30°C -> -0.0020 - 8.2765
+
+### data_20260904_145036.csv
+- test pid con kp = 45, ki = 0.4, kd = 500, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- reset arduino e inizio test al secondo 53.-
+- leggera sovraelongazione
+
+### data_20260904_150913.csv
+- test pid con kp = 50, ki = 0.4, kd = 500, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- undershoot
+
+### data_20260904_152754.csv
+- test pid con kp = 60, ki = 0.4, kd = 500, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- undershoot
+
+### data_20260904_153124.csv
+- test pid con kp = 60, ki = 0.4, kd = 100, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- undershoot
+
+### data_20260904_155040.csv
+- test pid con kp = 70, ki = 0.4, kd = 0, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- undershoot
+
+### data_20260904_155746.csv
+- test pid con kp = 70, ki = 0.7, kd = 0, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- undershoot leggero
+
+### data_20260904_160527.csv
+- test pid con kp = 70, ki = 0.8, kd = 0, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
+- undershoot leggero e sovraelongazione

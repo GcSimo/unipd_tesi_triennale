@@ -66,8 +66,8 @@
 // ----------------------------------------------------------------------------
 
 // costruttore della classe sht20
-sht20::sht20(uint32_t rp) {
-  sensor = SHT2x();   // inizializzazione oggetto della classe SHT2x
+sht20::sht20(uint32_t rp, TwoWire *wire) {
+  sensor = SHT2x(wire);   // inizializzazione oggetto della classe SHT2x
   state = SHT20_IDLE; // stato del sensore SHT20
   read_period = rp;   // periodo di lettura del sensore SHT20
   read_timer = 0UL;   // timer per le letture del sensore SHT20
@@ -91,23 +91,30 @@ bool sht20::update() {
   switch (state) {
     // --- 0. sensore in attesa
     case SHT20_IDLE:
+
+      // se è passato più del doppio del periodo di lettura, vuol dire che
+      // è stata saltata una misurazione, quindi si resetta il timer per
+      // evitare misurazioni a raffica
+      if (millis() - read_timer >= read_period * 2) {
+        read_timer = millis(); // aggiornamento timer richiesta
+        state = SHT20_READY_FOR_TEMP_REQ; // aggiornamento stato
+      }
+
       // verifica se sia trascorso il periodo tra due letture consecutive
-      //if (read_timer == 0UL) {
-      //  read_timer = millis(); // inizializzazione timer
-      //} else
-      if (millis() - read_timer >= read_period) {
+      else if (millis() - read_timer >= read_period) {
         read_timer += read_period; // aggiornamento timer richiesta
         state = SHT20_READY_FOR_TEMP_REQ; // aggiornamento stato
       }
 
-      // nessun nuovo dato disponibile
-      return false;
+      error = 0; // reset codice di errore
+      return false;  // nessun nuovo dato disponibile
 
     // --- 1. sensore pronto per inviare la richiesta di lettura della temperatura
     case SHT20_READY_FOR_TEMP_REQ:
       // invio richiesta al sensore e verifica errori
       if (!sensor.requestTemperature()) {
         error = sensor.getError(); // recupero codice di errore
+        state = SHT20_IDLE; // aggiornamento stato
         return false; // nessun nuovo dato disponibile
       }
 
@@ -124,6 +131,7 @@ bool sht20::update() {
         // recupero temperatura dal sensore e verifica errori
         if (!sensor.readTemperature()) {
           error = sensor.getError(); // recupero codice di errore
+          state = SHT20_IDLE; // aggiornamento stato
           return false; // nessun nuovo dato disponibile
         }
 
@@ -137,6 +145,7 @@ bool sht20::update() {
       // invio richiesta al sensore e verifica errori
       if (!sensor.requestHumidity()) {
         error = sensor.getError(); // recupero codice di errore
+        state = SHT20_IDLE; // aggiornamento stato
         return false; // nessun nuovo dato disponibile
       }
 
@@ -153,6 +162,7 @@ bool sht20::update() {
         // recupero umidità dal sensore e verifica errori
         if (!sensor.readHumidity()) {
           error = sensor.getError(); // recupero codice di errore
+          state = SHT20_IDLE; // aggiornamento stato
           return false; // nessun nuovo dato disponibile
         }
 

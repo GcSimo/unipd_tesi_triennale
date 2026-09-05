@@ -43,15 +43,22 @@ class sht20 {
     /**
      * @brief Costruttore della classe sht20.
      *
-     * Riceve come parametro il periodo di lettura del sensore SHT20, espresso
+     * Riceve come parametro opzionale il tempo di campionamento, ovvero
+     * l'intervallo di tempo tra due letture consecutive del sensore, espresso
      * in millisecondi. Di default viene impostato a 1000 ms (1 secondo).
-     *
-     * Dal datasheet è sconsigliato scendere sotto al secondo per evitare
+     * Il datasheet consiglia di non scendere sotto al secondo per evitare
      * fenomeni di self-heating del sensore.
      *
+     * È possibile indicare, sempre come parametro opzionale, il puntatore
+     * all'oggetto TwoWire da utilizzare per la comunicazione I2C. Questo
+     * è utile nel caso in cui il sensore sia attaccato ad un bus I2C diverso
+     * da quello di default, ad esempio se in quello di default sono presenti
+     * altri dispositivi I2C con lo stesso indirizzo (es. un altro SHT20).
+     *
      * @param read_period periodo di lettura del sensore
+     * @param wire puntatore all'oggetto TwoWire per la comunicazione I2C
      */
-    sht20(uint32_t read_period = 1000);
+    sht20(uint32_t read_period = 1000, TwoWire *wire = &Wire);
 
     /**
      * @brief Inizializzazione del sensore SHT20.
@@ -69,11 +76,11 @@ class sht20 {
      * lettura o dovuti ad un periodo di inattività del sensore superiore al
      * periodo di lettura impostato.
      *
-     * La lettura successiva avverrà dopo il periodo di lettura impostato
-     * dall'invocazione di questa funzione.
+     * La lettura successiva avverrà alla prima successiva invocazione della
+     * funzione update().
      */
     void init_timer() {
-      read_timer = millis();
+      read_timer = millis() - read_period;
     }
 
     /**
@@ -116,6 +123,11 @@ class sht20 {
 
     /**
      * @brief Restituisce il codice di errore del sensore SHT20.
+     *
+     * Il codice di errore è disponibile fino alla successiva invocazione
+     * con successo della funzione update(), che lo resetta a 0. Quindi per
+     * verificare l'esito di una invocazione di update() è necessario leggere
+     * il codice di errore prima di invocare nuovamente tale funzione.
      *
      * @return int codice di errore
      */

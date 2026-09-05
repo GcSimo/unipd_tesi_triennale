@@ -120,11 +120,13 @@ template <uint8_t C> void pid_reset_buffers(pid<C> &pid, int16_t error, int16_t 
   // aggiornamento della flag di inizializzazione
   pid.initialized = true;
 
-  // reset delle componenti del PID
-  pid.proportional = 0.0f;
-  pid.integral = 0.0f;
-  pid.derivative = 0.0f;
-  pid.output = 0.0f;
+  // reset delle componenti del PID se indicato nella configurazione del PID
+  if ((C == TEMP ? TEMP_PID_RESET : RH_PID_RESET)) {
+    pid.proportional = 0.0f;
+    pid.integral = 0.0f;
+    pid.derivative = 0.0f;
+    pid.output = 0.0f;
+  }
 }
 
 

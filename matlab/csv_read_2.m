@@ -61,11 +61,14 @@ function csv_read_2(filename, showPlot)
 			yyaxis left;
 			plot(time, data.Temperature, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Misurazione');
 			plot(time, data.Setpoint_Temperature, 'r--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint');
+			plot(time, data.T_min_thld, 'r:', 'LineWidth', 1, 'DisplayName', 'T_{min_thld}');
+			plot(time, data.T_max_thld, 'r:', 'LineWidth', 1, 'DisplayName', 'T_{max_thld}');
 			ylabel('Temperatura (°C)');
 
 			% Asse Destro (Segnali di controllo)
 			yyaxis right;
 			plot(time, data.T_PWM, 'k-', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}');
+			plot(time, data.T_output, 'k-', 'LineWidth', 1.5, 'DisplayName', 'Output_{T}');
 			plot(time, data.T_PID_p, '--', 'Color', c_P, 'LineWidth', 1, 'DisplayName', 'P_{PID}');
 			plot(time, data.T_PID_i, '--', 'Color', c_I, 'LineWidth', 1, 'DisplayName', 'I_{PID}');
 			plot(time, data.T_PID_d, '--', 'Color', c_D, 'LineWidth', 1, 'DisplayName', 'D_{PID}');
@@ -88,11 +91,14 @@ function csv_read_2(filename, showPlot)
 			yyaxis left;
 			plot(time, data.Humidity, 'b-', 'LineWidth', 1.5, 'DisplayName', 'Misurazione');
 			plot(time, data.Setpoint_Humidity, 'b--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint');
+			plot(time, data.RH_min_thld, 'b:', 'LineWidth', 1, 'DisplayName', 'RH_{min_thld}');
+			plot(time, data.RH_max_thld, 'b:', 'LineWidth', 1, 'DisplayName', 'RH_{max_thld}');
 			ylabel('Umidità (%)');
 
 			% Asse Destro (Segnali di controllo)
 			yyaxis right;
 			plot(time, data.RH_PWM, 'k-', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}');
+			plot(time, data.RH_output, 'k-', 'LineWidth', 1.5, 'DisplayName', 'Output_{RH}');
 			plot(time, data.RH_PID_p, '--', 'Color', c_P, 'LineWidth', 1, 'DisplayName', 'P_{PID}');
 			plot(time, data.RH_PID_i, '--', 'Color', c_I, 'LineWidth', 1, 'DisplayName', 'I_{PID}');
 			plot(time, data.RH_PID_d, '--', 'Color', c_D, 'LineWidth', 1, 'DisplayName', 'D_{PID}');

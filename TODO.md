@@ -9,12 +9,12 @@
 - [x] creare classe per gestire sht20
 - [x] verifica glitch iniziale dei relè e invertire digitalWrite con pinMode per i relè nella funzione di setup()
 - [x] tarare timer di refill
+- [x] verificare massima durata di un loop - max ct: 248312 micros - mean ct: 166 micros (PID-PID) - 162 micros (PID-HYST) - 156 micros (MAN) - 153 (NONE-NONE)
+- [x] verificare temporizzazione display, led allarme
+- [x] verificare derivata al variare del setpoint (derivative kick test)
 - [ ] tarare parametri PID
-- [ ] verificare massima durata di un loop
-- [ ] verificare temporizzazione display, led allarme
-- [ ] verificare derivata al variare del setpoint (derivative kick test)
-- [ ] aggiungere conversione °C in potenza
 - [ ] aggiungere static_assert per verificare parametri di configurazione dell'incubatrice
+- [ ] aggiungere conversione °C in potenza (feedforward per ragiungere il setpoint) -> complesso da implementare
 - [ ] gestione output nel passaggio da automatico a manuale -> non necessaria
 - [ ] implementare il pid come oggetto -> non necessaria (peggiorativa)
 
@@ -24,12 +24,12 @@
 ## documento tesi:
 - [x] scaricare template per presentazione powerpoint
 - [ ] scattare foto del prototipo da inserire nel documento:
-  - [ ] foto solo riscaldatore montato con ventola dietro
-  - [ ] foto solo ventola di omogeneizzazione
-  - [ ] foto umidificatore con ventola
-  - [ ] foto solo scheda arduino
-  - [ ] foto solo stepdown in uso accanto ad uno nuovo
-  - [ ] foto interno del pannello frontale (lato pannello e lato incubatrice)
+  - [x] foto solo riscaldatore montato con ventola dietro
+  - [x] foto solo ventola di omogeneizzazione
+  - [x] foto solo scheda arduino
+  - [x] foto solo stepdown in uso accanto ad uno nuovo
+  - [x] foto interno del pannello frontale (lato pannello e lato incubatrice)
+  - [x] misurare corrente assorbita dallo step down -> 1: 35 mA / 2: 66mA / 3: 96mA / 4: 117 mA / 5: 139 mA
 - [ ] modificare titolo della tesi per eliminare controllo di umidità
 
 ## hardware:
@@ -43,9 +43,9 @@
 ## confronto con prof:
 - [x] metodo dei minimi quadrati per calcolo derivata dell'errore
 - [x] miglioramenti al controllore pid ([https://onlinelibrary.wiley.com/doi/10.1002/9781394442102.ch1](https://onlinelibrary.wiley.com/doi/10.1002/9781394442102.ch1), [http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-reset-windup/](http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-reset-windup/))
-- [ ] ordine dei materiali e gestione del relé
-- [ ] scadenze per consegna tesi e discussione
-- [ ] modificare titolo della tesi per eliminare controllo di umidità
+- [x] ordine dei materiali e gestione del relé
+- [x] scadenze per consegna tesi e discussione
+- [x] modificare titolo della tesi per eliminare controllo di umidità
 
 
 - discussione dal 7 al 12 settembre verso metà settimana

@@ -139,13 +139,13 @@ bool fan_turn_off() {
 
   // verifica se è possibile spegnere la ventola di omogeneizzazione
   #if TEMP_CTRL == PID && RH_CTRL == PID
-  if (!status.heat_relay && (status.manual_ctrl || (!status.temp_pwm_value && !status.rh_pwm_value))) {
+  if (!status.rh_relay && !status.heat_relay && (status.manual_ctrl || (!status.temp_pwm_value && !status.rh_pwm_value))) {
   #elif TEMP_CTRL == PID && RH_CTRL != PID
-  if (!status.heat_relay && (status.manual_ctrl || !status.temp_pwm_value)) {
+  if (!status.rh_relay && !status.heat_relay && (status.manual_ctrl || !status.temp_pwm_value)) {
   #elif TEMP_CTRL != PID && RH_CTRL == PID
-  if (!status.heat_relay && (status.manual_ctrl || !status.rh_pwm_value)) {
+  if (!status.rh_relay && !status.heat_relay && (status.manual_ctrl || !status.rh_pwm_value)) {
   #else
-  if (!status.heat_relay) {
+  if (!status.rh_relay && !status.heat_relay) {
   #endif
     digitalWrite(FAN_RELAY, RELAY_OFF); // spegnimento ventola di omogeneizzazione
     status.fan_relay = false; // aggiornamento stato ventola di omogeneizzazione

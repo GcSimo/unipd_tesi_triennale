@@ -1,4 +1,4 @@
-function poles_estimation(filename, input_ordine)
+function poles_estimation(filename, input_ordine, T_external, t_end)
 	% Se non viene specificato il nome del file
 	if nargin < 1 || isempty(filename)
 		error('Uso corretto: model_estimation <nome_file.csv> [ordine]');
@@ -18,6 +18,22 @@ function poles_estimation(filename, input_ordine)
 		% Verifica che sia un numero intero positivo valido
 		if isnan(ordine) || ordine < 1 || mod(ordine, 1) ~= 0
 			error('L''ordine deve essere un numero intero positivo.');
+		end
+	end
+
+	if nargin < 3 || isempty(T_external)
+		T_external = 0; % Nessun vettore temporale esterno fornito
+	else
+		if ischar(T_external) || isstring(T_external)
+			T_external = str2double(T_external);
+		end
+	end
+
+	if nargin < 4 || isempty(t_end)
+		t_end = 0; % Nessun tempo finale fornito
+	else
+		if ischar(t_end) || isstring(t_end)
+			t_end = str2double(t_end);
 		end
 	end
 
@@ -41,16 +57,30 @@ function poles_estimation(filename, input_ordine)
 	data = readtable(filename, opts);
 
 	% 2. Vettore temporale e passo di campionamento Ts
-	t_datetime = datetime(data.Timestamp, 'InputFormat', 'yyyy-MM-dd HH:mm:ss');
-	t = seconds(t_datetime - t_datetime(1));
-	Ts = mean(diff(t));
+	if ismember('Timestamp', data.Properties.VariableNames)
+		t_datetime = datetime(data.Timestamp, 'InputFormat', 'yyyy-MM-dd HH:mm:ss');
+		t = seconds(t_datetime - t_datetime(1));
+		Ts = mean(diff(t));
+	else
+		t = data.Time_Seconds;
+		Ts = mean(diff(t));
+	end
 
 	% 3. Segnale centrato rispetto al setpoint di equilibrio
-	T_inf = 30.5;
+	if T_external ~= 0
+		T_inf = T_external; % Usa il vettore temporale esterno fornito
+	else
+		T_inf = data.Temperature(end); % Usa l'ultimo valore del segnale
+	end
 	y = data.Temperature - T_inf;
 
+	if t_end ~= 0
+		idx_end = length(t);
+	end
+
+
 	% 4. Stima di un sistema del 3° ordine (3 poli) con Prony
-	[~, a] = prony(y, 0, ordine);
+	[~, a] = prony(y(1:idx_end), 0, ordine);
 
 	% Poli discreti e continui
 	poli_z = roots(a);

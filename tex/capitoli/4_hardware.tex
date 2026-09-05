@@ -1,155 +1,211 @@
 \chapter{Sviluppo dell'hardware dell'incubatrice neonatale}
-\section{Architettura del sistema}
-In questo capitolo vengono descritte le caratteristiche fisiche del prototipo di incubatrice neonatale. Si parte dalla descrizione
-della struttura fisica, si prosegue con la descrizione dei componenti elettronici presenti ed infine si analizzano le connessioni
-tra i vari componenti e il microcontrollore. Per una migliore organizzazione, l'insieme delle componenti elettriche
-ed elettroniche è stato suddiviso in tre macrocategorie, affrontate nei successivi paragrafi:
+\section{Architettura e componentistica del sistema}
+In questo capitolo si descrive il prototipo di incubatrice neonatale dal punto di vista fisico e si analizza l'hardware
+impiegato. Si parte dalla descrizione della struttura fisica, si prosegue con la descrizione dei componenti elettronici
+presenti ed infine vengono presentate le connessioni tra le periferiche e il microcontrollore. Per una migliore organizzazione
+dell'elaborato, si suddivide l'insieme dei componenti elettronici in tre macrocategorie, affrontate nei successivi paragrafi:
 \begin{enumerate}
-	\item attuatori e relè;
-	\item pannello frontale e sensore di temperatura e umidità SHT20;
+	\item attuatori (riscaldatore, umidificatore, ventole \dots) e relè;
+	\item pannello informativo frontale e sensore di temperatura e umidità SHT20;
 	\item scheda Arduino Mega 2560 con microcontrollore ATmega2560.
 \end{enumerate}
 
-
 \subsection{Descrizione della struttura fisica}
-L'incubatrice neonatale è composta da una camera interna principale ed un cassetto inferiore contenente i componenti elettronici
-e la vasca con l'acqua per l'umidificazione.
+L'incubatrice neonatale è composta da una camera interna principale ed un cassetto inferiore contenente i componenti
+elettronici e la vasca con l'acqua per l'umidificazione.
 
-La camera interna è costituita con pareti laterali in polistirene espanso sinterizzato (ESP) sostenute ai quattro angoli da un
-telaio in legno. La base della camera interna è costituita da un pannello in legno ed è stato usato un pannello in policarbonato
-trasparente come rivestimento superiore. Il pannello superiore è incernierato alla struttura in legno lungo il lato lungo e
-permette il rapido accesso alla camera interna. Sul lato frontale sono presenti due sportelli che permettono un accesso rapido
-alla camera interna senza provocare grandi dispersioni di calore e umidità.
+La camera interna è costituita da pareti laterali in polistirene espanso sinterizzato (ESP) sostenute ai vertici da un
+telaio in legno. La base della camera interna è costituita da un pannello in legno e possiede una lastra in policarbonato
+trasparente come copertura superiore. Il pannello superiore è incernierato alla struttura in legno lungo il lato lungo e
+permette un facile accesso alla camera interna. Sul lato frontale sono presenti due oblò, coperti da un'altra lastra in
+policarbonato, che favoriscono un accesso alternativo alla camera interna senza provocare grandi dispersioni di calore e
+umidità.
 
-Il cassetto inferiore è realizzato con una struttura in legno estraibile dove sono posizionati i vari componenti elettronici
-e la vasca con l'acqua per l'umidificazione.
+Il cassetto inferiore estraibile è realizzato in legno. All'interno sono posizionati i vari componenti elettronici come
+il microcontrollore, i relè e la vasca con l'acqua per l'umidificazione.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.9\textwidth, trim={0cm 7cm 0cm 8cm}, clip]{immagini/1_incubatrice.jpg}
-	\caption[Foto del prototipo di incubatrice neonatale]{Foto del prototipo di incubatrice neonatale dove si può apprezzare
-	la camera interna illuminata, il cassetto inferiore con i componenti elettronici, i due oblò per l'accesso rapido, il
-	pannello in policarbonato superiore e il pannello frontale.}
-	\label{fig:interno_incubatrice}
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={2cm 2cm 0cm 8cm}, clip]{immagini/1_incubatrice_1.jpg}
+		\caption[Foto frontale del prototipo di incubatrice neonatale]{Foto frontale del prototipo di incubatrice neonatale
+		dove si può apprezzare la camera interna illuminata, il cassetto inferiore con i componenti elettronici, i due oblò
+		per l'accesso rapido, il pannello in policarbonato superiore e il pannello informativo frontale per la visualizzazione
+		dello stato del sistema.}
+		\label{fig:incubatrice_1}
+	\end{subfigure}
+
+	\vspace{0.25cm}
+
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={0cm 8cm 0cm 8cm}, clip]{immagini/1_incubatrice_2.jpg}
+		\caption[Foto dall'alto del prototipo di incubatrice neonatale]{Foto dall'alto del prototipo di incubatrice neonatale
+		dove si può vedere il riscaldatore, la ventola di omogeneizzazione dell'aria, il tubo dell'umidificatore ed il sensore
+		SHT20.}
+		\label{fig:incubatrice_2}
+	\end{subfigure}
+	\caption{Foto del prototipo di incubatrice neonatale.}
+	\label{fig:incubatrice}
 \end{figure}
 
+\newpage
+
 \subsection{Attuatori e relè}
-Di seguito sono analizzati i vari attuatori presenti nel prototipo di incubatrice neonatale che permettono di agire sul sistema
-per modificarne le condizioni ambientali interne.
+Di seguito sono analizzati i vari attuatori presenti nel prototipo di incubatrice neonatale che permettono di agire sul
+sistema per modificarne le condizioni ambientali interne.
 
 \subsubsection{Riscaldatore con ventola associata}
-Per riscaldare l'aria della camera interna, è utilizzato un riscaldatore a resistenza elettrica da 100W. Esso è situato
-su un angolo della camera interna e sorretto da un supporto in alluminio attaccato al telaio in legno. Dietro al riscaldatore è
-presente una ventola che permette di spingere l'aria attraverso le resistenze elettriche del riscaldatore.
+Per riscaldare l'aria della camera interna, viene impiegato un riscaldatore da 100 W dichiarati (80 W effetivi). È costituito
+da una resistenza elettrica che si riscalda al passaggio di corrente e si trova su un angolo della camera interna, sorretto
+da un supporto in alluminio fissato al telaio in legno. Dietro al riscaldatore è presente una ventola che spinge l'aria
+attraverso la resistenza elettrica del riscaldatore.
 
 \subsubsection{Umidificatore con ventola associata}
-Per l'umidificazione dell'aria della camera interna, si utilizza un umidificatore a ultrasuoni per generare vapore acqueo. Si trova
-nel cassetto inferiore all'interno di un contenitore in plastica ermetico che funge da serbatoio dell'acqua. Il vapore acqueo
-prodotto viene spinto dalla ventola all'interno di un tubo in plastica che collega il contenitore con la camera interna.
+Per l'umidificazione dell'aria della camera interna, si utilizza un umidificatore a ultrasuoni per generare vapore acqueo. Si
+trova nel cassetto inferiore all'interno di un contenitore in plastica ermetico che funge da serbatoio dell'acqua. Il vapore
+acqueo prodotto viene spinto dalla ventola all'interno di un tubo in plastica che dal contenitore, raggiunge la camera interna
+nell'angolo opposto al riscaldatore.
 
 \subsubsection{Ventola di omogeneizzazione dell'aria}
 Per favorire il ricircolo dell'aria nella camera interna, ed evitare la formazione di stratificazioni di temperatura e umidità,
-è presente una ventola di omogeneizzazione dell'aria. Si trova sull'angolo adiacente al riscaldatore ed è anch'essa sorretta da
-un supporto in alluminio.
+è presente una ventola di omogeneizzazione dell'aria. Si trova sull'angolo adiacente al riscaldatore, lungo il lato corto, ed
+è anch'essa sorretta da un supporto in alluminio simile a quello del riscaldatore.
 
 \subsubsection{Barra led}
-Per l'illuminazione della camera interna, è presente una barra led posta sul pannello trasparente superiore della camera interna.
+Per l'illuminazione della camera interna, è stata intallata una barra led posta sul coperchio trasparente superiore.
 
 \subsubsection{Relè e step down per il controllo degli attuatori}
-I vari attuatori con le relative ventole sopra elencati richiedono tutti una tensione di alimentazione di 12 V. L'unico che fa
-eccezione è l'umidificatore che lavora a 24 V. Date le elevate correnti richieste, per garantire un funzionamento stabile e sicuro
-i vari gli attuatori a 12 V sono collegati ad un alimentatore da banco esterno opportunamente dimensionato, mentre l'umidificatore
-è alimentato dal suo alimentatore esterno da 24V.
+I vari attuatori sopra descritti lavorano a tensioni comprese tra 12 V e 24 V e richiedono correnti troppo elevate, per essere
+comandati direttamente dal microcontrollore. Per questo motivo si utilizzano dei relè a 5 V, controllati dall'arduino, per
+accendere e spegnere i vari attuatori alimentati da un alimentatore esterno a 12V consigliato da almeno 150 W e dall'alimentatore
+dell'umificatore a 24 V.
 
-Per poter essere gestiti dal microcontrollore, tra l'alimentatore e i vari attuatori, sono stati inseriti dei relè controllati
-con segnali a 5 V dalla scheda Arduino Mega. Siccome le bobine dei relè richiedono una corrente maggiore di quella che può essere
-erogata dal microcontrollore, è stato aggiunto un convertitore step down da 12 V a 5 V per alimentare le bobine dei relè a 5 V
-utilizzando l'energia erogata dall'alimentatore esterno a 12 V.
+Siccome anche le bobine dei relè assorbono correnti elevate, è stato aggiunto un convertitore step down opportunamente regolato
+per convertire l'alimentazione esterna a 12 V in 5 V per alimentare le bobine dei relè.
+
+\subsubsection{Tabella riassuntiva con le specifiche elettriche dei vari componenti}
+Si riporta una tabella riassuntiva con le specifiche elettriche (tensione, corrente e potenza assorbita) misurate in laboratorio
+dei vari componenti presenti nel prototipo di incubatrice neonatale.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{c|c|c|c}
+		\textbf{Componente} & \textbf{Tensione} & \textbf{Corrente} & \textbf{Potenza} \\
+		\toprule
+		riscaldatore & 12 V & \textasciitilde 6.7 A & \textasciitilde 80 W \\
+		\midrule
+		umidificatore & 24 V & 1 A & 24 W \\
+		\midrule
+		ventola riscaldatore & 12 V & 0.1 A & 1.2 W \\
+		\midrule
+		ventola umidificatore & 12 V & 0.1 A & 1.2 W \\
+		\midrule
+		ventola omogeneizzazione & 12 V & 0.1 A & 1.2 W \\
+		\midrule
+		barra led & 12 V & 0.57 A & 6.84 W \\
+		\midrule
+		step down per relè & 12 V & ?? A & ?? W \\
+		\bottomrule
+		\textbf{totale} & \textbf{-} & \textbf{-} & \textbf{\textasciitilde 90 W@12 V + 24 W@24 V}
+	\end{tabular}
+	\caption{Specifica elettriche dei vari attuatori del prototipo di incubatrice neonatale.}
+	\label{tab:specifiche_elettriche}
+\end{table}
 
 \begin{figure}[htbp]
-    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        %\includegraphics[width=\textwidth]{1_riscaldatore.jpg}
-        \caption{Riscaldatore a resistenza elettrica con ventola posta dietro di esso.}
-        \label{fig:riscaldatore}
-    \end{subfigure}
-    \hfill % Spinge le immagini verso i margini, creando spazio al centro
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        %\includegraphics[width=\textwidth]{2_umidificatore.jpg}
-        \caption{Umidificatore a ultrasuoni con ventola per spingere il vapore acqueo verso la camera interna.}
-        \label{fig:umidificatore}
-    \end{subfigure}
-    \vspace{0.5cm}
+	\centering
 	\begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        %\includegraphics[width=\textwidth]{1_ventola_omogeneizzazione.jpg}
-        \caption{Ventola di omogeneizzazione dell'aria per favorire il ricircolo dell'aria nella camera interna.}
-        \label{fig:ventola_omogeneizzazione}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth, trim={0cm 25cm 0cm 25cm}, clip]{immagini/1_barra_led.jpg}
-        \caption{Barra LED per l'illuminazione della camera interna.}
-        \label{fig:barra_led}
-    \end{subfigure}
+		\centering
+		\includegraphics[width=0.9\textwidth, angle=180, trim={0cm 10cm 0cm 25cm}, clip]{immagini/1_riscaldatore.jpg}
+		\caption{Riscaldatore a resistenza elettrica con ventola posta dietro di esso.}
+		\label{fig:riscaldatore}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={0cm 27cm 0cm 8cm}, clip]{immagini/1_umidificatore.jpg}
+		\caption{Umidificatore a ultrasuoni con ventola per spingere il vapore acqueo verso la camera interna.}
+		\label{fig:umidificatore}
+	\end{subfigure}
 
-    \caption[Foto degli attuatori]{Foto degli attuatori presenti nel prototipo di incubatrice neonatale.}
-    \label{fig:griglia_completa}
+	\vspace{0.25cm}
+
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, angle=180, trim={0cm 20cm 0cm 25cm}, clip]{immagini/1_ventola_omogeneizzazione.jpg}
+		\caption{Ventola di omogeneizzazione dell'aria per favorire il ricircolo dell'aria nella camera interna.}
+		\label{fig:ventola_omogeneizzazione}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={0cm 22.5cm 0cm 22.5cm}, clip]{immagini/1_barra_led.jpg}
+		\caption{Barra LED per l'illuminazione della camera interna.}
+		\label{fig:barra_led}
+	\end{subfigure}
+	\caption[Foto degli attuatori]{Foto degli attuatori presenti nel prototipo di incubatrice neonatale.}
+	\label{fig:actuators}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
-	\begin{subfigure}[b]{0.65\textwidth}
-        \centering
-		\includegraphics[width=0.9\textwidth, trim={1cm 2cm 2cm 20cm}, clip]{immagini/1_rele.jpg}
-        \caption{Foto dei relè per il controllo degli attuatori del prototipo di incubatrice neonatale.}
-        \label{fig:rele}
-    \end{subfigure}
-    \hfill % Spinge le immagini verso i margini, creando spazio al centro
-    \begin{subfigure}[b]{0.34\textwidth}
-        \centering
-        %\includegraphics[width=\textwidth]{immagini/1_step_down.jpg}
-        \caption{Foto dello step down per alimentare le bobine dei relè a 5 V.}
-        \label{fig:step_down}
-    \end{subfigure}
+	\begin{subfigure}[b]{0.6\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={1cm 2cm 2cm 22cm}, clip]{immagini/1_rele.jpg}
+		\caption{Foto dei relè per il controllo degli attuatori del prototipo di incubatrice neonatale.}
+		\label{fig:rele}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.37\textwidth}
+		\centering
+		\includegraphics[height=0.9\textwidth, angle=90, trim={30cm 0cm 20cm 10cm}, clip]{immagini/1_step_down.jpg}
+		\caption{Foto dello step down per alimentare le bobine dei relè a 5 V.}
+		\label{fig:step_down}
+	\end{subfigure}
 	\caption[Foto dei relè e dello step down]{Foto dei relè e dello step down per il controllo degi attuatori
 	del prototipo di incubatrice neonatale.}
 	\label{fig:rele_step_down}
 \end{figure}
 
+\newpage
 
-\subsection{Pannello frontale e sensore SHT20}
+\subsection{Pannello informativo frontale e sensore di temperatura e umidità}
+\subsubsection{Pannello informativo frontale}
 Il pannello frontale del prototipo di incubatrice neonatale fornisce l'interfaccia utente con cui l'utilizzatore può interagire
-con il sistema. Si trova nella parte frontale del dispositivo ed è facilmente accessibile. Esso è composto dai seguenti
+con il sistema. Si trova nella parte frontale del prototipo, in alto a destra ai due oblò. Esso è composto dai seguenti
 componenti:
 \begin{itemize}
 	\item un display LCD 20x4 con interfaccia I2C;
-	\item 4 led di stato per indicare l'accensione del riscaldatore, l'accensione dell'umidificatore, la presenza di un allarme
-	e la necessità di eseguire un refill del serbatoio dell'acqua dell'umidificatore;
+	\item 4 led di stato per indicare l'accensione del riscaldatore (verde), l'accensione dell'umidificatore (verde), la
+	presenza di un allarme (rosso) e la necessità di eseguire un refill del serbatoio dell'acqua dell'umidificatore (rosso);
 	\item 3 switch a due posizioni per il controllo manuale del riscaldatore, dell'umidificatore e della barra led presente
 	all'interno del prototipo di incubatrice neonatale;
-	\item 2 potenziometri rotativi per la regolazione del setpoint di temperatura ed umidità.
+	\item 2 potenziometri rotativi per la regolazione dei setpoint di temperatura ed umidità.
 \end{itemize}
+
+\subsubsection{Sensore di temperatura ed umidità SHT20}
+Il sensore di temperatura e umidità SHT20 è un sensore digitale con interfaccia I2C che permette di misurare la temperatura
+e l'umidità relativa dell'aria rispettivamente con un'accuratezza di ±0.3°C per la temperatura e ±3\%RH per l'umidità.
+Esso è situato all'interno della camera interna del prototipo di incubatrice neonatale e per il momento è libero di essere
+posizionato in qualsiasi punto della camera in base alle esigenze richieste.
+
+Per i test effettuati nella seguente tesi, il sensore è stato posizionato a 20 cm dalle pareti lunghe, a 17 cm dalla parete
+corta opposta al riscaldatore e alla ventola di omogeneizzazione dell'aria e a 7.5 cm di altezza dal piano della base della
+camera interna.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.9\textwidth, trim={0cm 7cm 0cm 6cm}, clip]{immagini/1_pannello_frontale_1.jpg}
+	\includegraphics[width=0.9\textwidth, trim={0cm 3cm 0cm 2cm}, clip]{immagini/1_pannello_frontale_1.jpg}
 	\caption[Foto del pannello frontale]{Foto del pannello frontale del prototipo di incubatrice neonatale con i vari componenti
 	presenti.}
 	\label{fig:pannello_frontale}
 \end{figure}
 
-Il sensore di temperatura e umidità SHT20 è un sensore digitale che permette di misurare la temperatura e l'umidità relativa
-dell'ambiente in cui si trova. Esso è posizionato all'interno della camera interna del prototipo di incubatrice neonatale.
-Per i test effettuati, il sensore è stato posizionato a 20 cm dalle pareti laterali lunghe, a 17 cm dalla parete corta opposta
-al riscaldatore e alla ventola di omogeneizzazione dell'aria e a 7.5 cm di altezza dal piano della base della camera interna.
-
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.9\textwidth, trim={5cm 20cm 10cm 25cm}, clip]{immagini/1_sht20.jpg}
+	\includegraphics[width=0.9\textwidth, trim={10cm 15cm 15cm 20cm}, clip]{immagini/1_sht20.jpg}
 	\caption[Foto del sensore SHT20]{Sensore di temperatura e umidità SHT20 posizionato all'interno della camera interna del
 	prototipo di incubatrice neonatale.}
 	\label{fig:sht20}
@@ -157,32 +213,41 @@ al riscaldatore e alla ventola di omogeneizzazione dell'aria e a 7.5 cm di altez
 
 
 \subsection{Scheda Arduino Mega 2560}
-Per gestire i vari componenti elettronici del prototipo di incubatrice neonatale, è stata utilizzata una scheda Arduino Mega 2560
-con microcontrollore ATmega2560. Essa è stata scelta per la sua semplicità d'uso, la disponibilità di numerosi pin di input/output
-e l'elevato spazio di memoria disponibile per il firmware. La scheda è posizionata all'interno del cassetto inferiore del prototipo
-di incubatrice neonatale, insieme a tutti i cablaggi provenienti dai vari componenti elettronici. La scheda è alimentata via USB
-da un computer esterno su cui è possibile visualizzare i dati provenienti dal microcontrollore.
+Per gestire i vari componenti elettronici del prototipo di incubatrice neonatale, è stata utilizzata una scheda Arduino Mega
+2560 con microcontrollore ATmega2560. Essa è stata scelta per la sua semplicità d'uso, l'affidabilità, la disponibilità di
+numerosi pin di input/output e l'elevato spazio di memoria disponibile per il firmware. La scheda è posizionata all'interno
+del cassetto inferiore del prototipo di incubatrice neonatale, insieme a tutti i cablaggi provenienti dai vari componenti
+elettronici. La scheda è alimentata via USB da un computer esterno su cui è possibile visualizzare e salvare i dati raccolti.
 
 \begin{figure}[htbp]
 	\centering
-	%\includegraphics[width=0.9\textwidth]{immagini/1_arduino_mega.jpg}
+	\includegraphics[width=0.9\textwidth, angle=180, trim={0cm 15cm 0cm 12cm}, clip]{immagini/1_arduino_mega.jpg}
 	\caption[Foto della scheda Arduino Mega 2560]{Scheda Arduino Mega 2560 posizionata all'interno del cassetto inferiore del
 	prototipo di incubatrice neonatale.}
 	\label{fig:arduino_mega}
 \end{figure}
 
+\newpage
 
 \section{Collegamento delle periferiche al microcontrollore}
+\subsection{Gestione della massa del microcontrollore}
+In corrispondenza di variazioni improvvise e significative di corrente dovute, ad esempio, alle commutazioni dei relè, si
+possono verificare fluttuazioni di tensione e fenomeni di ground lifting. Tali interferenze possono comportare letture
+errate dei valori dei potenziometri, con conseguente malfunzionamento del sistema.
+
+Per limitare tali fenomeni, è stato scelto di utilizzare una distribuzione della massa a stella. Tale approccio consiste
+nel far convergere la massa di tutti i componenti elettronici in un unico nodo centrale, mostrato nello schema circuitale
+della scheda Arduino. In questo modo, i percorsi delle correnti di ritorno dei vari componenti non si sovrappongono tra di
+loro e si riescono a ridurre notevolmente le interferenze dovute alle commutazioni dei relè.
+
 \subsection{Connessioni dei relè ai diversi attuatori}
-Di seguito è riportato lo schema elettrico con le connessioni tra i relè e i vari attuatori presenti nel prototipo di incubatrice
+Si riporta, di seguito, lo schema elettrico con le connessioni tra i relè e i vari attuatori presenti nel prototipo di incubatrice
 neonatale realizzato con il software Fritzing. Sono indicati anche i cavi di collegamento tra i relè e la scheda Arduino, insieme
 al convertitore step down per alimentare le bobine dei relè a 5 V.
 
 Si evidenzia come l'umidificatore disponga di un suo sistema di alimentazione separato a 24 V, evidenziato dalla presenza del
-tratteggio sui cavi rosso e nero. Inoltre si nota che la massa dello step down e quella dei relè non sono immediatamente collegate
-tra di loro perché per distribuire la massa si utilizza la topologia a stella. Questo significa che tutti i componenti elettronici
-sono collegati a un unico punto di massa (mostrato nello schema dell'Arduino), eliminando i problemi di ground lifting e riducendo
-al minimo le interferenze dovute a sbalzi di corrente in corrispondenza delle commutazioni dei relè.
+tratteggio sui cavi rosso e nero. Inoltre si nota che la massa dello step down e quella dei relè non sono immediatamente
+collegate tra di loro, ma vengono portate fino al nodo centrale di massa (mostrato nello schema dell'Arduino).
 
 \begin{figure}[htbp]
 	\centering
@@ -192,52 +257,39 @@ al minimo le interferenze dovute a sbalzi di corrente in corrispondenza delle co
 	\label{fig:circuito_1}
 \end{figure}
 
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_1.png}
-%	\caption[Foto delle connessioni tra relè e attuatori]{Foto delle connessioni tra i relè e gli attuatori presenti nel
-%	prototipo di incubatrice neonatale.}
-%	\label{fig:foto_circuito_1}
-%\end{figure}
-
 \subsection{Connessioni del pannello frontale e del sensore SHT20}
 I componenti del pannello frontale e il sensore SHT20 sono collegati al microcontrollore tramite due cavi multipolari da 10
-conduttori ciascuno. Il cablaggio è alloggiato in una canalina dedicata che unisce il cassetto inferiore al pannello frontale
-e alla camera interna dell'incubatrice.
+conduttori ciascuno. Il cablaggio è alloggiato in una canalina dedicata che unisce il cassetto inferiore con il pannello frontale
+e la camera interna dell'incubatrice dove è presente il sensore SHT20.
 
-Al fine di garantire affidabilità e agevolare le future operazioni di manutenzione, le connessioni verso il pannello frontale
-sono state modularizzate utilizzando dei connettori JST disponibili in laboratorio. In particolare sono stati scelti tre connettori
-a 4 pin per i segnali di controllo e un connettore a 2 pin per l'alimentazione. Le connessioni interne tra i componenti del pannello
-frontale, la catena di alimentazione e i rispettivi connettori sono state saldate con stagno per garantire un collegamento stabile
-e duraturo nel tempo.
+Al fine di garantire affidabilità e agevolare le future operazioni di manutenzione, le connessioni verso il pannello
+frontale sono state modularizzate utilizzando dei connettori JST disponibili in laboratorio. In particolare sono stati
+scelti tre connettori a 4 pin per i segnali di controllo e un connettore a 2 pin per l'alimentazione. Le connessioni
+interne tra i componenti del pannello frontale, la catena di alimentazione e i rispettivi connettori sono state saldati
+con stagno per garantire giunzioni affidabili e durature nel tempo.
 
 Il sensore SHT20, per mantenere una certa flessibilità nella sua posizione all'interno della camera interna, è stato collegato
-ai cavi della canalina tramite una serie di 4 morsetti mammuth. In questo modo è possibile scollegare il sensore, allungare o
-accorciare i cavi per poter posizionare agevolmente il sensore in diverse posizioni.
+ai cavi della canalina tramite una serie di 4 morsetti mammuth. In questo modo è possibile allungare o accorciare i cavi per
+poter posizionare agevolmente il sensore in diverse posizioni.
 
-Per maggiore leggibilità, è stato scelto di tratteggiare i conduttori del cavo multipolare che collega il sensore SHT20 e il
-led di refill al microcontrollore. Si nota che non tutti i conduttori di questo cavo sono stati utilizzati.
+Per maggiore leggibilità, è stato scelto di tratteggiare i conduttori che scorrono nel cavo multipolare che collega il sensore
+SHT20 e il led di refill al microcontrollore. Si nota che non tutti i conduttori di questo cavo sono stati utilizzati.
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\textwidth]{immagini/1_circuito_2.png}
-    \caption[Schema circuitale del pannello frontale e del sensore SHT20]{Schema elettrico con le connessioni del sensore di
+	\centering
+	\includegraphics[width=0.9\textwidth]{immagini/1_circuito_2.png}
+	\caption[Schema circuitale del pannello frontale e del sensore SHT20]{Schema elettrico con le connessioni del sensore di
 	temperatura e umidità SHT20 e dei vari componenti presenti nel pannello frontale del prototipo di incubatrice neonatale.}
-    \label{fig:circuito_2}
+	\label{fig:circuito_2}
 \end{figure}
 
-%\begin{figure}[htbp]
-%    \centering
-%    \includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_2.png}
-%    \caption[Foto delle connessioni nel pannello frontale]{Foto delle connessioni tra i vari componenti presenti nel pannello
-%	frontale del prototipo di incubatrice neonatale.}
-%    \label{fig:foto_circuito_2}
-%\end{figure}
-
 \subsection{Connessioni dei vari componenti al microcontrollore}
-Nel seguente schema elettrico sono riportate tutte le connessioni tra i cavi multipolari provenienti dai vari componenti
-del prototipo e i cavi di controllo dei relè con i pin del microcontrollore. Si nota la presenza del nodo principale di massa
-a cui convergono tutti i cavi di massa dei vari componenti.
+Nel seguente schema elettrico sono riportate tutte le connessioni tra i pin del microcontrollore con i cavi multipolari
+provenienti dai vari componenti del prototipo e i cavi di controllo dei relè. Per maggiore ordine e flessibilità è stata
+utilizzata una breadboard, evitando di collegare direttamente i cavi alla scheda Arduino.
+
+Si nota in basso la presenza del nodo principale di massa a cui convergono tutti i cavi di massa dei vari componenti, secondo
+la distribuzione della massa a stella precedentemente descritta.
 
 Per limitare la corrente nei led di stato del pannello frontale, sono state inserite delle resistenze di bias. I relativi valori
 sono stati calcolati in modo da garantire una corrente di circa 10 mA e sono poi state aggiustate in maniera empirica per ottenere
@@ -263,35 +315,40 @@ di corrente, i led rossi risultano più luminosi rispetto a quelli verdi.
 \end{table}
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\textwidth]{immagini/1_circuito_3.png}
-    \caption[Schema circuitale del microcontrollore]{Schema elettrico con le connessioni dei cavi provenienti dai vari componenti
+	\centering
+	\includegraphics[width=0.9\textwidth]{immagini/1_circuito_3.png}
+	\caption[Schema circuitale del microcontrollore]{Schema elettrico con le connessioni dei cavi provenienti dai vari componenti
 	al microcontrollore Arduino Mega 2560.}
-    \label{fig:circuito_3}
-\end{figure}
-
-%\begin{figure}[htbp]
-%    \centering
-%    %\includegraphics[width=0.9\textwidth]{immagini/1_foto_circuito_3.png}
-%    \caption[Foto delle connessioni del microcontrollore]{Foto delle connessioni dei cavi provenienti dai vari componenti
-%	al microcontrollore Arduino Mega 2560.}
-%    \label{fig:foto_circuito_3}
-%\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    %\includegraphics[width=0.9\textwidth]{immagini/1_pannello_frontale_2.png}
-    \caption[Foto delle connessioni nel pannello frontale]{Foto delle connessioni tra i vari componenti presenti nel pannello
-	frontale del prototipo di incubatrice neonatale.}
-    \label{fig:foto_circuito_2}
+	\label{fig:circuito_3}
 \end{figure}
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\textwidth]{immagini/1_cassetto.jpg}
-    \caption[Foto delle connessioni del cassetto]{Foto delle connessioni presenti nel cassetto inferiore del prototipo di
-	incubatrice neonatale in cui si possono notare la scheda Arduino Mega 2560, il modulo relè, lo step down, i cavi provenienti
-	dal pannello frontale e dal sensore, la breadboard dove convergono tutti i cavi e il morsetto marrone per la distribuzione
-	della massa.}
-    \label{fig:foto_circuito_3}
+	\centering
+	\begin{subfigure}[b]{0.63\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={2cm 3cm 12cm 3cm}, clip]{immagini/1_pannello_frontale_2.jpg}
+		\caption{Foto delle connessioni tra i componenti del pannello frontale e i connettori per collegare
+		i cavi multipolari.}
+		\label{fig:pannello_frontale_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth, trim={34cm 3cm 44cm 5cm}, clip]{immagini/1_pannello_frontale_3.jpg}
+		\caption{Foto dei connettori attacati ai cavi multipolari.}
+		\label{fig:pannello_frontale_2}
+	\end{subfigure}
+	\caption[Foto delle connessioni nel pannello frontale]{Foto delle connessioni tra i vari componenti presenti nel pannello
+	frontale del prototipo di incubatrice neonatale e i connettori per collegare i cavi multipolari al pannello frontale.}
+	\label{fig:foto_circuito_2}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth, trim={7cm 2cm 0cm 6cm}, clip]{immagini/1_cassetto.jpg}
+	\caption[Foto delle connessioni del cassetto]{Foto delle connessioni presenti nel cassetto inferiore del prototipo di
+	incubatrice neonatale. Si possono notare la scheda Arduino Mega 2560, il modulo relè, lo step down, i cavi multipolari
+	del pannello frontale e del sensore, la breadboard dove convergono tutti i cavi e il morsetto marrone in basso a sinistra
+	per la distribuzione della massa.}
+	\label{fig:foto_circuito_3}
 \end{figure}

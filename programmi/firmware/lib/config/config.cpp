@@ -3,8 +3,7 @@
  * @author Giacomo Simonetto
  * @brief Configurazione di parametri e variabili globali di stato.
  *
- * Dichiarazione dei parametri di configurazione e delle variabili globali
- * di stato dell'incubatrice neonatale.
+ * Definizione delle variabili globali di stato dell'incubatrice neonatale.
  */
 
 #include "config.h"

@@ -8,7 +8,6 @@
  */
 
 #include "actuators.h"
-#include "utils.h"
 
 /**
  * NOTE IMPLEMENTATIVE sullo spegnimento della ventola di omogeneizzazione:

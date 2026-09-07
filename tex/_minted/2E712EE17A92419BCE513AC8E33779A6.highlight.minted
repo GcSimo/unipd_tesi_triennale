@@ -1,0 +1,23 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ * @file config.cpp}
+\PYG{c+cm}{ * @author Giacomo Simonetto}
+\PYG{c+cm}{ * @brief Configurazione di parametri e variabili globali di stato.}
+\PYG{c+cm}{ *}
+\PYG{c+cm}{ * Definizione delle variabili globali di stato dell\PYGZsq{}incubatrice neonatale.}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}config.h\PYGZdq{}}
+
+\PYG{c+c1}{// variabili globali di stato dell\PYGZsq{}incubatrice neonatale}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{status}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// variabili di stato dell\PYGZsq{}incubatrice}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{timers}\PYG{+w}{ }\PYG{n}{timers}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// variabili per i timer dell\PYGZsq{}incubatrice}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{o}{\PYGZlt{}}\PYG{n}{TEMP}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{temp\PYGZus{}pid}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// variabili per il PID della temperatura}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{pid}\PYG{o}{\PYGZlt{}}\PYG{n}{RH}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{rh\PYGZus{}pid}\PYG{p}{;}\PYG{+w}{     }\PYG{c+c1}{// variabili per il PID dell\PYGZsq{}umidità}
+
+\PYG{c+c1}{// sensore SHT20 per temperatura e umidità}
+\PYG{n}{sht20}\PYG{+w}{ }\PYG{n+nf}{sensor}\PYG{p}{(}\PYG{n}{SHT20\PYGZus{}READ\PYGZus{}PERIOD}\PYG{p}{);}
+
+\PYG{c+c1}{// display lcd 20x4 con interfaccia I2C}
+\PYG{n}{LiquidCrystal\PYGZus{}I2C}\PYG{+w}{ }\PYG{n+nf}{lcd}\PYG{p}{(}\PYG{l+m+mh}{0x27}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{20}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{p}{);}
+\end{MintedVerbatim}

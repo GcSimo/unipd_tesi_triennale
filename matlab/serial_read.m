@@ -1,0 +1,365 @@
+% -----------------------------------------------------------------------------
+% ------------- serial_read.m - Lettura dati dalla porta seriale --------------
+% -----------------------------------------------------------------------------
+%
+% La seguente funzione gestisce la comunicazione seriale dal lato computer con
+% la scheda Arduino installata sul prototipo di incubatore neonatale. Svolge
+% le seguenti operazioni:
+%
+%  1. legge i messaggi inviati dalla scheda Arduino tramite porta seriale
+%  2. filtra i messaggi in ingresso
+%  3. estrae i dati di interesse
+%  4. salva i dati in un file CSV opportunamente formattato
+%  5. mostra il grafico con l'andamento in tempo reale dei dati ricevuti
+%
+%
+% La funzione accetta i seguenti parametri di input:
+%  - showPlot:
+%    permette di scegliere che parametri visualizzare nel grafico in tempo
+%    reale in base al valore passato come parametro:
+%     - 0 = nessun grafico
+%     - 1 = solo il grafico per la temperatura
+%     - 2 = solo il grafico per l'umidità
+%     - 3 = entrambi i grafici per la temperatura e l'umidità (default)
+%
+%  - portName:
+%    nome della porta seriale a cui è collegata la scheda Arduino, su macOS
+%    solitamente è "/dev/cu.usbserial-110" o "/dev/cu.usbmodem1101" (default)
+%
+%  - baudRate:
+%    baud rate della porta seriale, di default è 115200
+%
+%  - filename:
+%    nome del file CSV in cui salvare i dati, di default viene nominato con il
+%    timestamp dell'avvio del programma nel formato "data_YYYYMMDD_HHMMSS.csv"
+%    all'interno della cartella "serial_read"
+%
+
+function serial_read(showPlot, portName, baudRate, filename)
+	%% ------ parsing dei parametri e assegnazione dei valori di default ------
+
+	% tipo di grafico da mostrare - default = 3 (entrambi i grafici)
+	if nargin < 1 || isempty(showPlot) || ~ismember(showPlot, [0, 1, 2, 3])
+		showPlot = 3;
+	end
+
+	% nome della porta seriale - default = "/dev/cu.usbmodem1101"
+	if nargin < 2 || isempty(portName)
+		portName = "/dev/cu.usbmodem1101";
+		%portName = "/dev/cu.usbserial-110";
+	end
+
+	% baud rate della porta seriale - default = 115200
+	if nargin < 3 || isempty(baudRate)
+		baudRate = 115200;
+	end
+
+	% nome del file CSV in cui salvare i dati - default = "data_YYYYMMDD_HHMMSS.csv"
+	if nargin < 4 || isempty(filename)
+		filename = sprintf('serial_read/data_%s.csv', datestr(now, 'yyyymmdd_HHMMSS'));
+	end
+
+
+	%% --------------------- configurazione porta seriale ---------------------
+	try
+		arduinoObj = serialport(portName, baudRate); % crea l'oggetto seriale
+		configureTerminator(arduinoObj, "CR/LF"); % imposta terminatore di riga
+		flush(arduinoObj); % libera il buffer da eventuali dati vecchi
+	catch ME
+		% stampa il messaggio di errore e termina l'esecuzione della funzione
+		error('Errore nell''apertura della porta seriale %s: %s', portName, ME.message);
+	end
+
+
+	%% ----------------------- configurazione file CSV ------------------------
+	% estrae il percorso della cartella dal nome del file
+	[folderPath, ~, ~] = fileparts(filename);
+
+	% crea un'eventuale cartella richiesta se non è già presente
+	if ~isempty(folderPath) && ~exist(folderPath, 'dir')
+		mkdir(folderPath);
+	end
+
+	% apre il file in modalità scrittura ('w' = write, 'a' = append)
+	fileID = fopen(filename, 'w');
+
+	% verifica la corretta apertura del file
+	if fileID == -1
+		% stampa il messaggio di errore e termina l'esecuzione della funzione
+		error('Impossibile aprire il file %s per la scrittura.', filename);
+	end
+
+	% scrive l'intestazione del CSV (la prima riga)
+	fprintf(fileID, ['Time_Seconds,Temperature,Humidity,Setpoint_Temperature,Setpoint_Humidity,', ...
+						'Ctrl,Error_Code,T_PWM,RH_PWM,', ...
+						'T_PID_p,T_PID_i,T_PID_d,T_PID_out,', ...
+						'RH_PID_p,RH_PID_i,RH_PID_d,RH_PID_out,', ...
+						'T_output,RH_output,T_min_thld,T_max_thld,RH_min_thld,RH_max_thld\n']);
+
+	% sistema di sicurezza per chiusura corretta di file e porta seriale:
+	%  onCleanup garantisce la chiusura del file CSV e della porta seriale se
+	%  lo script termina (sia con successo, sia per errore, sia per Ctrl+C)
+	cleanupObj = onCleanup(@() cleanUpRoutine(arduinoObj, fileID));
+
+
+	%% ------------------- setup dei grafici in tempo reale -------------------
+	if showPlot > 0
+
+		% crea una finestra grafica per stampare il grafico in tempo reale
+		fig = figure('Name', 'Log misurazioni - ' + filename, 'Color', 'w', 'Position', [100, 100, 1000, 700]);
+
+		% crea flag di controllo e pulsante di stop per fermare l'acquisizione
+		fig.UserData = true; % Variabile nascosta che mantiene vivo il ciclo
+		uicontrol('Parent', fig, 'Style', 'pushbutton', 'String', 'Ferma acquisizione', ...
+				'Units', 'pixels', 'Position', [15 15 100 35], ...
+				'Callback', @(src, event) set(fig, 'UserData', false));
+
+		% crea 2 righe se sono richiesti entrambi i grafici, altrimenti 1 riga
+		if showPlot == 3
+			t_layout = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+		else
+			t_layout = tiledlayout(1, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+		end
+
+		% numero di punti massimi da visualizzare nel grafico in tempo reale
+		maxPts = 3600;
+
+		% colori personalizzati per i dati del PID
+		c_P = [0.8500 0.3250 0.0980];
+		c_I = [0.9290 0.6940 0.1250];
+		c_D = [0.4940 0.1840 0.5560];
+		c_Out = [0.4660 0.6740 0.1880];
+
+		% --- grafico per le misurazioni di temperatura --
+		if showPlot == 1 || showPlot == 3
+
+			% impostazioni di base
+			ax1 = nexttile(t_layout);
+			title('Controllo Temperatura');
+			grid on; hold on;
+
+			% set di dati per l'asse sinistro (temperatura)
+			yyaxis left;
+			ylabel('Temperatura (°C)');
+			line_temp  = animatedline('Color', 'r', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
+			line_set_t = animatedline('Color', 'r', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+			line_t_min_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{min_thld}', 'MaximumNumPoints', maxPts);
+			line_t_max_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{max_thld}', 'MaximumNumPoints', maxPts);
+
+			% set di dati per l'asse destro (segnali di controllo)
+			yyaxis right;
+			ylabel('Segnali (PWM/PID)');
+			line_t_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
+			line_t_output = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'Output_{T}', 'MaximumNumPoints', maxPts);
+			line_t_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+
+			% aggiunge la legenda al grafico
+			legend('Location', 'westoutside');
+
+			% adatta automaticamente l'asse X al numero di punti visualizzati
+			ax1.XLimMode = 'auto';
+		end
+
+		% --- grafico per le misurazioni di umidità ---
+		if showPlot == 2 || showPlot == 3
+
+			% impostazioni di base
+			ax2 = nexttile(t_layout);
+			title('Controllo Umidità');
+			grid on; hold on;
+
+			% set di dati per l'asse sinistro (umidità)
+			yyaxis left;
+			ylabel('Umidità (%)');
+			line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
+			line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+			line_rh_min_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{min_thld}', 'MaximumNumPoints', maxPts);
+			line_rh_max_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{max_thld}', 'MaximumNumPoints', maxPts);
+
+			% set di dati per l'asse destro (segnali di controllo)
+			yyaxis right;
+			ylabel('Segnali (PWM/PID)');
+			line_rh_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{RH}', 'MaximumNumPoints', maxPts);
+			line_rh_output = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'Output_{RH}', 'MaximumNumPoints', maxPts);
+			line_rh_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+			line_rh_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+			line_rh_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+			line_rh_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1.2, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+
+			% aggiunge la legenda al grafico
+			legend('Location', 'westoutside');
+
+			% adatta automaticamente l'asse X al numero di punti visualizzati
+			ax2.XLimMode = 'auto';
+		end
+
+		% sincronizza l'asse X solo se entrambi i grafici sono presenti
+		if showPlot == 3
+			linkaxes([ax1, ax2], 'x');
+		end
+
+		% etichetta per l'asse X
+		xlabel(t_layout, 'Tempo trascorso (secondi)');
+	end
+
+
+
+	%% -------------- lettura dei messaggi dalla scheda Arduino ---------------
+
+	% inizializza ad "empty" la variabile per salvare l'istante t=0 associato
+	% alla prima lettura
+	t0 = [];
+
+	try
+		% ciclo infinito per lettura dei dati
+		while true
+
+			% controllo di uscita sicura in caso di chiusura della finestra
+			% grafica o pressione del pulsante di stop
+			if showPlot > 0
+				if ~isvalid(fig) || isequal(fig.UserData, false)
+					disp('Acquisizione interrotta dal grafico. Salvataggio in corso...');
+					break;
+				end
+			end
+
+			% 1. legge una riga in formato stringa
+			lineStr = readline(arduinoObj);
+
+			% 2. verifica se la riga contiene i dati da salvare (inizia con "LOG:")
+			if startsWith(lineStr, "LOG:")
+
+				% calcolo del tempo relativo in secondi
+				if isempty(t0)
+					t0 = tic; % salva il momento di inizio al primo log ricevuto
+					t_elapsed = 0.0;
+				else
+					t_elapsed = toc(t0); % calcola i secondi trascorsi da t0
+				end
+
+				% 3. estrae i dati da salvare tramite regex
+				temp    = extractNum(lineStr, 'T:\s*([-+]?\d*\.?\d+)');
+				rh      = extractNum(lineStr, 'RH:\s*([-+]?\d*\.?\d+)');
+				set_t   = extractNum(lineStr, 'Set_T:\s*([-+]?\d*\.?\d+)');
+				set_rh  = extractNum(lineStr, 'Set_RH:\s*([-+]?\d*\.?\d+)');
+
+				ctrl    = extractStr(lineStr, 'Ctrl:\s*([A-Z]+)');
+				err     = extractNum(lineStr, 'Error_Code:\s*(\d+)');
+
+				t_pwm   = extractNum(lineStr, 'T_PWM_norm:\s*([-+]?\d*\.?\d+)');
+				rh_pwm  = extractNum(lineStr, 'RH_PWM_norm:\s*([-+]?\d*\.?\d+)');
+
+				t_p     = extractNum(lineStr, 'T_PID_p:\s*([-+]?\d*\.?\d+)');
+				t_i     = extractNum(lineStr, 'T_PID_i:\s*([-+]?\d*\.?\d+)');
+				t_d     = extractNum(lineStr, 'T_PID_d:\s*([-+]?\d*\.?\d+)');
+				t_out   = extractNum(lineStr, 'T_PID_out:\s*([-+]?\d*\.?\d+)');
+
+				rh_p    = extractNum(lineStr, 'RH_PID_p:\s*([-+]?\d*\.?\d+)');
+				rh_i    = extractNum(lineStr, 'RH_PID_i:\s*([-+]?\d*\.?\d+)');
+				rh_d    = extractNum(lineStr, 'RH_PID_d:\s*([-+]?\d*\.?\d+)');
+				rh_out  = extractNum(lineStr, 'RH_PID_out:\s*([-+]?\d*\.?\d+)');
+
+				t_output  = extractNum(lineStr, 'T_output:\s*(\d+)');
+				rh_output = extractNum(lineStr, 'RH_output:\s*(\d+)');
+
+				t_min_thld = extractNum(lineStr, 'T_min_thld:\s*([-+]?\d*\.?\d+)');
+				t_max_thld = extractNum(lineStr, 'T_max_thld:\s*([-+]?\d*\.?\d+)');
+				rh_min_thld = extractNum(lineStr, 'RH_min_thld:\s*([-+]?\d*\.?\d+)');
+				rh_max_thld = extractNum(lineStr, 'RH_max_thld:\s*([-+]?\d*\.?\d+)');
+
+				% 4. scrive i dati estratti nel file CSV
+				fprintf(fileID, '%.2f,%.2f,%.2f,%.2f,%.2f,%s,%d,%.0f,%.0f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.0f,%.0f,%.2f,%.2f,%.2f,%.2f\n', ...
+					t_elapsed, temp, rh, set_t, set_rh, ctrl, err, t_pwm, rh_pwm, ...
+					t_p, t_i, t_d, t_out, rh_p, rh_i, rh_d, rh_out, ...
+					t_output, rh_output, t_min_thld, t_max_thld, rh_min_thld, rh_max_thld);
+
+				% 5. aggiorna il grafico in tempo reale se richiesto
+				if showPlot > 0 && isvalid(fig)
+					% dati di temperatura
+					if showPlot == 1 || showPlot == 3
+						addpoints(line_temp, t_elapsed, temp);
+						addpoints(line_set_t, t_elapsed, set_t);
+						addpoints(line_t_pwm, t_elapsed, t_pwm);
+						addpoints(line_t_p, t_elapsed, t_p);
+						addpoints(line_t_i, t_elapsed, t_i);
+						addpoints(line_t_d, t_elapsed, t_d);
+						addpoints(line_t_out, t_elapsed, t_out);
+						addpoints(line_t_output, t_elapsed, t_output);
+						addpoints(line_t_min_thld, t_elapsed, t_min_thld);
+						addpoints(line_t_max_thld, t_elapsed, t_max_thld);
+					end
+
+					% dati di umidità
+					if showPlot == 2 || showPlot == 3
+						addpoints(line_rh, t_elapsed, rh);
+						addpoints(line_set_rh, t_elapsed, set_rh);
+						addpoints(line_rh_pwm, t_elapsed, rh_pwm);
+						addpoints(line_rh_p, t_elapsed, rh_p);
+						addpoints(line_rh_i, t_elapsed, rh_i);
+						addpoints(line_rh_d, t_elapsed, rh_d);
+						addpoints(line_rh_out, t_elapsed, rh_out);
+						addpoints(line_rh_output, t_elapsed, rh_output);
+						addpoints(line_rh_min_thld, t_elapsed, rh_min_thld);
+						addpoints(line_rh_max_thld, t_elapsed, rh_max_thld);
+					end
+
+					% il limitrate forza MATLAB a non aggiornare l'UI più di
+					% 20 volte al secondo, prevenendo lag e crash in caso di
+					% dati ricevuti con frequenze molto alte
+					drawnow limitrate;
+				end
+			end
+		end
+
+
+	%% --- gestione delle interruzioni (errori o Ctrl+C) ---
+	catch ME
+		% se l'errore è un'interruzione da tastiera (Ctrl+C), mostra un
+		% messaggio di chiusura pulita, altrimenti, rilancia l'errore
+		if strcmp(ME.identifier, 'MATLAB:dispatcher:Interrupt')
+			disp('Interruzione da tastiera (Ctrl+C) completata in modo pulito.');
+		else
+			rethrow(ME);
+		end
+	end
+end
+
+
+% -----------------------------------------------------------------------------
+% ------------------------ funzioni ausiliarie locali -------------------------
+% -----------------------------------------------------------------------------
+
+% estrae un dato numerico dal messaggio in ingresso in base al pattern regex,
+% restituisce NaN in caso di mancata corrispondenza
+function val = extractNum(testo, pattern)
+	m = regexp(testo, pattern, 'tokens', 'once');
+	if isempty(m)
+		val = NaN;
+	else
+		val = str2double(m{1});
+	end
+end
+
+% estrae una stringa dal messaggio in ingresso in base al pattern regex,
+% restituisce "N/A" in caso di mancata corrispondenza
+function val = extractStr(testo, pattern)
+	m = regexp(testo, pattern, 'tokens', 'once');
+	if isempty(m)
+		val = "N/A";
+	else
+		val = string(m{1});
+	end
+end
+
+% gestisce la chiusura sicura della porta seriale e del file CSV, viene
+% invocata in automatico al termine del programma (successo, errore o Ctrl+C)
+function cleanUpRoutine(arduinoObj, fileID)
+	fprintf('\nChiusura connessione seriale e salvataggio file CSV in corso...\n');
+	clear arduinoObj;
+	if fileID ~= -1
+		fclose(fileID);
+	end
+end

@@ -26,13 +26,14 @@
 %\usepackage{fontspec} % per font richiesti dall'università
 %\setmainfont{Times New Roman}
 
-% per utilizzare l'alternativa TeX Gyre Termes con comdando pdflatex
+% per utilizzare l'alternativa TeX Gyre Termes con comando pdflatex
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{tgtermes}
+\usepackage{lmodern} % latin modern font for sans-serif and monospace (grafici e verb)
+\usepackage{tgtermes} % times new roman-like font for serif (testo principale)
 \usepackage{newtxmath} % per l'ambiente matematico con font TeX Gyre Termes
 
-% per utilizzare il font times new roman con comdando lualatex
+% per utilizzare il font times new roman con comando lualatex
 %\usepackage{fontspec}
 %\setmainfont{TeX Gyre Termes}
 %\usepackage{unicode-math}
@@ -45,6 +46,7 @@
 \onehalfspacing
 
 \usepackage{hyperref} % per link ipertestuali
+\providecommand*{\listingautorefname}{codice} % per autoref dei listing
 
 \usepackage{enumitem} % per elenchi puntati
 \usepackage{multirow} % per celle che si espandono su più righe
@@ -55,6 +57,9 @@
 \usepackage{caption} % per le didascalie
 \usepackage{subcaption} % per subfigure
 
+\usepackage{tikz} % per disegni e diagrammi
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc}
+
 % nei codici dei programmi non sono stati usati ambienti flottanti perché altrimenti non sarebbe stato possibile far
 % estendere il codice correttamente su più pagine. Inoltre se vengono inseriti caption fuori da ambienti flottanti,
 % come avviene nel codice, si generano dei warning di compilazione. Per evitare questi warning, si indica di non
@@ -64,12 +69,16 @@
 \usepackage{minted} % per il codice con la colorazione della sintassi
 %\usemintedstyle{vs} % Stile simile a Visual Studio Code
 \setminted{
-    linenos=true,          % mostra i numeri di riga
-    frame=single,          % riquadro singolo attorno al codice
-    framesep=2mm,          % distanza tra il codice e il riquadro
-    baselinestretch=0.9,   % interlinea del codice (utile se il documento ha interlinea 1.5)
-    fontsize=\scriptsize,  % dimensione del font più piccola
+	linenos=true,          % mostra i numeri di riga
+	frame=single,          % riquadro singolo attorno al codice
+	framesep=2mm,          % distanza tra il codice e il riquadro
+	baselinestretch=0.9,   % interlinea del codice (utile se il documento ha interlinea 1.5)
+	fontsize=\scriptsize,  % dimensione del font più piccola
 	breaklines             % wrap automatico delle righe lunghe
+}
+
+\setmintedinline{
+	fontsize=\normalsize
 }
 
 %\usepackage{listings} % per il codice
@@ -147,58 +156,58 @@
 \newcommand{\matricola}{2109923}
 
 \begin{document}
-    \pagenumbering{roman}
-    \pagestyle{empty} % per le prime pagine, non mostrare il numero di pagina
+	\pagenumbering{roman}
+	\pagestyle{empty} % per le prime pagine, non mostrare il numero di pagina
 
-    \input{capitoli/0_frontespizio}
-    \cleardoublepage
+	\input{capitoli/0_frontespizio}
+	\cleardoublepage
 
-%    \input{capitoli/1_dedica}
-%    \cleardoublepage
+	\input{capitoli/1_dedica}
+	\cleardoublepage
 
-    \pagestyle{plain} % comincia a mostrare il numero di pagina
+	\pagestyle{plain} % comincia a mostrare il numero di pagina
 	\phantomsection
-    \addcontentsline{toc}{chapter}{Abstract}
-    \include{capitoli/2_abstract}
-    \cleardoublepage
+	\addcontentsline{toc}{chapter}{Abstract}
+	\include{capitoli/2_abstract}
+	\cleardoublepage
 
-    \tableofcontents
-    \cleardoublepage
+	\tableofcontents
+	\cleardoublepage
 
-    \phantomsection
-    \addcontentsline{toc}{chapter}{\listfigurename}
-    \listoffigures
-    \cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listfigurename}
+	\listoffigures
+	\cleardoublepage
 
-    \phantomsection
-    \addcontentsline{toc}{chapter}{\listtablename}
-    \listoftables
-    \cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listtablename}
+	\listoftables
+	\cleardoublepage
 
-    \phantomsection
-    \addcontentsline{toc}{chapter}{Elenco dei codici}
-    \listoflistings
-    \cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Elenco dei codici}
+	\listoflistings
+	\cleardoublepage
 
-    \pagenumbering{arabic}
+	\pagenumbering{arabic}
 
-%    \input{capitoli/3_introduzione}
-%    \cleardoublepage
+	\input{capitoli/3_introduzione}
+	\cleardoublepage
 
-%	\input{capitoli/4_hardware}
-%    \cleardoublepage
+	\input{capitoli/4_hardware}
+	\cleardoublepage
 
 	\input{capitoli/5_firmware}
-    \cleardoublepage
+	\cleardoublepage
 
-%	\input{capitoli/6_controllore}
-%    \cleardoublepage
+	\input{capitoli/6_controllore}
+	\cleardoublepage
 
-%	\input{capitoli/7_conclusioni}
-%    \cleardoublepage
+	\input{capitoli/7_conclusioni}
+	\cleardoublepage
 
-%	\input{capitoli/8_appendice}
-%    \cleardoublepage
+	\input{capitoli/8_appendice}
+	\cleardoublepage
 
-    \printbibliography[heading=bibintoc]
+	\printbibliography[heading=bibintoc]
 \end{document}

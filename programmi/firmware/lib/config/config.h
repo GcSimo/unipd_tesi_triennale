@@ -63,7 +63,7 @@
 // tipi di windup per i controllori PID
 #define NO_WINDUP 0 // nessun anti-windup
 #define CLAMPING 1  // anti-windup con clamping
-#define LIMITING 2 // anti-windup con limiting
+#define LIMITING 2  // anti-windup con limiting
 #define BACK_CALC 3 // anti-windup con back calculation
 
 // ----------------------------------------------------------------------------
@@ -94,12 +94,12 @@
 // ----------------------------------------------------------------------------
 
 // parametri per gestione errori sul range di temperatura valido
-#define TEMP_ERR_THLD 0 // soglia di errore per temperatura (in cent. di °C)
-#define TEMP_ERR_HYST 20  // isteresi per errore di temperatura (in cent. di °C)
+#define TEMP_ERR_THLD 0  // soglia di errore per temperatura (in cent. di °C)
+#define TEMP_ERR_HYST 20 // isteresi per errore di temperatura (in cent. di °C)
 
 // parametri per gestione errori sul range di umidità valido
-#define RH_ERR_THLD 0  // soglia di errore per umidità (in cent. di %)
-#define RH_ERR_HYST 100   // isteresi per errore di umidità (in cent. di %)
+#define RH_ERR_THLD 0   // soglia di errore per umidità (in cent. di %)
+#define RH_ERR_HYST 100 // isteresi per errore di umidità (in cent. di %)
 
 
 // ----------------------------------------------------------------------------
@@ -125,7 +125,7 @@
 // ----------------------------------------------------------------------------
 
 // parametri per la gestione del segnale pwm
-#define PWM_PERIOD 15000 // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
+#define PWM_PERIOD 15000     // periodo del pwm per controllo attuatori (in ms) (max 30 sec)
 #define PWM_MIN_TIME_ON 500  // intervallo minimo di accensione attuatori (in ms)
 #define PWM_MIN_TIME_OFF 500 // intervallo minimo di spegnimento attuatori (in ms)
 
@@ -141,36 +141,35 @@
 // ----------------------------------------------------------------------------
 
 // parametri per il controllo della temperatura
-#define TEMP_CTRL PID       // tipo di controllore per la temperatura
-#define TEMP_HYS_THLD 10    // soglia di isteresi per temperatura (in cent. di °C)
-#define TEMP_PID_BIAS 0.0f   // bias di feedforward
-#define TEMP_PID_KP 70.0f    // guadagno proporzionale
-#define TEMP_PID_KI 0.8f // guadagno integrale
+#define TEMP_CTRL PID      // tipo di controllore per la temperatura
+#define TEMP_HYS_THLD 10   // soglia di isteresi per temperatura (in cent. di °C)
+#define TEMP_PID_BIAS 0.0f // bias di feedforward
+#define TEMP_PID_KP 70.0f  // guadagno proporzionale
+#define TEMP_PID_KI 0.8f   // guadagno integrale
 #define TEMP_PID_KD 0.0f   // guadagno derivativo
-#define TEMP_PID_KW 0.0f    // guadagno anti-windup
+#define TEMP_PID_KW 0.0f   // guadagno anti-windup
 #define TEMP_MIN_INTEGRAL -30.0f // limite minimo della componente integrale
 #define TEMP_MAX_INTEGRAL 30.0f  // limite massimo della componente integrale
 #define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup
-#define TEMP_PID_RESET 0 // reset delle componenti del PID ad ogni riavvio del PID
-#define TEMP_PID_P_SAMPLES 2 // campioni per calcolo della componente proporzionale
+#define TEMP_PID_RESET 0      // reset delle componenti del PID ad ogni riavvio del PID
+#define TEMP_PID_P_SAMPLES 2  // campioni per calcolo della componente proporzionale
 #define TEMP_PID_D_SAMPLES 20 // campioni per calcolo della componente derivativa
 #define TEMP_PID_I_SAMPLES (PID_UPDATE_PERIOD / PID_DATA_PERIOD) // campioni per calcolo della componente integrale
 
 // parametri per il controllo dell'umidità
 #define RH_CTRL NONE     // tipo di controllore per l'umidità
 #define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
-#define RH_PID_BIAS 0.0f   // bias del PID per umidità
+#define RH_PID_BIAS 0.0f // bias del PID per umidità
 #define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità
 #define RH_PID_KI 0.0f   // guadagno integrale del PID per umidità
 #define RH_PID_KD 0.0f   // guadagno derivativo del PID per umidità
 #define RH_PID_KW 0.0f   // guadagno anti-windup del PID per umidità
-#define RH_MIN_INTEGRAL 0.0f // limite minimo della componente integrale
-#define RH_MAX_INTEGRAL 100.0f  // limite massimo della componente integrale
+#define RH_MIN_INTEGRAL 0.0f   // limite minimo della componente integrale
+#define RH_MAX_INTEGRAL 100.0f // limite massimo della componente integrale
 #define RH_PID_WINDUP CLAMPING // tipo di anti-windup del PID per umidità
-#define RH_PID_RESET 0 // reset delle componenti del PID ad ogni riavvio del PID
-
-#define RH_PID_P_SAMPLES 2 // campioni per calcolo della componente proporzionale
-#define RH_PID_D_SAMPLES 10 // campioni per calcolo della componente derivativa
+#define RH_PID_RESET 0      // reset delle componenti del PID ad ogni riavvio del PID
+#define RH_PID_P_SAMPLES 2  // campioni per calcolo della componente proporzionale
+#define RH_PID_D_SAMPLES 20 // campioni per calcolo della componente derivativa
 #define RH_PID_I_SAMPLES (PID_UPDATE_PERIOD / PID_DATA_PERIOD) // campioni per calcolo della componente integrale
 
 

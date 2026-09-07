@@ -1,0 +1,20 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{; PlatformIO Project Configuration File}
+\PYG{c+c1}{;}
+\PYG{c+c1}{;   Build options: build flags, source filter}
+\PYG{c+c1}{;   Upload options: custom upload port, speed and extra flags}
+\PYG{c+c1}{;   Library options: dependencies, extra library storages}
+\PYG{c+c1}{;   Advanced options: extra scripting}
+\PYG{c+c1}{;}
+\PYG{c+c1}{; Please visit documentation for the other options and examples}
+\PYG{c+c1}{; https://docs.platformio.org/page/projectconf.html}
+
+\PYG{k}{[env:megaatmega2560]}
+\PYG{n+na}{platform}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{atmelavr}
+\PYG{n+na}{board}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{megaatmega2560}
+\PYG{n+na}{framework}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{arduino}
+\PYG{n+na}{monitor\PYGZus{}speed}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{115200}
+\PYG{n+na}{lib\PYGZus{}deps}\PYG{+w}{ }\PYG{o}{=}
+\PYG{+w}{	}\PYG{n+na}{marcoschwartz/LiquidCrystal\PYGZus{}I2C@\PYGZca{}1.1.4}
+\PYG{+w}{	}\PYG{n+na}{robtillaart/SHT2x@\PYGZca{}0.5.5}
+\end{MintedVerbatim}

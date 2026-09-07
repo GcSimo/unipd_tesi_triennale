@@ -128,9 +128,13 @@ nell'implementazione del controllore PID.
 	&= \frac{12}{T_s \cdot N(N^2-1)} \cdot \sum_{i=0}^{N-1} i \cdot y_i - \frac{6}{T_s \cdot N(N+1)} \cdot \sum_{i=0}^{N-1} y_i
 \end{align}
 
-\chapter{Codice sorgente del firmware}
-\section{Files di configurazione del firmware}
+\chapter{Codice del firmware}
+\section{File di configurazione per PlatformIO in VSCode}
+\captionof{listing}{File di configurazione dell'ambiente PlatformIO in VSCode}
+\label{lst:platformio_ini}
+\inputminted{ini}{../programmi/firmware/platformio.ini}
 
+\section{Files di configurazione del firmware}
 \captionof{listing}{File header con i parametri di configurazione}
 \label{lst:config_h}
 \inputminted{c++}{../programmi/firmware/lib/config/config.h}

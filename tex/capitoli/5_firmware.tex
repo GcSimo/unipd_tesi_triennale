@@ -1,11 +1,11 @@
 \chapter{Sviluppo del firmware per la gestione dell'incubatrice neonatale}
 \section{Requisiti del firmware}
-Il firmware per il microcontrollore deve essere in grado di gestire in tempo reale ed in maniera concorrente tutti i
+Il firmware del microcontrollore deve essere in grado di gestire in tempo reale ed in maniera concorrente tutti i
 componenti del prototipo di incubatrice neonatale, come il pannello informativo frontale, la gestione degli attuatori,
 il sensore di temperatura e umidità, la comunicazione seriale con il PC e i controllori per la gestione della temperatura.
 
 Per garantire la corretta sincronizzazione tra i vari processi, non è possibile impiegare codice bloccante come loop
-in attesa di soddisfare una certa condizione o l'utilizzo dela funzione \verb|delay()|. Serve usare un approccio basato
+in attesa di soddisfare una certa condizione o l'utilizzo della funzione \verb|delay()|. Serve usare un approccio basato
 su macchine a stati e condizioni che sfruttano la funzione \verb|millis()|. In questo modo, il microcontrollore può
 portare avanti più processi in parallelo senza rimanere occupato a concludere un determinato compito e trascurare gli altri.
 
@@ -22,10 +22,231 @@ prototipo orientato alla ricerca, infatti, capiterà sicuramente e molto spesso 
 per aggiungere nuove funzionalità, correggere scelte che si rivelano non ottimali o per adattarlo a nuove esigenze.
 
 \section{Configurazione generale}
+\subsection{Organizzazione e struttura del codice}
+\subsubsection{Moduli del codice}
+Per soddisfare le esigenze di modularità, leggibilità e manutenibilità del codice, il firmware è stato suddiviso in
+più moduli, ciascuno dei quali con un ruolo ben definito e limitato del sistema. In particolare, si è cercato di rendere
+i diversi moduli indipendenti tra loro, delegando al solo programma principale (\verb|main.cpp|) la coordinazione delle
+attività che coinvolgono più moduli. Ad esempio, l'accensione del riscaldatore è affidata al modulo di gestione degli
+attuatori, la stampa del messaggio di accensione sul display lcd è demandata al modulo di gestione del display, mentre
+è il programma principale che si occupa di richiedere l'accensione e la stampa del messaggio nello stesso momento.
+
 \begin{itemize}
-	\item variabili globali di stato
-	\item files e moduli del firmware
-	\item istruzioni di compilazione da arduino ide e platform.io
+	\item \textbf{configurazione generale} ~ - ~\verb|config.h|, ~ \verb|config.cpp| \\
+	contiene le definizioni di tutte le costanti e di tutti i parametri utilizzati nel sistema (es. pin utilizzati, parametri
+	dei controllori, \dots), in modo da averli tutti riuniti in un unico file e non doverli cercare in giro	per il codice;
+	contiene inoltre le dichiarazioni delle variabili globali di stato del sistema;
+	\item \textbf{funzioni di utilità} ~ - ~\verb|utils.h|, ~ \verb|utils.cpp| \\
+	fornisce alcune funzioni di utilità generiche utilizzate in più moduli del firmware;
+	\item \textbf{gestione degli attuatori} ~ - ~\verb|actuators.h|, ~ \verb|actuators.cpp| \\
+	contiene le funzioni per l'accensione e lo spegnimento dei vari attuatori del sistema, come il riscaldatore,
+	l'umidificatore, la barra led e la ventola di omogeneizzazione dell'aria;
+	\item \textbf{gestione degli errori} ~ - ~\verb|error.h|, ~ \verb|error.cpp| \\
+	gestisce gli errori del sistema, aggiornando il registro degli errori e occupandosi dell'accensione e dello
+	spegnimento del led di allarme del pannello informativo frontale;
+	\item \textbf{gestione del display lcd} ~ - ~\verb|lcd.h|, ~ \verb|lcd.cpp| \\
+	contiene le funzioni per la visualizzazione dei messaggi di sistema sul display lcd, come lo stato del sistema
+	costantemente aggiornato, l'aggiornamento dei setpoint, eventuali accensioni e spegnimenti degli attuatori e
+	la segnalazione degli errori;
+	\item \textbf{gestione della comunicazione seriale} ~ - ~\verb|serial.h|, ~ \verb|serial.cpp| \\
+	coordina la comunicazione seriale con il PC, gestendo l'invio dei messaggi di log per la registrazione degli
+	eventi, degli errori e per l'analisi dei dati del sistema;
+	\item \textbf{gestione del sensore di temperatura e umidità} ~ - ~\verb|sht20.h|, ~ \verb|sht20.cpp| \\
+	fornisce una classe wrapper della classe SHT2x della libreria SHT2x di Rob Tillaart \cite{sht2x_library} per
+	facilitare l'utilizzo non bloccante del sensore di temperatura e umidità SHT20;
+	\item \textbf{implementazione del controllore PID} ~ - ~\verb|pid.h| \\
+	contiene l'implementazione delle funzioni per la gestione del controllore PID; per rendere il codice efficiente,
+	sono stati utilizzati i template C++, per cui le implementazioni sono contenute direttamente nel file header
+	\verb|pid.h| e non in un file separato \verb|pid.cpp|;
+	\item \textbf{modulo principale del firmware} - \verb|main.cpp| \\
+	si occupa della gestione effettiva delle periferiche del sistema, sfruttando in maniera trasversale le funzioni
+	fornite dai vari moduli del firmware precedentemente illustrati.
+\end{itemize}
+
+\subsubsection{Dipendenze esterne}
+Il programma richiede l'utilizzo delle seguenti librerie esterne:
+\begin{itemize}
+	\item \verb|Arduino.h| di Arduino per la gestione delle funzioni di base del microcontrollore;
+	\item \verb|Wire.h| di Arduino per le comunicazioni I2C con il sensore SHT20 e con il display lcd;
+	\item \verb|SHT2x.h| di Rob Tillaart \cite{sht2x_library} per la gestione del sensore di temperatura e umidità SHT20;
+	\item \verb|LiquidCrystal_I2C.h| di Frank de Brabander \cite{lcd_library} per la gestione del display lcd.
+\end{itemize}
+
+\subsubsection{Dipendenze tra i moduli}
+Di seguito viene riportato il grafo delle dipendenze tra i vari moduli del firmware. Le frecce sono dirette dal modulo
+importatore al modulo importato. Alcuni moduli, come \verb|serial|, \verb|lcd| ed \verb|error|, richiedono l'inclusione
+di \verb|utils.h| solo nelle loro loro implementazioni, tali dipendenze sono rappresentate da frecce tratteggiate arancioni.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		>=Stealth,
+		node distance=1.5cm and 0.8cm,
+		module/.style={
+			rectangle, rounded corners, draw=black!70, thick,
+			fill=blue!10, minimum width=2cm, minimum height=0.6cm,
+			align=center, font=\sffamily\footnotesize
+		},
+		external/.style={
+			rectangle, rounded corners, draw=black!70, thick,
+			fill=green!15, minimum width=2cm, minimum height=0.6cm,
+			align=center, font=\sffamily\footnotesize
+		},
+		mainnode/.style={
+			rectangle, rounded corners, draw=black!70, thick,
+			fill=red!15, minimum width=2.3cm, minimum height=0.7cm,
+			align=center, font=\sffamily\bfseries\footnotesize
+		},
+		edge/.style={->, thick, draw=gray!80, shorten >=1pt},
+		crossedge/.style={->, thick, draw=orange!90, dashed, shorten >=1pt}
+	]
+
+		% Livello 0: Main
+		\node[mainnode] (main) {main.cpp};
+
+		% Livello 1: Moduli
+		% Lato sinistro
+		\node[module] (serial) [below=0.8cm of main] {serial};
+		\node[module] (pid) [left=0.4cm of serial] {pid};
+		\node[module] (actuators) [left=0.4cm of pid] {actuators};
+
+		% Lato destro
+		\node[module] (lcd) [right=0.4cm of serial] {lcd};
+		\node[module] (error) [right=0.4cm of lcd] {error};
+
+		% Livello 2: Config.h (Centro)
+		\node[module] (config) [below left=2.5cm and -0.7cm of main] {config};
+		\node[module] (utils) [below right=2.5cm and -0.7cm of main] {utils};
+
+		% Livello 3: Moduli e librerie esterne incluse da config.h
+		\node[module] (sht20) [below left=0.5cm and -0.5cm of config] {sht20};
+
+		% Livello 4: Librerie esterne di base incluse
+		\node[external] (arduino) [below left=1.8cm and -1.8cm of config] {Arduino.h};
+		\node[external] (sht2x) [left=0.4cm of arduino] {SHT2x.h};
+		\node[external] (wire) [right=0.4cm of arduino] {Wire.h};
+		\node[external] (lcd_i2c) [right=0.4cm of wire] {LiquidCrystal\_I2C.h};
+
+		% --- ARCHI ---
+		% Da main.cpp ai moduli di livello 1
+		\foreach \dest in {actuators, pid, serial, lcd, error} {
+			\draw[edge] (main) -- (\dest);
+		}
+		% Da main.cpp a config.h (passa dritta in mezzo al gap)
+		\draw[edge] (main) to[out=-135, in=80, out looseness=1.3, in looseness=2] (config);
+		\draw[edge] (main) to[out=-45, in=100, out looseness=1.3, in looseness=2] (utils);
+
+		% Dai moduli di livello 1 a config.h
+		\foreach \src in {actuators, pid, serial, lcd, error, utils} {
+			\draw[edge] (\src) -- (config);
+		}
+
+		% Dipendenze incrociate / laterali (a utils.h e error.h per implementazioni)
+		\draw[crossedge] (serial.south) to[out=-45, in=120] ($(utils.north)+(-0.3,0)$);
+		\draw[crossedge] (lcd.south) to[out=-100, in=70] ($(utils.north)+(0.3,0)$);
+		\draw[crossedge] ($(error.south)+(-0.4,0)$) to[out=-120, in=10] ($(utils.east)+(0,-0.1)$);
+		\draw[crossedge] ($(utils.east)+(0,0.1)$) to[out=10, in=-120] ($(error.south)+(-0.65,0)$);
+
+		% Da config.h a livello 3 e 4
+		\foreach \dest in {sht20, arduino, wire, lcd_i2c} {
+			\draw[edge] (config) -- (\dest);
+		}
+
+		% Da sht20.h
+		\draw[edge] (sht20) -- (arduino);
+		\draw[edge] (sht20) -- (sht2x);
+
+		% Legenda
+		\node[draw=black!70, thick, fill=white, rounded corners, below=6cm of main, align=center, font=\sffamily\footnotesize] (legend) {
+			\textbf{Legenda:}\\[4pt]
+			\tikz[baseline=-1.5ex]{\node[mainnode, scale=0.5, minimum width=1.5cm, minimum height=0.5cm] {};} File principale ~ ~ | ~ ~
+			\tikz[baseline=-1.5ex]{\node[module, scale=0.5, minimum width=1.5cm, minimum height=0.5cm] {};} Modulo di progetto ~ ~ | ~ ~
+			\tikz[baseline=-1.5ex]{\node[external, scale=0.5, minimum width=1.5cm, minimum height=0.5cm] {};} Libreria esterna \\[4pt]
+			~ \tikz[baseline=-0.7ex]{\draw[edge] (0,0) -- (0.6,0);} Dipendenza diretta (per inclusione) ~ | ~
+			\tikz[baseline=-0.7ex]{\draw[crossedge] (0,0) -- (0.6,0);} Dipendenza indiretta (nell'implementazione) ~
+		};
+	\end{tikzpicture}
+	\caption{Grafico delle dipendenze di importazione tra i vari moduli del firmware}
+	\label{fig:importazioni}
+\end{figure}
+
+\subsection{Istruzioni di compilazione e upload del firmware}
+\subsubsection{Compilazione tramite PlatformIO}
+Come ambiente di sviluppo, è stato scelto di utilizzare l'editor VSCode \cite{vscode} di Microsoft per la sua flessibilità
+e le funzionalità offerte, insieme all'estensione PlatformIO IDE \cite{platformio_ext} sviluppata dall'organizzazione
+PlatformIO \cite{platformio} per permettere la compilazione e l'upload del firmware sul microcontrollore direttamente
+dall'editor.
+
+In appendice è riportato il file di configurazione \verb|platformio.ini| (\autoref{lst:platformio_ini})
+da inserire nella cartella principale del progetto con le istruzioni per l'estensione PlatformIO per la compilazione e
+l'upload del firmware sul microcontrollore.
+
+I file header (\verb|.h|) e sorgente (\verb|.cpp|) dei vari moduli devono essere inseriti nella cartella \verb|lib|, ognuno
+all'interno della relativa sotto-cartella con il nome del modulo di appartenenza, mentre il file \verb|main.cpp| deve essere
+inserito nella cartella \verb|src|.
+
+\subsubsection{Compilazione via Arduino IDE}
+Come ambiente di sviluppo alternativo, è possibile utilizzare l'IDE ufficiale di Arduino \cite{arduino_ide}. Per compilare
+ed eseguire l'upload del firmware, è sufficiente posizionare tutti i files header (\verb|.h|) e sorgente (\verb|.cpp|) dei
+vari moduli nella cartella principale del progetto e rinominare il file \verb|main.cpp| in \verb|<nome_progetto>.ino|, dove
+\verb|<nome_progetto>| è il nome della cartella principale del progetto.
+
+\subsection{Variabili globali, parametri e funzioni di utilità}
+\subsubsection{Variabili globali di stato}
+Le variabili globali sono dichiarate nel file \verb|config.h| (\autoref{lst:config_h}) e sono definite nel
+rispettivo file \verb|config.cpp| (\autoref{lst:config_cpp}). Sono organizzate in oggetti (per il display lcd ed il sensore
+SHT20) o in struct. Di seguito si riportano le variabili globali con una breve descrizione del loro impiego, per una maggiore
+comprensione si rimanda ai rispettivi files riportati in appendice.
+\begin{itemize}
+	\item \mintinline{c++}|sht20 sensor|: oggetto di tipo \verb|sht20| dichiarato nel file \verb|sht20.h|, utilizzato per la
+	gestione del sensore di temperatura e umidità SHT20;
+	\item \mintinline{c++}|LiquidCrystal_I2C lcd|: oggetto di tipo \verb|LiquidCrystal_I2C| dichiarato nella libreria esterna
+	\verb|LiquidCrystal_I2C.h|, utilizzato per la gestione del display lcd;
+	\item \mintinline{c++}|struct status status|: struct con le informazioni sullo stato del sistema;
+	\item \mintinline{c++}|struct timers timers|: struct con i timer per la temporizzazione dei vari processi;
+	\item \mintinline{c++}|struct pid<TEMP> temp_pid| ~ e ~ \mintinline{c++}|struct pid<RH> rh_pid|: struct definite tramite
+	template per la gestione dei controllori PID per la temperatura e l'umidità.
+\end{itemize}
+
+\subsubsection{Memorizzazione delle misurazioni di temperatura e umidità}
+Analizzando il dominio del problema, si osserva che le misurazioni di temperatura e umidità ed i relativi setpoint sono numeri
+decimali senza segno, con al massimo due cifre intere e due cifre decimali. Si assume infatti che il prototipo sia utilizzato
+con temperature compresa tra 0°C e 100°C e per definizione anche l'umidità relativa è compresa tra 0\% e 100\%.
+
+Per ridurre l'occupazione di memoria ed il costo delle operazioni matematiche, si è deciso di moltiplicare per 100 i valori
+reali in modo da poterli memorizzare in variabili intere a 16 bit. Ad esempio una temperatura di 36.25°C viene salvata come
+3625, mentre un'umidità relativa del 75.50\% viene salvata come 7550.
+
+Si potrebbe usare anche variabili unsigned, solo che il loro utilizzo diventa estremamente delicato: per lo standard C/C++
+una sottrazione tra due unsigned da come risultato un unsigned che va in overflow se il risultato matematico dell'operazione
+è negativo.
+
+\subsubsection{Parametri di configurazione}
+I parametri del programma, sono definiti come costanti nel file \verb|config.h| (\autoref{lst:config_h})
+attraverso le direttive \mintinline{c++}|#define|. Di seguito si riporta una classificazione dei parametri per facilitarne la
+comprensione. Per maggiori dettagli si rimanda al file \verb|config.h| in appendice.
+\begin{itemize}
+	\item configurazione dei pin del microcontrollore per la gestione delle periferiche;
+	\item valori delle flag del programma per esplicitare meglio il significato dei valori usati nei parametri o nelle
+	variabili di configurazione;
+	\item parametri per il controllo dei potenziometri e del setpoint
+	\item parametri per la gestione degli errori
+	\item parametri per la temporizzazione dei vari processi del firmware
+	\item parametri per la gestione del segnale pwm
+	\item parametri per la gestione dei controllori
+\end{itemize}
+
+\subsubsection{Funzioni di utilità}
+Le funzioni di utilità sono definite nel file \verb|utils.h| (\autoref{lst:utils_h}) e implementate nel
+file \verb|utils.cpp| (\autoref{lst:utils_cpp}). Di seguito si riportano le firme e una breve descrizione
+del loro compito. Per una maggiore comprensione si rimanda ai relativi codici in appendice.
+\begin{itemize}
+	\item \mintinline{c++}|char *data_to_string(int16_t value);| \\
+	converte un valore di temperatura o umidità in una stringa di caratteri opportunamente formattata per la visualizzazione
+	su display lcd o per l'invio tramite comunicazione seriale;
+	\item \mintinline{c++}|int16_t rh_at_temp_setpoint(int16_t rh1, int16_t t1, int16_t t2);|\\
+	calcola l'umidità relativa che si avrebbe al un determinato setpoint di temperatura, utilizzando i valori di umidità
+	e temperatura corrente.
 \end{itemize}
 
 \section{Gestione degli attuatori}

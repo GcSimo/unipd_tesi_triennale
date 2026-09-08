@@ -106,7 +106,7 @@ function serial_read(showPlot, portName, baudRate, filename)
 	if showPlot > 0
 
 		% crea una finestra grafica per stampare il grafico in tempo reale
-		fig = figure('Name', 'Log misurazioni - ' + filename, 'Color', 'w', 'Position', [100, 100, 1000, 700]);
+		fig = figure('Name', sprintf('Log misurazioni - %s', filename), 'Color', 'w', 'Position', [100, 100, 1000, 700]);
 
 		% crea flag di controllo e pulsante di stop per fermare l'acquisizione
 		fig.UserData = true; % Variabile nascosta che mantiene vivo il ciclo
@@ -357,7 +357,7 @@ end
 % gestisce la chiusura sicura della porta seriale e del file CSV, viene
 % invocata in automatico al termine del programma (successo, errore o Ctrl+C)
 function cleanUpRoutine(arduinoObj, fileID)
-	fprintf('\nChiusura connessione seriale e salvataggio file CSV in corso...\n');
+	fprintf('Chiusura connessione seriale e salvataggio file CSV in corso...\n');
 	clear arduinoObj;
 	if fileID ~= -1
 		fclose(fileID);

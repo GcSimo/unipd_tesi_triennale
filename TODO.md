@@ -12,7 +12,9 @@
 - [x] verificare massima durata di un loop - max ct: 248312 micros - mean ct: 166 micros (PID-PID) - 162 micros (PID-HYST) - 156 micros (MAN) - 153 (NONE-NONE)
 - [x] verificare temporizzazione display, led allarme
 - [x] verificare derivata al variare del setpoint (derivative kick test)
-- [ ] tarare parametri PID
+- [ ] tarare parametri PID:
+  - [ ] tarare per avere salita smooth con PI (P fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint)
+  - [ ] aggiungere derivativo per avere P e derivativo fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint
 - [ ] aggiungere static_assert per verificare parametri di configurazione dell'incubatrice
 - [ ] aggiungere conversione °C in potenza (feedforward per ragiungere il setpoint) -> complesso da implementare
 - [ ] gestione output nel passaggio da automatico a manuale -> non necessaria
@@ -37,8 +39,16 @@
 - [x] misurare distanze per supporto dell'arduino e della millefori
 - [x] verificare dimensione della millefori e componenti già presenti
 - [ ] bloccaggio del coperchio in plexiglass
-- [ ] aggiungere switch di reset per il refill
 - [ ] fare elenco del materiale da acquistare
+  - [ ] switch di reset del timer refill
+  - [ ] moduli relé o componentistica equivalente
+  - [ ] terminali a vite per tutti i cavi possibili
+  - [ ] cavi/ponticelli per millefori
+  - [ ] pin headers per stepdown
+  - [ ] prevedere più relé di quelli presenti
+  - [ ] prevedere spazio per più sensori
+  - [ ] morsetto/nodo centrale per la massa
+  - [ ] eventuali mosfet logic level da sostituire ai relé
 
 ## confronto con prof:
 - [x] metodo dei minimi quadrati per calcolo derivata dell'errore

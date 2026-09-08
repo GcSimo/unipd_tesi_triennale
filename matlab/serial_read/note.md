@@ -373,3 +373,230 @@
 ### data_20260904_160527.csv
 - test pid con kp = 70, ki = 0.8, kd = 0, no bias, clamping, 15 secondi di pwm e 20 campioni derivativi
 - undershoot leggero e sovraelongazione
+
+### data_20260908_095849.csv
+- test pid con kp = 100, ki = 0, kd = 0
+- picco fino a 36°C, poi cala, oscilla e si stabilizza a 35.5°C
+- (36-35.5) * 100 = 50% di duty cycle per mantenere la temperatura
+
+### data_20260908_101513.csv
+- test pid con kp = 100, ki = 0, kd = 100
+- analogo a prima, sovraelongazione poco sotto i 36°C
+
+### data_20260908_102516.csv
+- test pid con kp = 100, ki = 0, kd = 300
+- analogo a prima, sovraelongazione ancora più bassa
+
+### data_20260908_103717.csv
+- test pid con kp = 100, ki = 0, kd = 500
+- sovraelongazione come per assenza di derivativo, forse perché è partita da una temperatura più bassa e c'è maggiore inerzia termica
+
+### data_20260908_104250.csv
+- test pid con kp = 50, ki = 0, kd = 500
+- sovraelongazione a 35.5°C poi lenta caduta a 35.2°C con 40% di duty cycle
+
+### data_20260908_110255.csv
+- acquisizione dati di evoluzione libera e risposta forzata
+
+### data_20260908_114342.csv
+- test pid con kp = 50, ki = 0.5, kd = 500
+- leggero overshoot per integrale di poco troppo alto
+
+### data_20260908_115655.csv
+- test pid con kp = 50, ki = 0.4, kd = 500
+- overshoot a regime, poi leggere oscillazioni
+
+### data_20260908_121637.csv
+- test pid con kp = 60, ki = 0.55, kd = 500
+- sottoelongazione
+
+### data_20260908_124031.csv
+- test pid con kp = 50, ki = 0.35, kd = 500
+- sottoelongazione
+
+### data_20260908_130127.csv
+- test pid con kp = 70, ki = 0.7, kd = 700
+- sottoelongazione
+
+### data_20260908_130804.csv
+- test pid con kp = 70, ki = 0.8, kd = 700
+- sottoelongazione
+
+### data_20260908_131550.csv
+- test pid con kp = 70, ki = 0.8, kd = 700
+- test cambiando sensore SHT20
+- leggera sottoelongazione
+
+### data_20260908_132554.csv
+- test pid con kp = 70, ki = 0.8, kd = 500
+- overshoot a 36.2°C circa
+
+### data_20260908_133756.csv
+- test pid con kp = 70, ki = 0.8, kd = 300
+- leggero overshoot a 36.05°C circa, poi oscillazioni a regime
+- si suppone il proporzionale troppo alto senza il derivativo che frena
+
+### data_20260908_134945.csv
+- test pid con kp = 60, ki = 0.6, kd = 0
+- sovraelongazione a 36.1°C circa, poi sottoelongazione per integrale troppo basso
+
+### data_20260908_140542.csv
+- test pid con kp = 60, ki = 0.6, kd = 600
+- sovraelongazione e sottoelongazione
+
+### data_20260908_141246.csv
+- test pid con kp = 60, ki = 0.6, kd = 1000
+- piccola sovraelongazione
+
+### data_20260908_142327.csv
+- test pid con kp = 60, ki = 0.55, kd = 1000
+- sovraelongazione
+
+### data_20260908_142850.csv
+- test pid con kp = 60, ki = 0.5, kd = 1200
+- lenta sovraelongazione
+
+### data_20260908_143511.csv
+- test pid con kp = 60, ki = 0.5, kd = 600
+- sovraelongazione
+
+### data_20260908_143947.csv
+- test pid con kp = 60, ki = 0.45, kd = 600
+- no sovraelongazione, ma sottoelongazione per integrale troppo basso
+
+### data_20260908_144558.csv
+- test pid con kp = 60, ki = 0.45, kd = 300
+- sfiora da sotto il setpoint, poi sottoelongazione per integrale troppo basso
+
+### data_20260908_145203.csv
+- test pid con kp = 55, ki = 0.45, kd = 300
+- sovraelongazione sotto al setpoint, poi sottoelongazione e salita lenta al setpoint
+
+### data_20260908_145933.csv
+- test pid con kp = 55, ki = 0.47, kd = 1100
+- ottimo, integrale di poco troppo alto (0.46 forse è giusto)
+
+### data_20260908_151514.csv
+- test pid con kp = 60, ki = 0.47, kd = 1200
+- sovraelongazione
+
+### data_20260908_152031.csv
+- test pid con kp = 60, ki = 0.47, kd = 600
+- arriva a setpoint, poi sottoelongazione per integrale troppo basso
+
+### data_20260908_152639.csv
+- test pid con kp = 50, ki = 0.43, kd = 1000
+- integrale troppo alto
+
+### data_20260908_153025.csv
+- test pid con kp = 50, ki = 0.40, kd = 1000
+- integrale di poco troppo alto
+
+### data_20260908_153757.csv
+- test pid con kp = 50, ki = 0.37, kd = 1000
+- integrale di poco troppo alto
+
+### data_20260908_154322.csv
+- test pid con kp = 50, ki = 0.35, kd = 1000
+- integrale di poco troppo alto
+
+### data_20260908_155002.csv
+- test pid con kp = 50, ki = 0.33, kd = 1000
+- integrale di poco troppo basso
+
+### data_20260908_160233.csv
+- test pid con kp = 55, ki = 0.45, kd = 1200 (valori quasi ottimali precedenti)
+- integrale di poco troppo alto
+
+### data_20260908_160915.csv
+- test pid con kp = 55, ki = 0.40, kd = 1200
+- integrale di poco troppo alto
+
+### data_20260908_161705.csv
+- test pid con kp = 55, ki = 0, kd = 1200, bias = 50
+- overshoot
+- 33°C -> 36°C in 176 secondi
+
+### data_20260908_162223.csv
+- test pid con kp = 50, ki = 0, kd = 1200, bias = 50
+- overshoot leggero
+- 33°C -> 36°C in 147 secondi
+
+### data_20260908_162949.csv
+- test pid con kp = 45, ki = 0, kd = 1200, bias = 50
+- overshoot leggero
+- 33°C -> 36°C in 177 secondi
+
+### data_20260908_163745.csv
+- test pid con kp = 55, ki = 0, kd = 800, bias = 50
+- overshoot
+- 33°C -> 36°C in --- secondi
+
+### data_20260908_164208.csv
+- test pid con kp = 55, ki = 0, kd = 500, bias = 50
+- overshoot
+- 33°C -> 36°C in --- secondi
+
+### data_20260908_164643.csv
+- test pid con kp = 55, ki = 0, kd = 2000, bias = 50
+- arriva a setpoint, poi overshoot
+- 33°C -> 36°C in --- secondi
+
+### data_20260908_165252.csv
+- test pid con kp = 120, ki = 0, kd = 0, bias = 0
+- test metodo ziegler-nichols - non funziona per questo sistema
+
+### data_20260908_170029.csv
+- test pid con kp = 50, ki = 0.4, kd = 1500
+- integrale troppo alto
+
+### data_20260908_170356.csv
+- test pid con kp = 55, ki = 0.4, kd = 1500
+- integrale troppo alto
+
+### data_20260908_170824.csv
+- test pid con kp = 55, ki = 0.35, kd = 1200
+- buono
+
+### data_20260908_171737.csv
+- test pid con kp = 55, ki = 0.35, kd = 1000
+- buono, integrale di poco troppo basso
+
+### data_20260908_172430.csv
+- test pid con kp = 55, ki = 0.36, kd = 1100
+- integrale di poco troppo basso
+
+### data_20260908_173022.csv
+- test pid con kp = 55, ki = 0.37, kd = 1100
+- integrale di poco troppo basso
+
+### data_20260908_173833.csv
+- test pid con kp = 55, ki = 0.40, kd = 1100
+- integrale di poco troppo alto
+
+### data_20260908_174245.csv
+- test pid con kp = 55, ki = 0.40, kd = 1000
+- buono *
+- introduzione del disturbo da 450 a 500 circa
+
+### data_20260908_180127.csv
+- test pid con kp = 60, ki = 0.33, kd = 1500
+- integrale di poco troppo basso
+
+### data_20260908_180910.csv
+- test pid con kp = 60, ki = 0.35, kd = 1500
+- integrale di poco troppo basso
+
+### data_20260908_181739.csv
+- test pid con kp = 60, ki = 0.37, kd = 1500
+- integrale di poco troppo basso
+
+### data_20260908_182413.csv
+- test pid con kp = 60, ki = 0.4, kd = 1500
+- buono *
+- introduzione del disturbo da 450 a 500 circa
+
+### data_20260908_184210.csv
+- test pid con kp = 55, ki = 0.35, kd = 1200
+- buono *
+- introduzione del disturbo da 430 a 480 circa

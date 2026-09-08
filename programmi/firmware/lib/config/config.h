@@ -144,13 +144,13 @@
 #define TEMP_CTRL PID      // tipo di controllore per la temperatura
 #define TEMP_HYS_THLD 10   // soglia di isteresi per temperatura (in cent. di °C)
 #define TEMP_PID_BIAS 0.0f // bias di feedforward
-#define TEMP_PID_KP 70.0f  // guadagno proporzionale
-#define TEMP_PID_KI 0.8f   // guadagno integrale
-#define TEMP_PID_KD 0.0f   // guadagno derivativo
+#define TEMP_PID_KP 55.0f  // guadagno proporzionale
+#define TEMP_PID_KI 0.35f   // guadagno integrale
+#define TEMP_PID_KD 1200.0f   // guadagno derivativo
 #define TEMP_PID_KW 0.0f   // guadagno anti-windup
+#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup
 #define TEMP_MIN_INTEGRAL -30.0f // limite minimo della componente integrale
 #define TEMP_MAX_INTEGRAL 30.0f  // limite massimo della componente integrale
-#define TEMP_PID_WINDUP CLAMPING // tipo di anti-windup
 #define TEMP_PID_RESET 0      // reset delle componenti del PID ad ogni riavvio del PID
 #define TEMP_PID_P_SAMPLES 2  // campioni per calcolo della componente proporzionale
 #define TEMP_PID_D_SAMPLES 20 // campioni per calcolo della componente derivativa

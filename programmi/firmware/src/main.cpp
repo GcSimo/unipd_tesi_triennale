@@ -659,6 +659,10 @@ void set_manual_ctrl() {
     rh_turn_off(); // spegnimento umidificatore e led associato
     serial_man_rh_off(); // stampa messaggio di spegnimento su serial monitor
   }
+
+  // richiede lo spegnimento della ventola di omogeneizzazione
+  if (status.fan_relay)
+    fan_turn_off();
 }
 
 // attivazione del controllo automatico degli attuatori

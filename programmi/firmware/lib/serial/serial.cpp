@@ -17,7 +17,7 @@ void serial_boot_message() {
 
 // trasmissione temperatura, umidità e stato del sistema
 void serial_datalog() {
-  Serial.print(F("LOG: T: "));
+  Serial.print(F("LOG-: T: "));
   Serial.print(data_to_string(status.temp_sht20));
   Serial.print(F("°C | RH: "));
   Serial.print(data_to_string(status.rh_sht20));

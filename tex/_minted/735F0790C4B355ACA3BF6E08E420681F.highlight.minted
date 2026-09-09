@@ -660,6 +660,10 @@
 \PYG{+w}{    }\PYG{n}{rh\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// spegnimento umidificatore e led associato}
 \PYG{+w}{    }\PYG{n}{serial\PYGZus{}man\PYGZus{}rh\PYGZus{}off}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// stampa messaggio di spegnimento su serial monitor}
 \PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// richiede lo spegnimento della ventola di omogeneizzazione}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{fan\PYGZus{}relay}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{fan\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
 \PYG{p}{\PYGZcb{}}
 
 \PYG{c+c1}{// attivazione del controllo automatico degli attuatori}

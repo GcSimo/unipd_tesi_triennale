@@ -239,40 +239,250 @@ comprensione. Per maggiori dettagli si rimanda al file \verb|config.h| in append
 \subsubsection{Funzioni di utilità}
 Le funzioni di utilità sono definite nel file \verb|utils.h| (\autoref{lst:utils_h}) e implementate nel
 file \verb|utils.cpp| (\autoref{lst:utils_cpp}). Di seguito si riportano le firme e una breve descrizione
-del loro compito. Per una maggiore comprensione si rimanda ai relativi codici in appendice.
+del loro compito. Per una maggiore comprensione si rimanda alla relativa implementazione in appendice.
 \begin{itemize}
-	\item \mintinline{c++}|char *data_to_string(int16_t value);| \\
+	\item \mintinline{c++}|char *data_to_string(int16_t value);| \label{data_to_string} \\
 	converte un valore di temperatura o umidità in una stringa di caratteri opportunamente formattata per la visualizzazione
 	su display lcd o per l'invio tramite comunicazione seriale;
-	\item \mintinline{c++}|int16_t rh_at_temp_setpoint(int16_t rh1, int16_t t1, int16_t t2);|\\
+	\item \mintinline{c++}|int16_t rh_at_temp_setpoint(int16_t rh1, int16_t t1, int16_t t2);| \\
 	calcola l'umidità relativa che si avrebbe al un determinato setpoint di temperatura, utilizzando i valori di umidità
 	e temperatura corrente.
 \end{itemize}
 
 \section{Gestione degli attuatori}
+\subsection{Gestione centralizzata degli attuatori}
+Ogni attuatore del sistema (riscaldatore, umidificatore, barra led e ventola di omogeneizzazione) ha una propria variabile
+di stato booleana che indica se l'attuatore in questione è acceso o spento. Tali variabili sono contenute nella struct
+\verb|status| vista in precedenza.
+
+Per mantenere la consistenza tra le variabili di stato del sistema e lo stato effettivo degli attuatori, sono state realizzate
+le due funzioni di accensione e spegnimento per ogni attuatore, ad eccezione della ventola di omogeneizzazione. Ogni funzione
+si occupa di accendere o spegnere l'attuatore in questione e di aggiornare la variabile di stato corrispondente.
+Oltre ad accendere o spegnere un attuatore, le funzioni possono svolgere alcuni controlli aggiuntivi (ad esempio per la
+gestione del refill dell'acqua dell'umidificatore) approfonditi nei successivi paragrafi.
+
+Per maggiori dettagli si rimanda all'implementazione di tali funzioni, dichiarate nel file \verb|actuators.h|
+(\autoref{lst:actuators_h}) e implementate nel file \verb|actuators.cpp| (\autoref{lst:actuators_cpp}).
+
+\subsection{Controllo manuale ed automatico degli attuatori}
+Per permettere maggiore flessibilità nei test eseguiti sul prototipo, è stato scelto di implementare due modalità di controllo
+degli attuatori: una modalità manuale e una modalità automatica. Nella modalità manuale, l'accensione e lo spegnimento del
+riscaldatore e del'umidificatore avviene tramite gli switch del pannello frontale. Nella modalità automatica, invece, si ignora
+lo stato degli switch e gli attuatori vengono controllati tramite opportuni controllori (ad isteresi o PID) che lavorano per
+raggiungere i setpoint impostati.
+
+Il passaggio in modalità manuale avviene quando uno dei due switch per controllare il riscaldatore o l'umidificatore viene
+spostato, mentre il passaggio in modalità automatica avviene quando viene ruotato uno dei due potenziometri del pannello
+frontale per regolare i setpoint di temperatura o umidità. Il passaggio tra una modalità e l'altra viene gestito nel programma
+principale (\verb|main.cpp|) (\autoref{lst:main_cpp}) tramite due apposite funzioni.
+
+\subsection{Gestione della ventola di omogeneizzazione}
+Lo scopo della ventola di omogeneizzazione è quello di rimescolare l'aria e ridurre le stratificazioni di temperatura ed
+umidità all'interno della camera di incubazione. Risulta, quindi, opportuno che venga accesa almeno quando il riscaldatore
+e/o l'umidificatore sono accesi. Per automatizzare questa gestione, le rispettive funzioni di accensione del riscaldatore
+e dell'umidificatore si occupano anche di accendere la ventola di omogeneizzazione. Non è richiesta, quindi, una funzione
+dedicata per l'accensione della ventola.
+
+A seguito di alcune prove sperimentali, si è osservato che quando un attuatore viene controllato tramite un segnale pwm,
+non ha senso accendere e spegnere la ventola di omogeneizzazione per assecondare il ciclo di lavoro dell'attuatore. Risulta
+più conveniente tenere la ventola sempre accesa finché almeno un attuatore è controllato da un segnale pwm non nullo. A
+seguito di questa osservazione, per poter spegnere la ventola devono verificarsi tutte le seguenti condizioni:
 \begin{itemize}
-	\item controllo manuale o automatico degli attuatori
-	\item gestione centralizzata degli attuatori per aggiornare le variabili di stato
-	\item gestione della ventola di omogeneizzazione della temperatura
-	\item gestione del refill dell'acqua per il sistema di umidificazione
+	\item il riscaldatore è spento;
+	\item l'umidificatore è spento;
+	\item il riscaldatore è controllato in modalità automatica da un segnale pwm nullo, oppure è attivo il controllo
+	manuale degli attuatori;
+	\item l'umidificatore è controllato in modalità automatica da un segnale pwm nullo, oppure è attivo il controllo
+	manuale degli attuatori.
 \end{itemize}
+Tale condizione è stata implementata nella funzione di spegnimento della ventola di omogeneizzazione (\verb|actuators.cpp|,
+\autoref{lst:actuators_cpp}), che viene richiamata ogni volta che il riscaldatore o l'umidificatore vengono spenti, ad ogni
+aggiornamento del segnale pwm e ogni volta che il sistema passa alla modalità di controllo manuale degli attuatori.
+
+\subsection{Gestione del refill dell'acqua per il sistema di umidificazione}
+L'acqua a disposizione per il sistema di umidificazione è contenuta in una piccola vaschetta di capienza massima di 1.5 litri.
+In pratica, però, sono necessari almeno 0.5 litri di acqua per mantenere l'umidificatore totalmente sommerso e al massimo
+se ne possono versare 0.75 litri prima che questa esca attraverso i tubi di trasporto del vapore acqueo. La quantità di acqua
+utile risulta essere, quindi, di circa 0.25 litri, che corrisponde a 250 grammi.
+Dai dati sperimentali acquisiti da Bincoletto Vanni nella sua tesi di laurea \cite{bincoletto2025}, la quantità di acqua
+nebulizzata dall'umidificatore è di circa 0.1 grammi al secondo, per cui risulta facile calcolare che i 250 grammi
+a disposizione si esaurisce in circa 2500 secondi (41 minuti e 40 secondi).
+
+Per garantire il corretto funzionamento del sistema di umidificazione, si utilizza un timer che monitora il tempo di accensione
+dell'umidificatore e, quando questo supera i 2500 secondi, viene segnalato un errore di esaurimento dell'acqua che blocca
+qualsiasi accensione dell'umidificatore. Tale verifica viene effettuata ad ogni ciclo del loop principale del programma
+e si basa anche sull'istante di tempo dell'ultima accensione dell'umidificatore, aggiornato dalla funzione di accensione
+dell'umidificatore. Per maggiori approfondimenti si rimanda alla relativa implementazione nel file \verb|main.cpp|
+(\autoref{lst:main_cpp}).
+
+Per far rientrare l'errore e ripristinare il corretto funzionamento del sistema, è necessario riempire la vaschetta con acqua
+e riavviare il microcontrollore. La scelta di resettare il microcontrollore ad ogni refill non risulta ottimale per le
+incubatrici neonatali destinate al mercato, ma è accettabile per un prototipo orientato alla ricerca accademica.
 
 \section{Gestione del pannello frontale}
-\begin{itemize}
-	\item lettura degli switch, con impostazione controllo manuale
-	\item lettura dei potenziometri, con filtri per ridurre il rumore
-	\item gestione del display lcd con temporizzazioni
-	\item gestione degli errori e gestione del led di allarme
-\end{itemize}
+\subsection{Lettura degli switch}
+La lettura degli switch del pannello frontale viene gestita direttamente nel programma principale (\verb|main.cpp|,
+\autoref{lst:main_cpp}). Per evitare di avere continue invocazioni della funzione \verb|digitalRead()| ad ogni ciclo
+del loop principale, sono stati inseriti tre timer (uno per ogni switch) che abilitano la lettura dello switch solo
+ogni 50 millisecondi. Questo ritardo risulta abbastanza lungo per evitare di sovraccaricare troppo il microcontrollore
+e sufficientemente breve per garantire una buona reattività del sistema agli input dell'utente.
+
+Quando viene rilevato un cambio di stato di uno switch, vengono invocate le funzioni apposite per aggiornare lo stato
+dell'attuatore corrispondente e, solo per gli switch del riscaldatore e dell'umidificatore, si effettua il passaggio
+alla modalità di controllo manuale.
+
+\subsection{Lettura dei potenziometri e aggiornamento dei setpoint}
+Come per gli switch, anche per i potenziometri sono stati implementati due timer (uno per ogni potenziometro) che ne abilitano
+la lettura solo ogni 100 millisecondi. Siccome le letture di voltaggi analogici sono soggette a rumore e fluttuazioni, è stato
+aggiunto un filtro a threshold che blocca le successive operazioni di aggiornamento del setpoint se la differenza tra il nuovo
+valore letto e il vecchio valore del potenziometro è inferiore ad una certa soglia di rumore.
+
+Per evitare che, mentre l'utente ruota il potenziometro, il setpoint venga aggiornato continuamente ad ogni nuova posizione
+intermedia, è stato introdotto un ulteriore timer che permette di salvare il nuovo valore del setpoint solo dopo un certo
+intervallo di tempo (1100 ms) dall'ultima modifica. In questo modo l'utente può ruotare il potenziometro quanto vuole senza
+che il setpoint venga aggiornato ogni istante, evitando, così, problemi di instabilità nei controllori. I valori intermedi
+dei setpoint vengono comunque visualizzati sul display lcd, così da dare un feedback immediato all'utente.
+
+Infine, è stato scelto di far avvenire il passaggio alla modalità di controllo automatico degli attuatori con la sola modifica
+della posizione del potenziometro, in quanto l'utente può voler attivare la modalità automatica senza necessità di modificare
+i setpoint impostati.
+
+Tutti i parametri di threshold e gli intervalli di aggiornamento sono definiti come costanti nel file \verb|config.h|
+(\autoref{lst:config_h}). Per maggiori dettagli sulla gestione dei potenziometri e dei setpoint si rimanda alla relativa
+implementazione nel file \verb|main.cpp| (\autoref{lst:main_cpp}).
+
+\subsection{Gestione del display lcd}
+La gestione del display lcd è affidata al modulo \verb|lcd| che fornisce una serie di funzioni per la stampa dei messaggi di
+sistema sul display e per la loro temporizzazione. Di seguito viene riportato il ciclo di funzionamento del display e alcune
+considerazioni e scelte implementative effettuate per la relativa gestione. Tutti i parametri di temporizzazione sono definiti
+nel file \verb|config.h| (\autoref{lst:config_h}). Per maggiori dettagli sul funzionamento, si rimanda alla relativa
+implementazione nei file \verb|lcd.h| (\autoref{lst:lcd_h}) e \verb|lcd.cpp| (\autoref{lst:lcd_cpp}).
+
+\subsubsection{Organizzazione dei messaggi e ciclo di funzionamento del display}
+In condizioni di normale funzionamento, il display lcd mostra costantemente le informazioni sullo stato del sistema, come
+la temperatura, l'umidità, i setpoint impostati, la modalità di controllo degli attuatori (manuale o automatica) e l'eventuale
+presenza di errori.
+
+In caso di eventi specifici, come l'accensione o lo spegnimento di un attuatore, la modifica dei setpoint o la segnalazione
+di un errore, il display lcd mostra un messaggio relativo all'evento appena verificatosi. Tali messaggi devono essere
+visualizzati immediatamente e devono rimanere sul display per un certo intervallo di tempo, in modo da permettere all'utente
+di leggerli. Dopo tale intervallo di tempo, il display torna a mostrare le informazioni sullo stato del sistema.
+
+\subsubsection{Temporizzazione dei messaggi}
+Per garantire un tempo minimo di visualizzazione dei messaggi associati agli eventi, è stato introdotto un timer che viene
+costantemente aggiornato ad ogni nuova scrittura sul display. I messaggi associati agli eventi vengono visualizzati
+immediatamente, a prescindere dallo stato del timer, mentre le informazioni sullo stato del sistema vengono visualizzate
+solo dopo che è trascorso un intervallo di tempo prefissato (1000 ms) dall'ultima scrittura sul display. In questo modo
+i messaggi associati agli eventi vengono mantenuti stampati sul display per permettere all'utente di leggerli, prima di
+venire sovrascritti dalle informazioni sullo stato del sistema.
+
+\subsubsection{Prevenzione del flickering del display}
+Aggiornamenti frequenti dell'intero contenuto del display lcd possono provocare un fastidioso flickering, dovuto al fatto
+che la modifica del contenuto del display non è istantanea. Per evitare questo fenomeno, è stata implementata una tecnica
+di aggiornamento selettivo che consiste nel modificare solo le informazioni che sono effettivamente cambiate rispetto
+all'ultima stampa.
+
+Per conoscere quali informazioni del display sono state cambiate, i messaggi da stampare sono stati divisi in 4 tipi di
+pagine, ciascuna con un proprio indice numerico identificativo. La prima pagina è quella delle informazioni sullo stato
+del sistema, le successive due sono quelle relative all'aggiornamento dei setpoint di temperatura e umidità, mentre
+l'ultima pagina è quella dei messaggi di sistema. Inoltre per salvare i dati variabili tra una stampa e l'altra (misurazioni
+e setpoint), sono state definite le opportune variabili necessarie.
+
+Il display viene aggiornato completamente solo quando si rileva un cambio di pagina, altrimenti si modificano solo i dati
+che sono effettivamente cambiati rispetto all'ultima stampa. Unica eccezione è rappresentata dai messaggi di sistema, che
+sono sempre stampati completamente.
+
+\subsection{Gestione degli errori e del led di allarme}
+La gestione degli errori del sistema deve prevedere un sistema pratico ed efficiente per registrare gli errori che si
+verificano durante il funzionamento del prototipo e per segnalare all'utente la presenza di errori tramite il led di allarme
+del pannello frontale.
+
+\subsubsection{Registro degli errori e gestione del led di allarme}
+Per registrare gli errori, si utilizza una variabile intera a 16 bit, in cui ogni bit rappresenta un errore specifico.
+Quando si verifica un errore, il bit corrispondente viene settato a 1, mentre quando l'errore viene risolto, il bit viene
+riportato a 0. In questo modo, è possibile registrare fino a 16 errori diversi, senza dover ricorrere a strutture dati più
+complesse e dispendiose in termini di memoria. La modifica del ``registro'' degli errori avviene tramite operazioni bitwise
+con opportune maschere di bit, definite come costanti nel file \verb|config.h| (\autoref{lst:config_h}).
+
+Il numero intero positivo (in base 10) ottenuto dalla combinazione dei bit settati a 1 rappresenta il codice di errore del
+sistema, che viene visualizzato sul display e inviato tramite comunicazione seriale al PC. Riconvertendo il numero in base
+2 si può ottenere la rappresentazione binaria del registro degli errori, da cui è possibile risalire a quali errori sono
+presenti.
+
+Il led di allarme del pannello frontale viene acceso quando è presente almeno un errore nel registro degli errori, mentre
+viene spento quando non sono presenti errori.
+
+\subsubsection{Temporizzazione degli errori}
+La maggior parte degli errori del sistema possiedono una condizione di attivazione e una condizione di disattivazione. Ad
+esempio l'errore dovuto alla temperatura troppo alta si attiva quando la temperatura supera un certo valore di soglia e
+rientra quando la temperatura ritorna nel range di sicurezza. Altri errori, invece, come i problemi di comunicazione con
+il sensore SHT20, non hanno una condizione di disattivazione. Per questi errori, sono stati creati appositi timer che ne
+permettono la disattivazione automatica dopo un certo intervallo di tempo.
+
+Per maggiori approfondimenti sul funzionamento della gestione degli errori, si rimanda al relativo codice nei files
+\verb|error.h| (\autoref{lst:error_h}) e \verb|error.cpp| (\autoref{lst:error_cpp}).
 
 \section{Gestione della comunicazione seriale al PC}
+Lo scopo della comunicazione seriale dalla scheda Arduino al PC è quello di inviare messaggi di log per la registrazione
+degli eventi, degli errori e per l'analisi delle variabili di stato del sistema. La scheda Arduino si occupa di inviare
+messaggi al PC tramite connessione USB, poi il computer si occuperà della corretta visualizzazione e registrazione dei
+dati ricevuti (ad esempio su un monitor seriale o con uno script MATLAB). Non è previsto nessun invio dei dati dal computer
+alla scheda Arduino.
+
+\subsubsection{Comunicazioni seriali dal lato della scheda Arduino}
+Per alleggerire il programma principale, la gestione della comunicazione seriale viene delegata al modulo \verb|serial|,
+che fornisce una serie di funzioni che si occupano semplicemente di comporre e trasmettere gli opportuni messaggi. Ogni
+messaggio inizia con quattro caratteri che ne permettono l'identificazione e ne facilitano il parsing dal lato del computer.
+Di seguito si riportano le classi di messaggi con una breve descrizione del loro contenuto:
 \begin{itemize}
-	\item comunicazioni seriali
-	\item codice matlab
+	\item \verb|"BOOT: ..."|: avvio del sistema, trasmesso ad ogni accensione del microcontrollore;
+	\item \verb|"LOG-: ..."|: log dello stato del sistema, permette al computer di registrare l'evoluzione del sistema nel tempo;
+	\item \verb|"SETx: ..."|: aggiornamento dei setpoint di temperatura e umidità, \verb|x| viene sostituita con un numero che
+	indica il tipo di setpoint modificato (temperatura: \verb|0| o umidità: \verb|1|);
+	\item \verb|"ACTx: ..."|: aggiornamento dello stato degli attuatori, \verb|x| viene sostituita con un numero identificativo
+	dell'attuatore coinvolto e del tipo di azione eseguita;
+	\item \verb|"ERR-: ..."|: trasmissione della descrizione di un errore verificatosi nel sistema.
 \end{itemize}
+Per maggiori dettagli si rimanda ai file \verb|serial.h| (\autoref{lst:serial_h}) e \verb|serial.cpp|
+(\autoref{lst:serial_cpp}).
+
+\subsubsection{Script MATLAB per registrare i dati in file csv}
+Per una gestione semplice ed efficace dei dati ricevuti dalla scheda Arduino, è stato realizzato uno script MATLAB che si
+occupa di leggere i messaggi inviati dalla scheda Arduino, filtrarli e salvare i dati delle variabili di stato del sistema
+in un file csv. Inoltre, lo script permette di visualizzare in tempo reale l'andamento delle variabili di stato attraverso
+dei grafici aggiornati in tempo reale, in modo da avere un feedback immediato sul funzionamento del prototipo.
+
+Siccome si è interessati soltanto alle variabili di stato del sistema, lo script utilizza solo i messaggi di log che iniziano
+con \verb|"LOG-"|, ignorando tutti gli altri messaggi. Per maggiori dettagli sul funzionamento dello script MATLAB, si rimanda
+al file \verb|serial_read.m| (\autoref{lst:serial_read}) riportato in appendice.
 
 \section{Gestione del sensore di temperatura e umidità}
-\begin{itemize}
-	\item gestione non bloccante
-	\item utilizzo di una macchina a stati
-\end{itemize}
+La gestione del sensore SHT20 è affidata al modulo \verb|sht20|, che si occupa di recuperare le misurazioni di temperatura
+e di umidità e di fornirle al programma principale tramite apposite funzioni. Per automatizzare la gestione del sensore
+è stato scelto di creare una classe wrapper della classe \verb|SHT2x| della libreria esterna \verb|SHT2x.h|, in modo da
+poter facilmente istanziare più oggetti nel caso si debba impiegare più sensori SHT20 contemporaneamente.
+
+\subsubsection{Limiti della gestione bloccante del sensore}
+Il recupero delle misurazioni di temperatura e umidità dal sensore SHT20 avviene in due fasi principali: la richiesta di
+conversione del segnale analogico della grandezza fisica in un valore digitale e la trasmissione del valore digitale al
+microcontrollore. Tra una fase e l'altra è necessario attendere un certo intervallo di tempo affinché il convertitore
+analogico-digitale (ADC) del sensore effettua la conversione richiesta.
+
+L'approccio più semplice per la gestione del sensore SHT20, presentato anche negli esempi della libreria \verb|SHT2x.h|,
+utilizza alcune funzioni bloccanti che inviano la richiesta e rimangono in attesa della risposta del sensore prima di
+restituire il controllo al programma principale. Questo approccio risulta molto facile da utilizzare, ma è estremamente
+svantaggioso per il prototipo, in quanto introdurrebbe ritardi non trascurabili che compromettono la reattività e la
+sincronizzazione dei processi dell'intero sistema. Per questo motivo si è deciso di utilizzare solo apposite funzioni
+non bloccanti offerte dalla libreria \verb|SHT2x.h|, che richiedono però una gestione più complessa, implementata tramite
+una macchina a stati.
+
+\subsubsection{Macchina a stati per la gestione del sensore}
+Per semplificare il più possibile il programma principale, la gestione del sensore è stata delegata alla funzione
+\verb|sht20::update()| che da sola, in autonomia, si occupa di coordinare tutte le fasi di richiesta, attesa, ricezione
+dei dati dal sensore tramite una macchina a stati.  Contiene, inoltre, un sistema di temporizzazione per garantire che
+le richieste vengano effettuate ad intervalli regolari.
+
+La funzione \verb|sht20::update()| deve essere invocata ad ogni ciclo del loop principale e restituisce un valore booleano che
+indica se sono disponibili nuove misurazioni di temperatura e umidità. In caso affermativo, le misurazioni vanno recuperate
+con due apposite funzioni \verb|sht20::get_temperature()| e \verb|sht20::get_humidity()|. Per maggiori dettagli si rimanda
+all'implementazione nei file \verb|sht20.h| (\autoref{lst:sht20_h}) e \verb|sht20.cpp| (\autoref{lst:sht20_cpp}).

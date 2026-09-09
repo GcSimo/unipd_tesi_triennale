@@ -18,7 +18,7 @@
 
 \PYG{c+c1}{// trasmissione temperatura, umidità e stato del sistema}
 \PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{serial\PYGZus{}datalog}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}LOG: T: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}LOG\PYGZhy{}: T: \PYGZdq{}}\PYG{p}{));}
 \PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{));}
 \PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}°C | RH: \PYGZdq{}}\PYG{p}{));}
 \PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{));}

@@ -145,13 +145,13 @@
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}CTRL PID      }\PYG{c+c1}{// tipo di controllore per la temperatura}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}HYS\PYGZus{}THLD 10   }\PYG{c+c1}{// soglia di isteresi per temperatura (in cent. di °C)}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}BIAS 0.0f }\PYG{c+c1}{// bias di feedforward}
-\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KP 70.0f  }\PYG{c+c1}{// guadagno proporzionale}
-\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KI 0.8f   }\PYG{c+c1}{// guadagno integrale}
-\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KD 0.0f   }\PYG{c+c1}{// guadagno derivativo}
+\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KP 55.0f  }\PYG{c+c1}{// guadagno proporzionale}
+\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KI 0.35f   }\PYG{c+c1}{// guadagno integrale}
+\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KD 1200.0f   }\PYG{c+c1}{// guadagno derivativo}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}KW 0.0f   }\PYG{c+c1}{// guadagno anti\PYGZhy{}windup}
+\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}WINDUP CLAMPING }\PYG{c+c1}{// tipo di anti\PYGZhy{}windup}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}MIN\PYGZus{}INTEGRAL \PYGZhy{}30.0f }\PYG{c+c1}{// limite minimo della componente integrale}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}MAX\PYGZus{}INTEGRAL 30.0f  }\PYG{c+c1}{// limite massimo della componente integrale}
-\PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}WINDUP CLAMPING }\PYG{c+c1}{// tipo di anti\PYGZhy{}windup}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}RESET 0      }\PYG{c+c1}{// reset delle componenti del PID ad ogni riavvio del PID}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}P\PYGZus{}SAMPLES 2  }\PYG{c+c1}{// campioni per calcolo della componente proporzionale}
 \PYG{c+cp}{\PYGZsh{}define TEMP\PYGZus{}PID\PYGZus{}D\PYGZus{}SAMPLES 20 }\PYG{c+c1}{// campioni per calcolo della componente derivativa}

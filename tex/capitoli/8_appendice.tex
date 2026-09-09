@@ -226,3 +226,28 @@ nell'implementazione del controllore PID.
 \captionof{listing}{File principale del firmware}
 \label{lst:main_cpp}
 \inputminted{c++}{../programmi/firmware/src/main.cpp}
+
+
+\chapter{Programmi in MATLAB}
+\section{Lettura dei dati dalla porta seriale}
+\captionof{listing}{Funzione MATLAB per la lettura dei dati dalla porta seriale, salvataggio dei dati in un file csv e
+aggiornamento dei grafici in tempo reale costuiti con i dati ricevuti}
+\label{lst:serial_read}
+\inputminted[tabsize=4]{matlab}{../matlab/serial_read.m}
+
+\newpage
+
+\section{Stampa dei grafici dei dati nei files csv}
+\captionof{listing}{Funzione MATLAB per la stampa dei grafici utilizzando i dati contenuti in un file csv}
+\label{lst:csv_read}
+\inputminted[tabsize=4]{matlab}{../matlab/csv_read.m}
+
+\newpage
+
+\section{Calcolo delle prestazioni della risposta del PID}
+\captionof{listing}{Funzione MATLAB per l'analisi delle prestazioni della risposta al gradino del controllore PID e la
+stampa del grafico della risposta}
+\label{lst:plot_info}
+\inputminted[tabsize=4]{matlab}{../matlab/plot_info.m}
+
+\newpage

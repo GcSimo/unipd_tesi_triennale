@@ -13,7 +13,7 @@
 %  5. mostra il grafico con l'andamento in tempo reale dei dati ricevuti
 %
 %
-% La funzione accetta i seguenti parametri di input:
+% La funzione accetta i seguenti parametri da riga di comando:
 %  - showPlot:
 %    permette di scegliere che parametri visualizzare nel grafico in tempo
 %    reale in base al valore passato come parametro:
@@ -37,8 +37,7 @@
 
 function serial_read(showPlot, portName, baudRate, filename)
 	%% ------ parsing dei parametri e assegnazione dei valori di default ------
-
-	% tipo di grafico da mostrare - default = 3 (entrambi i grafici)
+	% tipo di grafico da mostrare (default = 3 - entrambi i grafici)
 	if nargin < 1 || isempty(showPlot) || ~ismember(showPlot, [0, 1, 2, 3])
 		showPlot = 3;
 	end
@@ -114,7 +113,7 @@ function serial_read(showPlot, portName, baudRate, filename)
 				'Units', 'pixels', 'Position', [15 15 100 35], ...
 				'Callback', @(src, event) set(fig, 'UserData', false));
 
-		% crea 2 righe se sono richiesti entrambi i grafici, altrimenti 1 riga
+		% crea il layout con 1 o 2 righe in base ai grafici da mostrare
 		if showPlot == 3
 			t_layout = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 		else
@@ -141,25 +140,25 @@ function serial_read(showPlot, portName, baudRate, filename)
 			% set di dati per l'asse sinistro (temperatura)
 			yyaxis left;
 			ylabel('Temperatura (°C)');
-			line_temp  = animatedline('Color', 'r', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
-			line_set_t = animatedline('Color', 'r', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
-			line_t_min_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{min_thld}', 'MaximumNumPoints', maxPts);
-			line_t_max_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{max_thld}', 'MaximumNumPoints', maxPts);
+			line_temp       = animatedline('Color', 'r', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
+			line_set_t      = animatedline('Color', 'r', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
+			line_t_min_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{min-thld}', 'MaximumNumPoints', maxPts);
+			line_t_max_thld = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'T_{max-thld}', 'MaximumNumPoints', maxPts);
 
 			% set di dati per l'asse destro (segnali di controllo)
 			yyaxis right;
 			ylabel('Segnali (PWM/PID)');
-			line_t_pwm = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
+			line_t_pwm    = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'PWM_{T}', 'MaximumNumPoints', maxPts);
 			line_t_output = animatedline('Color', 'k', 'LineWidth', 1.5, 'DisplayName', 'Output_{T}', 'MaximumNumPoints', maxPts);
-			line_t_p   = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
-			line_t_i   = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
-			line_t_d   = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
-			line_t_out = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_p      = animatedline('Color', c_P, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'P_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_i      = animatedline('Color', c_I, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'I_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_d      = animatedline('Color', c_D, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'D_{PID}', 'MaximumNumPoints', maxPts);
+			line_t_out    = animatedline('Color', c_Out, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Out_{PID}', 'MaximumNumPoints', maxPts);
 
 			% aggiunge la legenda al grafico
 			legend('Location', 'westoutside');
 
-			% adatta automaticamente l'asse X al numero di punti visualizzati
+			% adatta automaticamente l'asse x al numero di punti visualizzati
 			ax1.XLimMode = 'auto';
 		end
 
@@ -176,8 +175,8 @@ function serial_read(showPlot, portName, baudRate, filename)
 			ylabel('Umidità (%)');
 			line_rh     = animatedline('Color', 'b', 'LineWidth', 1.5, 'DisplayName', 'Misurazione', 'MaximumNumPoints', maxPts);
 			line_set_rh = animatedline('Color', 'b', 'LineStyle', '--', 'LineWidth', 1.2, 'DisplayName', 'Setpoint', 'MaximumNumPoints', maxPts);
-			line_rh_min_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{min_thld}', 'MaximumNumPoints', maxPts);
-			line_rh_max_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{max_thld}', 'MaximumNumPoints', maxPts);
+			line_rh_min_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{min-thld}', 'MaximumNumPoints', maxPts);
+			line_rh_max_thld = animatedline('Color', 'b', 'LineStyle', ':', 'LineWidth', 1, 'DisplayName', 'RH_{max-thld}', 'MaximumNumPoints', maxPts);
 
 			% set di dati per l'asse destro (segnali di controllo)
 			yyaxis right;
@@ -192,16 +191,16 @@ function serial_read(showPlot, portName, baudRate, filename)
 			% aggiunge la legenda al grafico
 			legend('Location', 'westoutside');
 
-			% adatta automaticamente l'asse X al numero di punti visualizzati
+			% adatta automaticamente l'asse x al numero di punti visualizzati
 			ax2.XLimMode = 'auto';
 		end
 
-		% sincronizza l'asse X solo se entrambi i grafici sono presenti
+		% sincronizza gli assi x dei due grafici se entrambi sono stati creati
 		if showPlot == 3
 			linkaxes([ax1, ax2], 'x');
 		end
 
-		% etichetta per l'asse X
+		% etichetta per l'asse x
 		xlabel(t_layout, 'Tempo trascorso (secondi)');
 	end
 
@@ -229,8 +228,8 @@ function serial_read(showPlot, portName, baudRate, filename)
 			% 1. legge una riga in formato stringa
 			lineStr = readline(arduinoObj);
 
-			% 2. verifica se la riga contiene i dati da salvare (inizia con "LOG:")
-			if startsWith(lineStr, "LOG:")
+			% 2. verifica se la riga contiene i dati da salvare (inizia con "LOG-:")
+			if startsWith(lineStr, "LOG-:")
 
 				% calcolo del tempo relativo in secondi
 				if isempty(t0)

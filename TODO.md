@@ -13,8 +13,11 @@
 - [x] verificare temporizzazione display, led allarme
 - [x] verificare derivata al variare del setpoint (derivative kick test)
 - [ ] tarare parametri PID:
-  - [ ] tarare per avere salita smooth con PI (P fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint)
-  - [ ] aggiungere derivativo per avere P e derivativo fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint
+  - [x] tarare per avere salita smooth con PI (P fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint)
+  - [x] aggiungere derivativo per avere P e derivativo fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint
+- [ ] effettuare simulazioni da un certo valore iniziale di equilibrio con sensore a 10cm dalla superficie del materasso al centro della camera di incubazione
+- [ ] foto del sensore nella nuova posizione
+- [ ] eventuali test come sono descritti dalla normativa
 - [ ] aggiungere static_assert per verificare parametri di configurazione dell'incubatrice
 - [ ] aggiungere conversione °C in potenza (feedforward per ragiungere il setpoint) -> complesso da implementare
 - [ ] gestione output nel passaggio da automatico a manuale -> non necessaria

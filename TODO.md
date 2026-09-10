@@ -16,8 +16,8 @@
   - [x] tarare per avere salita smooth con PI (P fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint)
   - [x] aggiungere derivativo per avere P e derivativo fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint
 - [ ] effettuare simulazioni da un certo valore iniziale di equilibrio con sensore a 10cm dalla superficie del materasso al centro della camera di incubazione
-- [ ] foto del sensore nella nuova posizione
 - [ ] eventuali test come sono descritti dalla normativa
+- [ ] verificare allarmi secondo lo standard IEC 60601-2-19 sui range di temperatura
 - [ ] aggiungere static_assert per verificare parametri di configurazione dell'incubatrice
 - [ ] aggiungere conversione °C in potenza (feedforward per ragiungere il setpoint) -> complesso da implementare
 - [ ] gestione output nel passaggio da automatico a manuale -> non necessaria
@@ -36,6 +36,7 @@
   - [x] foto interno del pannello frontale (lato pannello e lato incubatrice)
   - [x] misurare corrente assorbita dallo step down -> 1: 35 mA / 2: 66mA / 3: 96mA / 4: 117 mA / 5: 139 mA
 - [ ] modificare titolo della tesi per eliminare controllo di umidità
+- [ ] foto del sensore nella nuova posizione
 
 ## hardware:
 - [x] correggere connessioni relay e switch
@@ -52,6 +53,7 @@
   - [ ] prevedere spazio per più sensori
   - [ ] morsetto/nodo centrale per la massa
   - [ ] eventuali mosfet logic level da sostituire ai relé
+  - [ ] eventuale output sonoro per gli errori
 
 ## confronto con prof:
 - [x] metodo dei minimi quadrati per calcolo derivata dell'errore

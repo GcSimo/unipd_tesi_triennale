@@ -8,29 +8,183 @@ normazione elettrotecnica), dando origine alla norma ``EN IEC 60601-2-19''.
 
 Per la progettazione del controllore è stata assunta come riferimento la versione britannica della norma,
 ``BS EN IEC 60601-2-19:2021+A1:2023'' \cite{bs_60601_2_19}. Tale documento è tecnicamente identico alla norma
-``IEC 60601-2-19:2020'' con l'integrazione dell'emendamento A1:2023.
+``IEC 60601-2-19:2020'' con l'integrazione dell'emendamento A1:2023. Di seguito si riportano i requisiti relativi
+al controllo della temperatura delle incubatrici neonatali che monitorano la temperatura dell'aria della camera interna.
 
-Analizzando le parti relative al controllo della temperatura delle incubatrici neonatali, si possono individuare i seguenti
-requisiti principali:
+\begin{enumerate}
+	\item La temperatura deve essere misurata posizionando il sensore a un'altezza di 10 cm rispetto al piano del materasso,
+	in corrispondenza del centro dello stesso. Nel prototipo in esame, non essendo presente un materasso, la misura deve
+	essere effettuata a 10 cm dalla superficie di base della camera interna.
 
-\begin{itemize}
-	\item sensore posizionato al centro della culla, a 10 cm dalla base del materasso
-	\item funzionalità del controllore con temperature esterne comprese tra i 20°C e i 30°C
-	\item setpoint compreso tra 35 e 37°C, almeno 3°C sopra la temperatura ambiente
-	\item il setpoint impostabile dall'operatore non deve superare i 37°C, è permesso impostare una temperatura fino
-	a 39°C, ma la norma impone che questo avvenga esclusivamente tramite un'azione intenzionale e separata da parte
-	dell'operatore
-	\item warm-up time: tempo impiegato per arrivare a +11°C dalla temperatura ambiente, ad esempio 25°C -> 36°C, deve
-	rientrare entro il 20\% del valore dichiarato nelle istruzioni
-	\item una volta raggiunta la temperatura target (Steady Temperature Condition - STC), questa non deve variare per
-	più di 1°C nell'arco di un'ora, micro fluttuazioni di 0.5°C sono ammesse
-	\item overshoot transitorio non deve superare i 2°C
-	\item riacquisizione della condizione di regime (steady state) entro 15 minuti da un eventuale disturbo
-\end{itemize}
+	\item Le incubatrici devono garantire il corretto funzionamento per temperature ambientali comprese tra 20°C e 30°C.
+	Le prove di verifica dei requisiti devono essere eseguite a una temperatura ambiente compresa tra 21°C e 26°C.
+
+	\item In condizioni di normale utilizzo, la temperatura di regime (\textit{setpoint}) deve essere impostata a 36°C \(\pm\)
+	1°C e deve risultare superiore alla temperatura ambiente di almeno 3°C. Il valore massimo impostabile deve essere
+	compreso tra 36°C e 37°C con possibile estensione fino a 39°C esclusivamente a seguito di un'azione intenzionale
+	dell'operatore e della conseguente attivazione di un indicatore di allarme. Il valore minimo impostabile suggerito
+	è pari a 30°C, ma può essere anche inferiore.
+
+	\item Il tempo di riscaldamento (\textit{warm-up time}) non deve differire di oltre il 20\% rispetto al valore dichiarato
+	dal costruttore nelle istruzioni per l'uso. Esso deve essere determinato impostando il setpoint a una temperatura pari
+	a 12°C al di sopra della temperatura ambiente e misurando il tempo necessario affinché la temperatura interna raggiunga
+	un valore pari a 11°C al di sopra della temperatura ambiente.
+
+	\item Deve essere verificata la condizione di stabilità della temperatura, secondo la quale l'escursione massima della
+	temperatura interna non deve superare 1°C nell'arco di un'ora. Sono ammesse oscillazioni massime pari a 0.5°C rispetto
+	alla temperatura impostata. Per verificare tale condizione, il setpoint deve essere inizialmente impostato a 32°C e
+	successivamente a 36°C,
+
+	\item A seguito di un disturbo esterno o di una variazione del setpoint, l'eventuale sovraelongazione della temperatura
+	non deve superare i 2°C, mentre la condizione di regime deve essere ristabilita entro 15 minuti. Tale requisito deve
+	essere verificato impostando inizialmente il setpoint a 32°C e attendendo il raggiungimento della condizione di regime;
+	successivamente, il setpoint deve essere portato a 36°C ed analizzando le prestazioni del relativo transitorio.
+
+	\item Il sistema deve attivare un allarme quando la differenza tra setpoint e temperatura misurata è superiore a 3°C,
+	oppure quando la temperatura misurata è superiore a 40°C.
+\end{enumerate}
+
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+			font=\sffamily\footnotesize, % Font senza grazie tipico dei disegni tecnici
+			>=latex,             % Stile delle frecce standard
+			every node/.style={align=center}, % Permette l'andata a capo nei nodi
+			scale=0.6 % Scala del disegno (1.0 = 100% reale)
+		]
+
+		% --- DEFINIZIONE DELLE COORDINATE ---
+		% Per coerenza matematica e visiva, usiamo una scala lineare dove 1 unità Y = 2 °C.
+		% Fissiamo la temperatura ambiente a 23 °C (Y=0).
+		% Questo fa sì che l'aumento di 11 °C avvenga esattamente a 34 °C (Y=5.5),
+		% posizionando la linea di "Warm-up" perfettamente a metà tra i 32 °C e i 36 °C, proprio come nella Fig. AA.
+
+		\def\Yamb{0}          % 23 °C (Ambiente)
+		\def\Ythirtytwo{4}  % 32 °C
+		\def\Yrise{5}       % 34 °C (Temperatura ambiente + 11 °C)
+		\def\Ythirtysix{6}  % 36 °C (Temperatura media di controllo)
+		\def\Yovershoot{6.8}  % 38 °C (Overshoot massimo)
+		\def\Ythirtyeight{7}% 38 °C (Overshoot massimo)
+		\def\Yend{8.6}        % Limite superiore
+		\def\Amp{0.25}        % Ampiezza dell'oscillazione stazionaria
+
+		% Coordinate temporali (Asse X)
+		\def\Xstart{0}
+		\def\Xwarmup{3}
+		\def\Xpeak{4}
+		\def\Xtrough{6.5}
+		\def\Xovershoot{9}
+		\def\Xsteady{10}
+		\def\Xend{17}
+
+		% --- ASSI CARTESIANI ---
+		% Asse Y
+		\draw[->, thick] (0, \Yamb) -- (0, \Yend);
+		\node at (-2.2, \Yend-0.15) {Temperatura\\dell'incubatrice};
+
+		% Asse X
+		\draw[->, thick] (0, \Yamb) -- (\Xend+1, \Yamb);
+		\node at (\Xend+0.8, -0.35) {Time};
+
+		% --- ETICHETTE E TACCHE DELL'ASSE Y ---
+		\draw[thick] (-0.15, \Ythirtytwo) -- (0, \Ythirtytwo) node[left, xshift=-2pt] {32°C};
+		\draw[thick] (-0.15, \Ythirtysix) -- (0, \Ythirtysix) node[left, xshift=-2pt] {36°C};
+		\draw[thick] (-0.15, \Ythirtyeight) -- (0, \Ythirtyeight) node[left, xshift=-2pt] {38°C};
+
+		% --- LINEE GUIDA ORIZZONTALI ---
+		% Linea di base della Temperatura Ambiente
+		\draw (0, \Yamb) -- (-0.5, \Yamb) node[left] {Temperatura\\ambientale};
+
+		% Linea del completamento del Warm-up (Innalzamento di 11 °C)
+		\draw[thin, dashed] (0, \Yrise) -- (\Xwarmup, \Yrise);
+		\draw[thin] (-2.6, \Yrise) -- (0, \Yrise);
+		\draw[<->] (-2.2, \Yamb+0.7) -- (-2.2, \Yrise) node[midway, fill=white] {11 $^\circ$C};
+
+		% Linee guida orizzontali collegate ai punti chiave della curva
+		\draw[thin, dashed] (0, \Ythirtytwo) -- (\Xtrough + 0.5, \Ythirtytwo);
+		\draw[thin, dashed] (0, \Ythirtyeight) -- (\Xovershoot + 1, \Ythirtyeight);
+		\draw[thin, dashed] (0, \Ythirtysix) -- (\Xend, \Ythirtysix);
+
+		% --- CURVA PRINCIPALE DELLA TEMPERATURA ---
+		% Disegnata prestando molta attenzione a garantire pendenze fluide nei punti di giunzione (tangenza S-Curve)
+		\draw[thick]
+			(\Xstart, \Yamb)
+			% Fase di riscaldamento iniziale
+			.. controls (1, 0.1) and (2.5, 4) .. (\Xwarmup, \Yrise)
+			% Raggiungimento del picco di Overshoot
+			.. controls (3.5, 6) and (3.9, \Ythirtysix) .. (\Xpeak, \Ythirtysix)
+			% Discesa verso il minimo (Undershoot a 32 °C)
+			.. controls (4.8, \Ythirtysix) and (5.3, \Ythirtytwo-0.2) .. (\Xtrough, \Ythirtytwo)
+			% Risalita verso l'Overshoot massimo a 38 °C
+			.. controls (7.4, \Ythirtytwo+0.1) and (8.2, \Yovershoot) .. (\Xovershoot, \Yovershoot)
+			% Discesa verso la stabilizzazione (Calcolata per avere la stessa pendenza del seno all'ingresso)
+			.. controls (9.4, \Yovershoot) and (9.7, 6.2) .. (\Xsteady, \Ythirtysix)
+			% Condizione di temperatura stazionaria (onda sinusoidale con ampiezza +-0.5 °C)
+			sin (10.5, \Ythirtysix - \Amp) cos (11, \Ythirtysix)
+			sin (11.5, \Ythirtysix + \Amp) cos (12, \Ythirtysix)
+			sin (12.5, \Ythirtysix - \Amp) cos (13, \Ythirtysix)
+			sin (13.5, \Ythirtysix + \Amp) cos (14, \Ythirtysix)
+			sin (14.5, \Ythirtysix - \Amp) cos (15, \Ythirtysix)
+			sin (15.5, \Ythirtysix + \Amp) cos (16, \Ythirtysix)
+			sin (16.5, \Ythirtysix - \Amp) cos (17, \Ythirtysix);
+
+		% --- ANNOTAZIONI ---
+
+		% Overshoot
+		\node (overshoot) at (8.6, 3) {Overshoot\\massimo\\+2°C};
+		\draw[->] (overshoot) -- (\Xovershoot, \Yovershoot - 0.05);
+
+		% Warm-up Time
+		\draw[thin] (\Xwarmup, \Yrise) -- (\Xwarmup, 0);
+		\draw[thin] (\Xwarmup, 0) -- (\Xwarmup, -0.55);
+		\draw[thin] (0, \Yamb) -- (0, -0.55);
+		\draw[<->] (0, -0.3) -- (\Xwarmup, -0.3) node[midway, below] {Warm-up};
+
+		% Steady temperature condition
+		\draw[thin] (\Xsteady, \Ythirtysix+0.5) -- (\Xsteady, -0.55);
+		\draw[->] (\Xsteady, -0.3) -- (16, -0.3) node[midway, below] {Condizione stazionaria};
+
+		% Linee di inviluppo del regime stazionario (Limiti di oscillazione)
+		\draw[dotted] (\Xsteady-0.1, \Ythirtysix + \Amp) -- (\Xend, \Ythirtysix + \Amp);
+		\draw[dotted] (\Xsteady-0.1, \Ythirtysix - \Amp) -- (\Xend, \Ythirtysix - \Amp);
+
+		% Temperature Variation
+		\draw[->] (16.5, \Ythirtysix - \Amp - 0.5) -- (16.5, \Ythirtysix - \Amp);
+		\draw[->] (16.5, \Ythirtysix + \Amp + 0.5) -- (16.5, \Ythirtysix + \Amp);
+		\node[right] at (17.2, \Ythirtysix) {Variazione di\\temperatura\\$\pm$0.5°C};
+
+		% Average Incubator Temperature
+		\node[right] (avg) at (13, 2.5) {Temperatura media\\dell'incubatrice};
+		\draw[->] (avg) -- (13.5, \Ythirtysix);
+
+		% Test warm-up time
+		\draw[->] (0, \Yend-0.6) -- (5, \Yend-0.6) node[midway, above] {Test di warm-up};
+
+		% Test overshoot, settling time e steady state
+		\draw[thin] (\Xtrough, 0) -- (\Xtrough, \Yend);
+		\draw[->] (\Xtrough, \Yend-0.6) -- (18, \Yend-0.6) node[midway, above] {Test di overshoot, settling time e steady state};
+	\end{tikzpicture}
+	\caption[Grafico della temperatura nel test di validazione]{Grafico con l'evoluzione della temperatura
+	prevista durante il test di validazione del warm-up time, dell'overshoot e della condizione di regime, come indicate sopra
+	secondo la normativa IEC 60601-2-19. Elaborazione propria basata sulle figure 201.101 e AA.1 del documento in analisi
+	``BS EN IEC 60601-2-19:2021+A1:2023'' \cite{bs_60601_2_19}.}
+	\label{fig:requisiti_norma}
+\end{figure}
+
 
 \section{Controllore ad isteresi}
 \subsection{Principio di funzionamento di un controllore ad isteresi}
+%Il controllore ad isteresi è uno dei controllori a feedback più semplici da implementare. In pratica quando la grandezza
+%misurata supera una certa soglia di disattivazione, il controllore disattiva l'attuatore, mentre quando la grandezza
+%misurata scende al di sotto della soglia di attivazione, il controllore attiva l'attuatore. Di norma è opportuno definire
+%valori distinti per le soglie, tali che la soglia di disattivazione sia maggiore del setpoint e la soglia di attivazione
+%sia minore del setpoint. Se questo non viene fatto e le due soglie coincidono con il setpoint, il rumore della grandezza
+%misurata potrebbe causare un comportamento instabile del controllore quando si trova in prossimità del setpoint.
+
 \subsection{Implementazione del controllore ad isteresi nel firmware}
+%Dato che il controllore ad isteresi dipende solo dalla temperatura corrente,
+
 \subsection{Test di funzionamento con grafico e prestazioni}
 
 \begin{figure}[htbp]

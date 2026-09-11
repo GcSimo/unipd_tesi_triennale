@@ -1,5 +1,51 @@
 \chapter{Conclusioni}
 \section{Discussione critica dei risultati ottenuti}
+\subsubsection{Analisi dell'hardware}
+La configurazione dell'hardware progettata e realizzata si è rivelata adeguata per soddisfare le richieste del firmware e dei test
+effettuati. Inoltre, la progettazione modulare dei vari blocchi del circuito permetterà di modificare e aggiornare facilmente la
+configurazione del prototipo in base alle esigenze future.
+
+Sono state riscontrate alcune criticità, tra cui la presenza di fluttuazioni sulla tensione di alimentazione del sensore SHT20
+in corrispondenza dell'accensione e dello spegnimento del riscaldatore. Queste provocano piccole variazioni periodiche della
+temperatura misurata dell'ordine dei centesimi di grado che non danno troppi disturbi al sistema di controllo, ma che rimangono
+comunque osservabili.
+
+\subsubsection{Analisi del firmware}
+Il firmware sviluppato si è rivelato adeguato e performante per la gestione di tutte le componenti del prototipo di incubatrice
+neonatale. La suddivisione modulare del codice permetterà di effettuare facilmente modifiche e aggiornamenti futuri, e l'ampio
+numero di commenti ne facilita la comprensione e la manutenzione.
+
+Sono state condotte alcune analisi di performance del firmware
+
+Sono state condotte alcune analisi sulla reattività del firmware, in particolare è stata misurata la durata media e massima di
+un ciclo di esecuzione della funzione \verb|loop()|. Il tempo medio rappresenta il ritardo medio con cui il firmware reagisce
+agli eventi. Tale valore è stato calcolato come il rapporto tra il tempo totale di esecuzione del firmware (escluso il tempo di
+setup) e il numero di esecuzioni di \verb|loop()| eseguiti ed il dato considerato rappresenta il valore asintotico osservato dopo
+un periodo di tempo sufficientemente lungo. I risultati ottenuti sono riportati nella seguente tabella, suddivisi per il tipo di
+configurazione dei controllori.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{c | c | c | c}
+		\textbf{configurazione} & \textbf{tempo medio} & \textbf{memoria RAM} & \textbf{memoria FLASH} \\
+		\toprule
+		controllori PID & \textasciitilde 110 \(\mu\)sec & 811 byte - 9.9\% & 21.6 kbyte - 8.5\% \\
+		\midrule
+		controllori ad isteresi & \textasciitilde 100 \(\mu\)sec & 811 byte - 9.9\% & 18.4 kbyte - 7.3\% \\
+		\midrule
+		nessun controllore attivo & \textasciitilde 97 \(\mu\)sec & 811 byte - 9.9\% & 17.1 kbyte - 6.7\%\\
+		\midrule
+		controllo manuale & \textasciitilde 98 \(\mu\)sec & - & - \\
+	\end{tabular}
+	\caption[Indici di prestazione del firmware]{Indici di prestazione del firmware per diverse configurazioni dei controllori.}
+	\label{tab:loop_time}
+\end{table}
+
+Si osserva che nella configurazione
+
+La durata massima di un ciclo di loop() rappresenta invece il ritardo massimo che il firmware può avere in condizioni di carico
+estremo e poco verosimile. Il valore ottenuto è di 248,312 millisecondi ed è stato osservato mentre si agiva contemporaneamente sui due potenziometri e sui tre switch, in modo da generare il maggior numero di eventi possibili.
+
 \begin{itemize}
 	\item sviluppo del codice firmware, durata media e massima di un loop
 	\item taratura dei parametri e conoscenza dei limiti del controllore PID

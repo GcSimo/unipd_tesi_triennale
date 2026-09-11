@@ -77,7 +77,7 @@
 #define TEMP_DEF_SP 3600  // setpoint iniziale temperatura (in cent. di °C)
 #define TEMP_MIN_SP 2500  // valore minimo del setpoint (in cent. di °C)
 #define TEMP_MAX_SP 4000  // valore massimo del setpoint (in cent. di °C)
-#define TEMP_STEP_SP 10   // passo di variazione del setpoint(in cent. di °C)
+#define TEMP_STEP_SP 25  // passo di variazione del setpoint(in cent. di °C)
 
 // parametri per lettura del potenziometro e scelta del setpoint di umidità
 #define RH_POT_THLD 5     // soglia per soppressione del rumore
@@ -94,8 +94,9 @@
 // ----------------------------------------------------------------------------
 
 // parametri per gestione errori sul range di temperatura valido
-#define TEMP_ERR_THLD 0  // soglia di errore per temperatura (in cent. di °C)
+#define TEMP_ERR_THLD 300  // soglia di errore per temperatura (in cent. di °C)
 #define TEMP_ERR_HYST 20 // isteresi per errore di temperatura (in cent. di °C)
+#define TEMP_ERR_MAX 4000 // limite massimo per errore di temperatura (in cent. di °C)
 
 // parametri per gestione errori sul range di umidità valido
 #define RH_ERR_THLD 0   // soglia di errore per umidità (in cent. di %)
@@ -117,7 +118,7 @@
 #define REFILL_INTERVAL 2500000UL // durata dell'acqua prima del refill
 // 250ml capacità (da 750ml a 500ml) -> 250g di acqua
 // 0.1g/sec dalla tesi magistrale di Vanni
-// 250g / 0.1g/sec = 2500 sec = 41.6 min = 2500000 ms
+// 250g / 0.1g/sec = 2500 sec = 41.6 min = 2 500 000 ms
 
 
 // ----------------------------------------------------------------------------
@@ -157,7 +158,7 @@
 #define TEMP_PID_I_SAMPLES (PID_UPDATE_PERIOD / PID_DATA_PERIOD) // campioni per calcolo della componente integrale
 
 // parametri per il controllo dell'umidità
-#define RH_CTRL NONE     // tipo di controllore per l'umidità
+#define RH_CTRL NONE    // tipo di controllore per l'umidità
 #define RH_HYS_THLD 200  // soglia di isteresi per umidità (in cent. di %)
 #define RH_PID_BIAS 0.0f // bias del PID per umidità
 #define RH_PID_KP 0.0f   // guadagno proporzionale del PID per umidità

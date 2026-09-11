@@ -40,7 +40,7 @@ il microcontrollore, i relè e la vasca con l'acqua per l'umidificazione.
 
 	\begin{subfigure}[b]{\textwidth}
 		\centering
-		\includegraphics[width=0.9\textwidth, trim={0cm 8cm 0cm 8cm}, clip]{immagini/1_incubatrice_2.jpg}
+		\includegraphics[width=0.9\textwidth, trim={2cm 2cm 2cm 2cm}, clip]{immagini/1_incubatrice_2.jpg}
 		\caption[Foto dall'alto del prototipo di incubatrice neonatale]{Foto dall'alto del prototipo di incubatrice neonatale
 		dove si può vedere il riscaldatore, la ventola di omogeneizzazione dell'aria, il tubo dell'umidificatore ed il sensore
 		SHT20.}
@@ -191,9 +191,8 @@ e l'umidità relativa dell'aria rispettivamente con un'accuratezza di ±0.3°C p
 Esso è situato all'interno della camera interna del prototipo di incubatrice neonatale e per il momento è libero di essere
 posizionato in qualsiasi punto della camera in base alle esigenze richieste.
 
-Per i test effettuati nella seguente tesi, il sensore è stato posizionato a 20 cm dalle pareti lunghe, a 17 cm dalla parete
-corta opposta al riscaldatore e alla ventola di omogeneizzazione dell'aria e a 7.5 cm di altezza dal piano della base della
-camera interna.
+Per i test effettuati nella seguente tesi, il sensore è stato posizionato al centro della camera, ovvero a 20 cm dalle pareti
+lunghe e a 37 cm dalle pareti corte, ad una altezza di 10 cm dal fondo della camera interna.
 
 \begin{figure}[htbp]
 	\centering
@@ -205,7 +204,7 @@ camera interna.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.9\textwidth, trim={10cm 15cm 15cm 20cm}, clip]{immagini/1_sht20.jpg}
+	\includegraphics[width=0.9\textwidth, trim={10cm 10cm 10cm 20cm}, clip]{immagini/1_sht20.jpg}
 	\caption[Foto del sensore SHT20]{Sensore di temperatura e umidità SHT20 posizionato all'interno della camera interna del
 	prototipo di incubatrice neonatale.}
 	\label{fig:sht20}
@@ -217,7 +216,8 @@ Per gestire i vari componenti elettronici del prototipo di incubatrice neonatale
 2560 con microcontrollore ATmega2560. Essa è stata scelta per la sua semplicità d'uso, l'affidabilità, la disponibilità di
 numerosi pin di input/output e l'elevato spazio di memoria disponibile per il firmware. La scheda è posizionata all'interno
 del cassetto inferiore del prototipo di incubatrice neonatale, insieme a tutti i cablaggi provenienti dai vari componenti
-elettronici. La scheda è alimentata via USB da un computer esterno su cui è possibile visualizzare e salvare i dati raccolti.
+elettronici. La scheda è alimentata via USB da un computer esterno su cui è possibile visualizzare e salvare i dati relativi
+allo stato del sistema.
 
 \begin{figure}[htbp]
 	\centering

@@ -12,14 +12,13 @@
 - [x] verificare massima durata di un loop - max ct: 248312 micros - mean ct: 166 micros (PID-PID) - 162 micros (PID-HYST) - 156 micros (MAN) - 153 (NONE-NONE)
 - [x] verificare temporizzazione display, led allarme
 - [x] verificare derivata al variare del setpoint (derivative kick test)
-- [ ] tarare parametri PID:
+- [x] tarare parametri PID:
   - [x] tarare per avere salita smooth con PI (P fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint)
   - [x] aggiungere derivativo per avere P e derivativo fino a -1°C o -0.5°C dal setpoint poi introdurre I per arrivare al setpoint
-- [ ] effettuare simulazioni da un certo valore iniziale di equilibrio con sensore a 10cm dalla superficie del materasso al centro della camera di incubazione
-- [ ] eventuali test come sono descritti dalla normativa
-- [ ] verificare allarmi secondo lo standard IEC 60601-2-19 sui range di temperatura
+- [x] verificare allarmi secondo lo standard IEC 60601-2-19 sui range di temperatura
+- [x] verificare attivazione/disattivazione attuatori al cambio di setpoint
 - [ ] aggiungere static_assert per verificare parametri di configurazione dell'incubatrice
-- [ ] aggiungere conversione °C in potenza (feedforward per ragiungere il setpoint) -> complesso da implementare
+- [ ] aggiungere conversione °C in potenza (feedforward per raggiungere il setpoint) -> complesso da implementare
 - [ ] gestione output nel passaggio da automatico a manuale -> non necessaria
 - [ ] implementare il pid come oggetto -> non necessaria (peggiorativa)
 
@@ -36,7 +35,13 @@
   - [x] foto interno del pannello frontale (lato pannello e lato incubatrice)
   - [x] misurare corrente assorbita dallo step down -> 1: 35 mA / 2: 66mA / 3: 96mA / 4: 117 mA / 5: 139 mA
 - [ ] modificare titolo della tesi per eliminare controllo di umidità
-- [ ] foto del sensore nella nuova posizione
+- [ ] durata ciclo di loop dalle misurazioni effettuate
+- [ ] eventuali test come sono descritti dalla normativa:
+  - [x] spostare il sensore di temperatura
+  - [x] foto del sensore nella nuova posizione
+  - [x] annotarsi la temperatura esterna della stanza
+  - [x] test di warm-up
+  - [x] test di stabilità da 32 a 36°C
 
 ## hardware:
 - [x] correggere connessioni relay e switch
@@ -72,7 +77,7 @@
 - testare quanti W vengono convertiti in quanti gradi a catena aperta
   - trovare lo stato di equilibrio (temperatura raggiunta) a determinate situazioni di duty cycle
   - costruire 3 punti per 3 valori di duty cycle e fare una curva di interpolazione
-  - una volta costruita la curva si può appplicare la funzione inversa per trovare il duty cycle necessario per raggiungere una certa temperatura
+  - una volta costruita la curva si può applicare la funzione inversa per trovare il duty cycle necessario per raggiungere una certa temperatura
   - in questo modo si può fare un controllo feedforward
   - si somma il contributo del pid al contributo del feedforward così il feedback agisce solo per correggere eventuali errori di modellazione
 - lista materiale dopo la discussione

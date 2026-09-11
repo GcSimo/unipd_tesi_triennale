@@ -161,6 +161,7 @@
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} adatta automaticamente l\PYGZsq{}asse x al numero di punti visualizzati}
 \PYG{+w}{			}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{XLimMode}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}auto\PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{			}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{YLimMode}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}auto\PYGZsq{}}\PYG{p}{;}
 \PYG{+w}{		}\PYG{k}{end}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico per le misurazioni di umidità \PYGZhy{}\PYGZhy{}\PYGZhy{}}
@@ -194,6 +195,7 @@
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} adatta automaticamente l\PYGZsq{}asse x al numero di punti visualizzati}
 \PYG{+w}{			}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{XLimMode}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}auto\PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{			}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{YLimMode}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}auto\PYGZsq{}}\PYG{p}{;}
 \PYG{+w}{		}\PYG{k}{end}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} sincronizza gli assi x dei due grafici se entrambi sono stati creati}

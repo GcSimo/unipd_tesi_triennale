@@ -160,6 +160,7 @@ function serial_read(showPlot, portName, baudRate, filename)
 
 			% adatta automaticamente l'asse x al numero di punti visualizzati
 			ax1.XLimMode = 'auto';
+			ax1.YLimMode = 'auto';
 		end
 
 		% --- grafico per le misurazioni di umidità ---
@@ -193,6 +194,7 @@ function serial_read(showPlot, portName, baudRate, filename)
 
 			% adatta automaticamente l'asse x al numero di punti visualizzati
 			ax2.XLimMode = 'auto';
+			ax2.YLimMode = 'auto';
 		end
 
 		% sincronizza gli assi x dei due grafici se entrambi sono stati creati

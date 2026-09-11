@@ -1,4 +1,4 @@
-function csv_read_1(filename)
+function plot_csv_old(filename)
 	% Se non viene specificato alcun argomento
     if nargin < 1 || isempty(filename)
         error('Uso corretto: csv_read <nome_file.csv>');

@@ -1,3 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{n}{LiquidCrystal\PYGZus{}I2C}\PYG{+w}{ }\PYG{n}{lcd}
-\end{MintedVerbatim}

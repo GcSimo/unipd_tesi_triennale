@@ -78,9 +78,9 @@ void check_temp_range() {
     err_clear(ERR_LOW_TEMP); // rimozione errore temperatura troppo bassa
 
   // temperatura troppo alta
-  else if (!err_check(ERR_HIGH_TEMP) && status.temp_sht20 > status.temp_setpoint + TEMP_ERR_THLD + TEMP_ERR_HYST)
+  else if (!err_check(ERR_HIGH_TEMP) && (status.temp_sht20 > status.temp_setpoint + TEMP_ERR_THLD + TEMP_ERR_HYST || status.temp_sht20 > TEMP_ERR_MAX))
     err_set(ERR_HIGH_TEMP); // errore temperatura troppo alta
-  else if (err_check(ERR_HIGH_TEMP) && status.temp_sht20 <= status.temp_setpoint + TEMP_ERR_THLD - TEMP_ERR_HYST)
+  else if (err_check(ERR_HIGH_TEMP) && (status.temp_sht20 <= status.temp_setpoint + TEMP_ERR_THLD - TEMP_ERR_HYST && status.temp_sht20 <= TEMP_ERR_MAX))
     err_clear(ERR_HIGH_TEMP); // rimozione errore temperatura troppo alta
 }
 

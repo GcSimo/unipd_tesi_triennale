@@ -1,107 +1,103 @@
 \chapter{Sviluppo del controllore di temperatura per l'incubatrice neonatale}
 \section{Requisiti del controllore di temperatura}
+\subsubsection{Guida alle normative in materia di incubatrici neonatali}
 Per poter essere immessa sul mercato, un’incubatrice neonatale deve soddisfare i requisiti previsti da diverse normative
 tecniche, tra cui la norma ``IEC 60601-2-19'' \cite{iec_60601_2_19}, sviluppata dalla IEC (International Electrotechnical
-Commission), che costituisce il principale riferimento internazionale per questa tipologia di dispositivi. La norma è stata
+Commission), che costituisce il principale riferimento internazionale proprio per le incubatrici neonatali. La norma è stata
 successivamente recepita in ambito europeo dal CEN (Comitato europeo di normazione) e dal CENELEC (Comitato europeo di
 normazione elettrotecnica), dando origine alla norma ``EN IEC 60601-2-19''.
 
-Per la progettazione del controllore è stata assunta come riferimento la versione britannica della norma,
-``BS EN IEC 60601-2-19:2021+A1:2023'' \cite{bs_60601_2_19}. Tale documento è tecnicamente identico alla norma
-``IEC 60601-2-19:2020'' con l'integrazione dell'emendamento A1:2023. Di seguito si riportano i requisiti relativi
-al controllo della temperatura delle incubatrici neonatali che monitorano la temperatura dell'aria della camera interna.
+Per la progettazione del controllore è stata assunta come riferimento la versione emessa dal BSI (British Standards
+Institution) ``BS EN IEC 60601-2-19:2021+A1:2023'' \cite{bs_60601_2_19}. Tale documento è tecnicamente identico alla
+norma ``IEC 60601-2-19:2020'' con l'integrazione dell'emendamento A1:2023.
 
+\subsubsection{Requisiti della normativa ``BS EN IEC 60601-2-19:2021+A1:2023''}
 \begin{enumerate}
 	\item La temperatura deve essere misurata posizionando il sensore a un'altezza di 10 cm rispetto al piano del materasso,
 	in corrispondenza del centro dello stesso. Nel prototipo in esame, non essendo presente un materasso, la misura deve
 	essere effettuata a 10 cm dalla superficie di base della camera interna.
 
 	\item Le incubatrici devono garantire il corretto funzionamento per temperature ambientali comprese tra 20°C e 30°C.
-	Le prove di verifica dei requisiti devono essere eseguite a una temperatura ambiente compresa tra 21°C e 26°C.
+	Le prove di verifica dei requisiti devono essere eseguite a una temperatura ambientale compresa tra 21°C e 26°C.
 
 	\item In condizioni di normale utilizzo, la temperatura di regime (\textit{setpoint}) deve essere impostata a 36°C \(\pm\)
-	1°C e deve risultare superiore alla temperatura ambiente di almeno 3°C. Il valore massimo impostabile deve essere
-	compreso tra 36°C e 37°C con possibile estensione fino a 39°C esclusivamente a seguito di un'azione intenzionale
+	1°C e deve risultare superiore alla temperatura dell'ambiente di almeno 3°C. Il valore massimo impostabile deve essere
+	compreso tra 36°C e 37°C con possibile estensione fino a 39°C esclusivamente a seguito di un'azione aggiuntiva contemporanea
 	dell'operatore e della conseguente attivazione di un indicatore di allarme. Il valore minimo impostabile suggerito
 	è pari a 30°C, ma può essere anche inferiore.
 
 	\item Il tempo di riscaldamento (\textit{warm-up time}) non deve differire di oltre il 20\% rispetto al valore dichiarato
 	dal costruttore nelle istruzioni per l'uso. Esso deve essere determinato impostando il setpoint a una temperatura pari
-	a 12°C al di sopra della temperatura ambiente e misurando il tempo necessario affinché la temperatura interna raggiunga
-	un valore pari a 11°C al di sopra della temperatura ambiente.
+	a 12°C al di sopra della temperatura ambientale e misurando il tempo necessario affinché la temperatura interna raggiunga
+	un valore pari a 11°C al di sopra della temperatura ambientale.
 
 	\item Deve essere verificata la condizione di stabilità della temperatura, secondo la quale l'escursione massima della
 	temperatura interna non deve superare 1°C nell'arco di un'ora. Sono ammesse oscillazioni massime pari a 0.5°C rispetto
-	alla temperatura impostata. Per verificare tale condizione, il setpoint deve essere inizialmente impostato a 32°C e
-	successivamente a 36°C,
+	alla temperatura impostata.
 
 	\item A seguito di un disturbo esterno o di una variazione del setpoint, l'eventuale sovraelongazione della temperatura
-	non deve superare i 2°C, mentre la condizione di regime deve essere ristabilita entro 15 minuti. Tale requisito deve
-	essere verificato impostando inizialmente il setpoint a 32°C e attendendo il raggiungimento della condizione di regime;
-	successivamente, il setpoint deve essere portato a 36°C ed analizzando le prestazioni del relativo transitorio.
+	non deve superare i 2°C, mentre la condizione di stabilità deve essere ristabilita entro 15 minuti. Tale requisito deve
+	essere verificato analizzando il comportamento del sistema al passaggio da una condizione di equilibrio ottenuta con
+	il setpoint a 32°C, a ad una nuova condizione di equilibrio ottenuta con il setpoint a 36°C.
 
 	\item Il sistema deve attivare un allarme quando la differenza tra setpoint e temperatura misurata è superiore a 3°C,
 	oppure quando la temperatura misurata è superiore a 40°C.
 \end{enumerate}
 
-
 \begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[
+			>=latex, % stile delle frecce standard
+			scale=0.65, % riduzione in scala
 			font=\sffamily\footnotesize, % Font senza grazie tipico dei disegni tecnici
-			>=latex,             % Stile delle frecce standard
-			every node/.style={align=center}, % Permette l'andata a capo nei nodi
-			scale=0.6 % Scala del disegno (1.0 = 100% reale)
+			every node/.style={align=center}, % permette l'andata a capo nei nodi
 		]
 
 		% --- DEFINIZIONE DELLE COORDINATE ---
-		% Per coerenza matematica e visiva, usiamo una scala lineare dove 1 unità Y = 2 °C.
-		% Fissiamo la temperatura ambiente a 23 °C (Y=0).
-		% Questo fa sì che l'aumento di 11 °C avvenga esattamente a 34 °C (Y=5.5),
-		% posizionando la linea di "Warm-up" perfettamente a metà tra i 32 °C e i 36 °C, proprio come nella Fig. AA.
+		% coordinate di temperatura (asse Y) - scala di 2°C ogni 1 unità
+		\def\Yamb{0}         % temperatura ambientale
+		\def\Ythirtytwo{4}   % 32 °C
+		\def\Ythirtysix{6}   % 36 °C
+		\def\Ythirtyeight{7} % 38 °C
+		\def\Yrise{5}        % temperatura di warm-up
+		\def\Yovershoot{6.8} % temperatura di overshoot (36°C < x < 38°C)
+		\def\Yend{8.7}       % limite superiore
+		\def\Amp{0.25}       % ampiezza dell'oscillazione di stabilità
 
-		\def\Yamb{0}          % 23 °C (Ambiente)
-		\def\Ythirtytwo{4}  % 32 °C
-		\def\Yrise{5}       % 34 °C (Temperatura ambiente + 11 °C)
-		\def\Ythirtysix{6}  % 36 °C (Temperatura media di controllo)
-		\def\Yovershoot{6.8}  % 38 °C (Overshoot massimo)
-		\def\Ythirtyeight{7}% 38 °C (Overshoot massimo)
-		\def\Yend{8.6}        % Limite superiore
-		\def\Amp{0.25}        % Ampiezza dell'oscillazione stazionaria
-
-		% Coordinate temporali (Asse X)
-		\def\Xstart{0}
-		\def\Xwarmup{3}
-		\def\Xpeak{4}
-		\def\Xtrough{6.5}
-		\def\Xovershoot{9}
-		\def\Xsteady{10}
-		\def\Xend{17}
+		% coordinate temporali (asse X)
+		\def\Xstart{0}       % inizio del grafico
+		\def\Xwarmup{3}      % fine warm-up time
+		\def\Xpeak{4}        % picco dopo il warm-up time
+		\def\Xtrough{6.5}    % condizione di stabilità a 32°C
+		\def\Xovershoot{9}   % picco di overshoot a poco meno di 38°C
+		\def\Xsteady{10}     % inizio della condizione di stabilità a 36°C
+		\def\Xend{17}        % fine del grafico
 
 		% --- ASSI CARTESIANI ---
-		% Asse Y
+		% asse Y
 		\draw[->, thick] (0, \Yamb) -- (0, \Yend);
 		\node at (-2.2, \Yend-0.15) {Temperatura\\dell'incubatrice};
 
-		% Asse X
+		% asse X
 		\draw[->, thick] (0, \Yamb) -- (\Xend+1, \Yamb);
 		\node at (\Xend+0.8, -0.35) {Time};
 
 		% --- ETICHETTE E TACCHE DELL'ASSE Y ---
+		% etichette dell'asse Y
 		\draw[thick] (-0.15, \Ythirtytwo) -- (0, \Ythirtytwo) node[left, xshift=-2pt] {32°C};
 		\draw[thick] (-0.15, \Ythirtysix) -- (0, \Ythirtysix) node[left, xshift=-2pt] {36°C};
 		\draw[thick] (-0.15, \Ythirtyeight) -- (0, \Ythirtyeight) node[left, xshift=-2pt] {38°C};
 
 		% --- LINEE GUIDA ORIZZONTALI ---
-		% Linea di base della Temperatura Ambiente
+		% linea di base della temperatura ambientale
 		\draw (0, \Yamb) -- (-0.5, \Yamb) node[left] {Temperatura\\ambientale};
 
-		% Linea del completamento del Warm-up (Innalzamento di 11 °C)
+		% linea del completamento del warm-up
 		\draw[thin, dashed] (0, \Yrise) -- (\Xwarmup, \Yrise);
 		\draw[thin] (-2.6, \Yrise) -- (0, \Yrise);
 		\draw[<->] (-2.2, \Yamb+0.7) -- (-2.2, \Yrise) node[midway, fill=white] {11 $^\circ$C};
 
-		% Linee guida orizzontali collegate ai punti chiave della curva
+		% linee guida orizzontali collegate ai punti chiave della curva
 		\draw[thin, dashed] (0, \Ythirtytwo) -- (\Xtrough + 0.5, \Ythirtytwo);
 		\draw[thin, dashed] (0, \Ythirtyeight) -- (\Xovershoot + 1, \Ythirtyeight);
 		\draw[thin, dashed] (0, \Ythirtysix) -- (\Xend, \Ythirtysix);
@@ -120,7 +116,7 @@ al controllo della temperatura delle incubatrici neonatali che monitorano la tem
 			.. controls (7.4, \Ythirtytwo+0.1) and (8.2, \Yovershoot) .. (\Xovershoot, \Yovershoot)
 			% Discesa verso la stabilizzazione (Calcolata per avere la stessa pendenza del seno all'ingresso)
 			.. controls (9.4, \Yovershoot) and (9.7, 6.2) .. (\Xsteady, \Ythirtysix)
-			% Condizione di temperatura stazionaria (onda sinusoidale con ampiezza +-0.5 °C)
+			% Condizione di temperatura a regime (onda sinusoidale con ampiezza +-0.5 °C)
 			sin (10.5, \Ythirtysix - \Amp) cos (11, \Ythirtysix)
 			sin (11.5, \Ythirtysix + \Amp) cos (12, \Ythirtysix)
 			sin (12.5, \Ythirtysix - \Amp) cos (13, \Ythirtysix)
@@ -130,88 +126,275 @@ al controllo della temperatura delle incubatrici neonatali che monitorano la tem
 			sin (16.5, \Ythirtysix - \Amp) cos (17, \Ythirtysix);
 
 		% --- ANNOTAZIONI ---
-
-		% Overshoot
-		\node (overshoot) at (8.6, 3) {Overshoot\\massimo\\+2°C};
+		% overshoot
+		\node (overshoot) at (8.4, 2.5) {Overshoot\\(max +2°C)};
 		\draw[->] (overshoot) -- (\Xovershoot, \Yovershoot - 0.05);
 
-		% Warm-up Time
+		% warm-up time
 		\draw[thin] (\Xwarmup, \Yrise) -- (\Xwarmup, 0);
 		\draw[thin] (\Xwarmup, 0) -- (\Xwarmup, -0.55);
 		\draw[thin] (0, \Yamb) -- (0, -0.55);
 		\draw[<->] (0, -0.3) -- (\Xwarmup, -0.3) node[midway, below] {Warm-up};
 
-		% Steady temperature condition
-		\draw[thin] (\Xsteady, \Ythirtysix+0.5) -- (\Xsteady, -0.55);
-		\draw[->] (\Xsteady, -0.3) -- (16, -0.3) node[midway, below] {Condizione stazionaria};
+		% steady temperature condition
+		\draw[thin] (\Xsteady, -0.55) -- (\Xsteady, \Ythirtysix+0.5);
+		\draw[thin] (\Xend, -0.55) -- (\Xend, \Yend-0.35);
+		\draw[<->] (\Xsteady, -0.3) -- (\Xend, -0.3) node[midway, below] {Condizione di stabilità};
 
-		% Linee di inviluppo del regime stazionario (Limiti di oscillazione)
+		% linee di inviluppo del regime stazionario (limite oscillazioni)
 		\draw[dotted] (\Xsteady-0.1, \Ythirtysix + \Amp) -- (\Xend, \Ythirtysix + \Amp);
 		\draw[dotted] (\Xsteady-0.1, \Ythirtysix - \Amp) -- (\Xend, \Ythirtysix - \Amp);
 
-		% Temperature Variation
+		% variazione di temperatura
 		\draw[->] (16.5, \Ythirtysix - \Amp - 0.5) -- (16.5, \Ythirtysix - \Amp);
+		\draw (16.25, \Ythirtysix - \Amp) -- (16.75, \Ythirtysix - \Amp);
+		\draw (16.25, \Ythirtysix + \Amp) -- (16.75, \Ythirtysix + \Amp);
+		\draw (16.5, \Ythirtysix - \Amp) -- (16.5, \Ythirtysix + \Amp);
 		\draw[->] (16.5, \Ythirtysix + \Amp + 0.5) -- (16.5, \Ythirtysix + \Amp);
-		\node[right] at (17.2, \Ythirtysix) {Variazione di\\temperatura\\$\pm$0.5°C};
+		\node[right] at (17, \Ythirtysix) {Variazione di\\temperatura\\$\pm$0.5°C};
 
-		% Average Incubator Temperature
-		\node[right] (avg) at (13, 2.5) {Temperatura media\\dell'incubatrice};
+		% temperatura media
+		\node[right] (avg) at (11, 2.5) {Temperatura media\\dell'incubatrice};
 		\draw[->] (avg) -- (13.5, \Ythirtysix);
 
-		% Test warm-up time
-		\draw[->] (0, \Yend-0.6) -- (5, \Yend-0.6) node[midway, above] {Test di warm-up};
+		% test di warm-up
+		\draw[<->] (0, \Yend-0.6) -- (\Xtrough, \Yend-0.6) node[midway, above] {Test di warm-up};
 
-		% Test overshoot, settling time e steady state
-		\draw[thin] (\Xtrough, 0) -- (\Xtrough, \Yend);
-		\draw[->] (\Xtrough, \Yend-0.6) -- (18, \Yend-0.6) node[midway, above] {Test di overshoot, settling time e steady state};
+		% test overshoot, settling time e steady state
+		\draw[thin] (\Xtrough, 0) -- (\Xtrough, \Yend-0.35);
+		\draw[<->] (\Xtrough, \Yend-0.6) -- (\Xend, \Yend-0.6) node[midway, above] {Test di overshoot, settling time e steady state};
 	\end{tikzpicture}
-	\caption[Grafico della temperatura nel test di validazione]{Grafico con l'evoluzione della temperatura
-	prevista durante il test di validazione del warm-up time, dell'overshoot e della condizione di regime, come indicate sopra
-	secondo la normativa IEC 60601-2-19. Elaborazione propria basata sulle figure 201.101 e AA.1 del documento in analisi
+	\caption[Grafico della temperatura nel test di validazione]{Grafico dell'evoluzione prevista della temperatura durante
+	i test di validazione del warm-up time, dell'overshoot, del settling time e del mantenimento della condizione di stabilità,
+	come descritto nei requisiti sopra elencati. Elaborazione propria basata sulle figure 201.101 e AA.1 del documento normativo
 	``BS EN IEC 60601-2-19:2021+A1:2023'' \cite{bs_60601_2_19}.}
 	\label{fig:requisiti_norma}
 \end{figure}
 
+\newpage
+
+\section{Procedure per l'analisi dei dati raccolti durante i test}
+\subsubsection{Descrizione dei test da eseguire}
+Un'incubatrice neonatale, per soddisfare i requisiti normativi sul controllo della temperatura, deve superare i
+seguenti due test di validazione.
+
+\begin{enumerate}
+	\item Test del periodo di warm-up \\
+	Il periodo di warm-up consiste nella durata della fase di riscaldamento iniziale dell'incubatrice per portare la
+	temperatura interna ad un determinato setpoint, partendo dalla temperatura ambientale. Il test consiste di partire
+	dall'incubatrice in perfetto equilibrio termico con la temperatura ambientale, successivamente impostare un setpoint
+	di 12°C superiore alla temperatura di partenza e misurare il tempo necessario per far aumentare la temperatura interna
+	di 11°C.
+	\item Test di overshoot, settling time ed errori a regime a 36°C \\
+	Il test prevede di partire dall'incubatrice da una condizione di equilibrio termico a temperatura interna impostata di
+	32°C. Si procede poi ad impostare un nuovo setpoint a 36°C e si analizza la risposta del sistema a tale variazione. In
+	particolare si verifica che l'overshoot sia contenuto entro 2°C, che il settling time sia inferiore a 15 minuti e che
+	la temperatura a regime compia oscillazioni inferiori a \(\pm\)0.5°C rispetto al setpoint.
+\end{enumerate}
+
+\subsubsection{Strumenti per l'analisi dei dati}
+Per l'analisi dei dati raccolti, sono stati preparati i seguenti programmi MATLAB, che permettono di visualizzare i grafici
+dell'evoluzione temporale delle variabili di stato e di calcolare i parametri richiesti dalla normativa a partire dai dati
+raccolti nei file csv.
+\begin{itemize}
+	\item Visualizzazione dei grafici dei dati raccolti nei file csv - \verb|plot_csv.m|\\
+	Il programma si occupa semplicemente di stampare il grafico dell'andamento della temperatura e delle altre variabili
+	di stato in funzione del tempo, basandosi sui dati raccolti nei file csv. Si rimanda al codice per maggiori dettagli
+	\autoref{lst:plot_csv}.
+	\item Calcolo del periodo di warm-up - \verb|test1_analysis.m|\\
+	Il programma calcola il periodo di warm-up a partire dai dati raccolti nei file csv durante il primo test previsto
+	dalla normativa. Si rimanda al codice per maggiori dettagli \autoref{lst:test1_analysis}.
+	\item Calcolo delle metriche di prestazione - \verb|test2_analysis.m|\\
+	Il programma calcolo delle metriche di prestazione (overshoot, settling time ed errori a regime) con i dati raccolti
+	nei file csv durante il secondo test previsto dalla normativa. Si rimanda al codice per maggiori dettagli
+	\autoref{lst:test2_analysis}.
+\end{itemize}
+
+\newpage
 
 \section{Controllore ad isteresi}
 \subsection{Principio di funzionamento di un controllore ad isteresi}
-%Il controllore ad isteresi è uno dei controllori a feedback più semplici da implementare. In pratica quando la grandezza
-%misurata supera una certa soglia di disattivazione, il controllore disattiva l'attuatore, mentre quando la grandezza
-%misurata scende al di sotto della soglia di attivazione, il controllore attiva l'attuatore. Di norma è opportuno definire
-%valori distinti per le soglie, tali che la soglia di disattivazione sia maggiore del setpoint e la soglia di attivazione
-%sia minore del setpoint. Se questo non viene fatto e le due soglie coincidono con il setpoint, il rumore della grandezza
-%misurata potrebbe causare un comportamento instabile del controllore quando si trova in prossimità del setpoint.
+Il controllore ad isteresi è uno dei controllori a feedback più semplici da implementare. In pratica quando la grandezza
+da controllare supera una certa soglia di disattivazione, il controllore spegne l'attuatore. Viceversa, quando la grandezza
+da controllare scende al di sotto della soglia di attivazione, il controllore riattiva l'attuatore. Di norma è opportuno definire
+valori distinti per le due soglie, tali che la soglia di disattivazione sia maggiore del setpoint e la soglia di attivazione
+sia minore del setpoint. Se questo non avviene e le due soglie coincidono con il setpoint, il rumore di misurazione della
+grandezza da controllare potrebbe causare un comportamento instabile del controllore per valori prossimi al setpoint.
 
 \subsection{Implementazione del controllore ad isteresi nel firmware}
-%Dato che il controllore ad isteresi dipende solo dalla temperatura corrente,
+Dato che il controllore ad isteresi dipende solo dalla temperatura corrente e dal setpoint, è sufficiente inserire le
+verifiche delle condizioni di attivazione e disattivazione del riscaldatore subito dopo che tali valori vengono aggiornati.
+In pratica sono state create due funzioni di verifica (una per la temperatura e una per l'umidità) che vengono invocate subito
+dopo la lettura delle misurazioni dal sensore e dopo l'aggiornamento del setpoint. Per maggiori dettagli si rimanda alla
+relativa implementazione nel programma principale \verb|main.cpp| (\autoref{lst:main_cpp}).
 
 \subsection{Test di funzionamento con grafico e prestazioni}
+Nelle pagine seguenti sono riportati i grafici dei due test richiesti dalla normativa, eseguiti con il controllore ad isteresi.
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_isteresi.pdf}
-	\caption[Grafico del setpoint del controllore ad isteresi]{Grafico del raggiungimento e mantenimento del setpoint
-	di temperatura ottenuto con il controllore ad isteresi.}
-	\label{fig:isteresi}
-\end{figure}
+%A pagina seguente è riportato il grafico del raggiungimento e mantenimento del setpoint di temperatura impostato a 36°C,
+%partendo dallo stato iniziale di 32°C e sfruttando il controllore ad isteresi. Si può notare che i requisiti imposti dalla
+%normativa sono soddisfatti, in quanto:
+%\begin{itemize}
+%	\item il tempo di assestamento è di --- secondi, inferiore a 15 minuti;
+%	\item l'overshoot massimo è di --- °C, inferiore a 2°C;
+%	\item la temperatura compie oscillazioni comprese nel range di 36 \(\pm\) 0.5°C.
+%\end{itemize}
+%
+%Il controllore ad isteresi, però, ha continue ed infinite oscillazioni della temperatura attorno al setpoint, che si
+%vorrebbero eliminare per garantire una migliore stabilità nel controllo. Per fare ciò è necessario implementare altri
+%tipi di controllore più complessi e performanti, come ad esempio il controllore PID.
+%
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_isteresi.pdf}
+%	\caption[Grafico del setpoint del controllore ad isteresi]{Grafico del raggiungimento e mantenimento del setpoint
+%	di temperatura ottenuto con il controllore ad isteresi.}
+%	\label{fig:isteresi}
+%\end{figure}
 
 \newpage
 
 \section{Controllore PID}
 \subsection{Principio di funzionamento di un controllore PID}
+I controllori PID sono una classe di sistemi di controllo a retroazione ampiamente usati per la loro grande efficacia
+nel risolvere una vasta gamma di problemi di controllo. L'output di un controllore PID è dato dalla combinazione delle
+tre azioni che lo compongono: proporzionale, integrale e derivativa, ciascuna pesata per il rispettivo coefficiente di
+guadagno \(k_p\), \(k_i\) e \(k_d\).
+\begin{equation}
+	u(t) \; = \; \underbrace{ \; k_p \cdot e(t) \;}_\text{proporzionale} \; + \; \underbrace{\; k_i \cdot \int_0^t \! e(\tau) \, d\tau \;}_\text{integrale} \; + \; \underbrace{\; k_d \cdot \frac{de(t)}{dt} \;}_\text{derivativa}
+	\label{eq:pid_output}
+\end{equation}
+
+\subsubsection{Componente proporzionale}
+L'azione proporzionale (P) genera un segnale di controllo proporzionale all'errore tra il valore misurato e il valore
+desiderato della grandezza da controllare. Permette di portare rapidamente il sistema vicino al setpoint, ma potrebbe
+non essere sufficiente a garantire errore nullo a regime, specialmente nei sistemi instabili, senza un polo nell'origine.
+\begin{equation}
+	P_\text{PID}(t) = k_p \cdot e(t)
+	\label{eq:pid_prop}
+\end{equation}
+
+\subsubsection{Componente integrale}
+L'azione integrale (I) genera un segnale di controllo proporzionale dall'integrale dell'errore nel tempo, calcolato
+dall'istante di inizio del controllo fino al momento corrente. Grazie a questa azione, il controllore è in grado di
+eliminare l'errore a regime, ma risulta delicato da trattare, in quanto è facile provocare overshoot, oscillazioni,
+e saturazione dell'output.
+\begin{equation}
+	I_\text{PID}(t) = k_i \cdot \int_{0}^{t} e(\tau) \, d\tau
+	\label{eq:pid_int}
+\end{equation}
+
+\subsubsection{Componente derivativa}
+L'azione derivativa (D): il segnale di controllo è dato dalla derivata dell'errore nel tempo, ovvero dalla velocità
+di variazione dell'errore rispetto al tempo. Agisce come un freno sulla risposta del sistema, riducendo i comportamenti
+troppo nervosi e le oscillazioni, ma è molto sensibile al rumore di misurazione della grandezza da controllare.
+\begin{equation}
+	D_\text{PID}(t) = k_d \cdot \frac{de(t)}{dt}
+	\label{eq:pid_der}
+\end{equation}
+
 \subsection{Implementazione del controllore PID nel firmware}
-\subsubsection{Salvataggio degli errori e delle misurazioni nel buffer}
+Nel prototipo di incubatrice neonatale, il controllore PID viene utilizzato per controllare la temperatura interna della
+camera. Di conseguenza l'errore \(e(t)\) è dato dalla differenza tra il setpoint di temperatura e la temperatura misurata
+dal sensore. L'output del controllore PID è un numero in virgola mobile compreso tra 0 e 100 che può essere interpretato
+come la percentuale di potenza da fornire al riscaldatore.
+
+\subsubsection{Gestione del segnale PWM}
+Siccome gli attuatori sono pilotati tramite relè, non è possibile utilizzare un segnale di controllo nel dominio dei
+numeri reali, bensì è necessario convertire l'output del controllore PID in un segnale binario a due stati (acceso/spento)
+cercando di perdere meno informazione possibile. Per fare ciò, si è deciso di generare un segnale PWM (pulse-width modulation)
+in cui il duty cycle è proporzionale all'output del controllore PID. L'output del controllore non viene più visto come la
+percentuale di potenza da fornire al riscaldatore, bensì come la percentuale di tempo in cui il riscaldatore deve essere
+acceso durante un periodo di tempo fisso.
+
+A seguito di prove sperimentali si è deciso di impostare il periodo del segnale PWM pari a 15 secondi per garantire un
+buon compromesso tra la reattività del sistema e il numero di commutazione dei relè. Inoltre, per prevenire accensioni
+e spegnimenti troppo ravvicinati ed inutili del riscaldatore, è stato introdotto un tempo minimo di accensione e spegnimento
+pari a 0.5 secondi. In questo modo se viene richiesto di accendere il riscaldatore per un tempo inferiore a 0.5 secondi,
+oppure di spegnerlo per un tempo inferiore a 0.5 secondi, lo stato del riscaldatore non viene modificato, risparmiando
+due commutazioni.
+
+Per maggiori dettagli sulla gestione del segnale PWM si rimanda alla relativa implementazione nel programma principale
+\verb|main.cpp| (\autoref{lst:main_cpp}).
+
+\subsubsection{Multi-rate control per l'accumulo delle misurazioni e l'aggiornamento dell'uscita}
+Il sistema di controllo basato sul segnale PWM richiede un aggiornamento dell'uscita del controllore ogni 15 secondi, mentre
+la temperatura viene acquisita con un periodo di campionamento pari a 1 secondo. Per utilizzare tutti i dati disponibili,
+è stato adottato uno schema di controllo a più frequenze (\textit{multi-rate control}). In pratica le misurazioni acquisite
+ed i corrispondenti errori vengono salvati progressivamente ogni secondo in buffer circolari, mentre l'output del controllore
+viene aggiornato, utilizzando i dati contenuti nei buffer, in maniera indipendente solo quando richiesto dalla gestione del
+segnale PWM.
+
+Per svolgere correttamente i due compiti indipendenti, a livello implementativo sono state create le due funzioni
+\verb|pid_add_data()| e \verb|pid_update_output()| rispettivamente per salvare i dati nei buffer e per aggiornare
+l'output del controllore PID.
+
+
 \subsubsection{Aggiornamento dello stato}
-\subsubsection{Gestione del ciclo pwm}
-\subsubsection{Sistema di anti-windup}
-\subsubsection{Derivative on measurement}
+L'aggiornamento dello stato del controllore PID consiste nell'applicare la formula matematica riportata sopra (\autoref{eq:pid_output})
+utilizzando i dati contenuti nei buffer. A causa delle non idealità del sistemi reali, è necessario applicare alcune azioni
+aggiuntive per garantire un comportamento corretto e stabile del controllore. Nei prossimi paragrafi viene descritto il procedimento
+del calcolo di ogni componente con le opportune considerazioni effettuate.
+
+Se si dovesse necessitare di maggiori informazioni sull'implementazione del controllore PID, si rimanda al codice sorgente relativo
+contenuto nel file \verb|pid.h| (\autoref{lst:pid_h}).
+
+\subsubsection{Calcolo della componente proporzionale}
+Il calcolo della componente proporzionale consiste nel prodotto tra il guadagno proporzionale \(k_p\) e l'errore corrente \(e(t)\)
+come indicato nella formula riportata sopra (\autoref{eq:pid_prop}). Per ridurre l'effetto del rumore di misurazione della temperatura,
+si è deciso di utilizzare come errore corrente la media degli ultimi \(M\) errori salvati nel buffer, con \(M\) scelto arbitrariamente
+e indipendentemente dai periodi di temporizzazione del sistema. All'aumentare di \(M\) il sistema diventa più stabile, ma si introduce
+un ritardo tra l'azione proporzionale e il reale andamento dell'errore. Per i test effettuati, è stato utilizzato \(M=2\) campioni.
+
+\subsubsection{Calcolo della componente integrale e gestione del fenomeno di windup}
+La componente integrale è contenuta in una variabile accumulatore a cui viene sommato un nuovo contributo ad ogni aggiornamento
+dell'output del controllore. Il calcolo del nuovo contributo risulta coerente con la formula riportata sopra (\autoref{eq:pid_int}),
+ad eccezione del fatto che si utilizzano l'ultimo istante di aggiornamento dell'output e l'istante di tempo corrente come estremi
+di integrazione. L'integrale del segnale campionato \(e(t)\) è calcolo attraverso una somma discreta, moltiplicata per il periodo
+di campionamento \(T_s\).
+
+In determinate condizioni di funzionamento, l'azione integrale del controllore PID può accumulare un errore molto grande che
+necessita di una sovraelongazione elevata e prolungata nel tempo per riportare l'accumulatore al corretto valore di regime.
+Questo fenomeno è noto come windup dell'integrale. Per evitare di incorrere in tale problema, è stato implementato un sistema
+di anti-windup definito come \textit{integral-clamping} che consiste nel bloccare l'accumulatore dell'integrale quando l'output
+del controllore PID raggiunge il valore massimo o minimo consentito e l'errore corrente ha lo stesso segno dell'errore accumulato
+nell'integrale. \cite{advanced_pid_control}
+
+\subsubsection{Calcolo della componente derivativa tramite regressione lineare sulle misurazioni}
+Il calcolo della componente derivativa, secondo la formula riportata sopra (\autoref{eq:pid_der}), consiste nel prodotto tra il guadagno
+derivativo \(k_d\) e la derivata dell'errore corrente \(e(t)\).
+
+Quando il setpoint viene modificato, si verifica anche un cambiamento nella derivata dell'errore che può essere molto elevato e causare
+problemi di instabilità del sistema. Questo fenomeno è noto come \textit{derivative kick}. Per evitare ciò, la derivata dell'errore, viene
+sostituita con la derivata della temperatura misurata. In questo modo, le modifiche del setpoint risultano ininfluenti sul valore calcolato.
+Inoltre, dalla seguente dimostrazione matematica, si osserva che la derivata della misurazione coincide con la derivata dell'errore se il
+setpoint è costante, come avviene nella maggior parte dei casi di funzionamento del controllore PID. \cite{advanced_pid_control}
+\begin{equation}
+	\frac{d}{dt} e(t) = \frac{d}{dt} \left(y_\text{sp}(t) - y(t) \right) = \frac{d}{dt} y_\text{sp}(t) - \frac{d}{dt} y(t) = 0 - \frac{d}{dt} y(t) = - \frac{d}{dt} y(t)
+	%\frac{d e(t)}{dt} = \frac{d}{dt} \left(y_\text{sp}(t) - y(t) \right) = \frac{d y_\text{sp}(t)}{dt} - \frac{d y(t)}{dt} = 0 - \frac{d y(t)}{dt} = - \frac{d y(t)}{dt}
+\end{equation}
+
+Siccome il calcolo della derivata tramite rapporto incrementale tra gli ultimi due campioni è estremamente sensibile al rumore della
+misurazione, è stato optato per calcolare la derivata attraverso la regressione lineare sulle ultime \(N\) misurazioni contenute nel
+buffer. In pratica, si calcola la pendenza della retta che meglio approssima i punti dati dalle \(N\) misurazioni più recenti,
+cercando di minimizzare l'errore quadratico medio tra i punti dati e la retta. La formula matematica per fare ciò è la seguente:
+\begin{equation}
+	\frac{d}{dt} y(t) \; \approx \; \frac{12}{T_s \cdot N(N^2-1)} \cdot \sum_{i=0}^{N-1} i \cdot y_i \; - \; \frac{6}{T_s \cdot N(N+1)} \cdot \sum_{i=0}^{N-1} y_i
+\end{equation}
+con \(T_s\) periodo di campionamento del sensore, \(N\) numero di campioni utilizzati, \(y_i\) misurazioni della temperatura dalla
+più vecchia alla più recente. Per maggiori dettagli si rimanda alla dimostrazione matematica riportata in appendice
+(\autoref{chap:derivata_regressione_lineare}).
+
+Per i test effettuati, è stato utilizzato \(N=20\) campioni, in modo da considerare un intervallo di tempo superiore al periodo del
+segnale pwm per compensare alle variazioni periodiche della temperatura dovute all'accensione e allo spegnimento ripetuto del riscaldatore.
+
 \subsection{Test di funzionamento con grafico e prestazioni}
 
 
 parametri ottimali individuati:
 \begin{itemize}
-	\item kp = 55, ki = 0.40, kd = 1000
 	\item kp = 55, ki = 0.35, kd = 1200
+	\item kp = 55, ki = 0.40, kd = 1000
 	\item kp = 60, ki = 0.4, kd = 1500
 \end{itemize}
 
@@ -222,20 +405,20 @@ prestazioni richieste:
 	\item overshoot
 \end{itemize}
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_pid_1_1.pdf}
-	\caption[Grafico del setpoint del controllore PID]{Grafico del raggiungimento e mantenimento del setpoint di temperatura
-	ottenuto con il controllore PID con parametri Kp=55, Ki=0.35, Kd=1200.}
-	\label{fig:pid_gradino}
-\end{figure}
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_pid_1_1.pdf}
+%	\caption[Grafico del setpoint del controllore PID]{Grafico del raggiungimento e mantenimento del setpoint di temperatura
+%	ottenuto con il controllore PID con parametri Kp=55, Ki=0.35, Kd=1200.}
+%	\label{fig:pid_gradino}
+%\end{figure}
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_pid_1_2.pdf}
-	\caption[Grafico della perturbazione del controllore PID]{Grafico del ripristino del setpoint di temperatura dopo un
-	disturbo esterno, ottenuto con il controllore PID con parametri Kp=55, Ki=0.35, Kd=1200.}
-	\label{fig:pid_perturbazione}
-\end{figure}
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_pid_1_2.pdf}
+%	\caption[Grafico della perturbazione del controllore PID]{Grafico del ripristino del setpoint di temperatura dopo un
+%	disturbo esterno, ottenuto con il controllore PID con parametri Kp=55, Ki=0.35, Kd=1200.}
+%	\label{fig:pid_perturbazione}
+%\end{figure}
 
 \section{Confronto tra controllore ad isteresi e PID}

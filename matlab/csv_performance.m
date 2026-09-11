@@ -1,5 +1,5 @@
 % -----------------------------------------------------------------------------
-% --------------- plot_info.m - Calcola le prestazioni del PID ----------------
+% ------------ csv_performance.m - calcola le prestazioni del PID -------------
 % -----------------------------------------------------------------------------
 %
 % La seguente funzione legge i dati da un file CSV generato dalla funzione
@@ -19,13 +19,13 @@
 %    indice di inizio per l'analisi dei dati (opzionale, default = 1)
 %
 %  - end_time:
-%    indice di fine per l'analisi dei dati (opzionale, default = ultimo dato)
+%    indice di fine per l'analisi dei dati (opzionale, default = ultimo)
 %
 %  - start_value:
 %    valore di equilibrio iniziale (opzionale, default = primo valore)
 %
 
-function plot_info(filename, variabile, start_time, end_time, start_value)
+function csv_performance(filename, variabile, start_time, end_time, start_value)
 
 	%% ------ parsing dei parametri e assegnazione dei valori di default ------
 
@@ -186,9 +186,9 @@ function plot_info(filename, variabile, start_time, end_time, start_value)
 	end
 
 	% --- overshoot ---
-	%t_peak = metriche.PeakTime;
-	%y_peak = metriche.Peak + start_value;
-	%plot(t_peak, y_peak, 'Color', col_peak, 'Marker', 'o', 'MarkerSize', 8, 'MarkerFaceColor', col_peak);
+	t_peak = metriche.PeakTime;
+	y_peak = metriche.Peak + start_value;
+	plot(t_peak, y_peak, 'Color', col_peak, 'Marker', 'o', 'MarkerSize', 8, 'MarkerFaceColor', col_peak, 'HandleVisibility', 'off');
 	%text(t_peak, y_peak, sprintf('  Overshoot: %.1f%%', metriche.Overshoot), 'Color', col_peak, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'top');
 
 	% --- estetica e legenda ---

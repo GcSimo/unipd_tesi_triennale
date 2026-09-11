@@ -1,7 +1,8 @@
 \appendix
 \chapter{Metodo dei minimi quadrati per il calcolo stabile della derivata}
+\label{chap:derivata_regressione_lineare}
 Di seguito viene illustrato il procedimento matematico effettuato per ottenere la formula utilizzata nel controllore PID per
-il calcolo del contributo derivativo.
+il calcolo del contributo derivativo attraverso una regressione lineare sui dati contenuti nel buffer.
 
 Il calcolo della derivata di una grandezza fisica misurata da un sensore risulta particolarmente delicato in quanto è fortemente
 soggetto al rumore delle misurazioni. Il semplice calcolo del rapporto incrementale tra due campioni consecutivi può portare
@@ -134,7 +135,7 @@ nell'implementazione del controllore PID.
 \label{lst:platformio_ini}
 \inputminted{ini}{../programmi/firmware/platformio.ini}
 
-\section{Files di configurazione del firmware}
+\section{File di configurazione del firmware}
 \captionof{listing}{File header con i parametri di configurazione}
 \label{lst:config_h}
 \inputminted{c++}{../programmi/firmware/lib/config/config.h}
@@ -145,7 +146,7 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo con le funzioni di utilità}
+\section{File del modulo con le funzioni di utilità}
 \captionof{listing}{File header con le funzioni di utilità}
 \label{lst:utils_h}
 \inputminted{c++}{../programmi/firmware/lib/utils/utils.h}
@@ -156,7 +157,7 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo per la gestione degli errori}
+\section{File del modulo per la gestione degli errori}
 \captionof{listing}{File header con le funzioni per la gestione degli errori}
 \label{lst:error_h}
 \inputminted{c++}{../programmi/firmware/lib/error/error.h}
@@ -167,7 +168,7 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo per il controllo attuatori}
+\section{File del modulo per il controllo attuatori}
 \captionof{listing}{File header con le funzioni per il controllo degli attuatori}
 \label{lst:actuators_h}
 \inputminted{c++}{../programmi/firmware/lib/actuators/actuators.h}
@@ -178,7 +179,7 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo per la gestione del display lcd}
+\section{File del modulo per la gestione del display lcd}
 \captionof{listing}{File header con le funzioni per la gestione del display lcd}
 \label{lst:lcd_h}
 \inputminted{c++}{../programmi/firmware/lib/lcd/lcd.h}
@@ -189,7 +190,7 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo per la gestione del sensore di temperatura e umidità SHT20}
+\section{File del modulo per la gestione del sensore di temperatura e umidità SHT20}
 \captionof{listing}{File header con le funzioni per la gestione del sensore SHT20}
 \label{lst:sht20_h}
 \inputminted{c++}{../programmi/firmware/lib/sht20/sht20.h}
@@ -200,7 +201,7 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo per la gestione delle comunicazioni seriali}
+\section{File del modulo per la gestione delle comunicazioni seriali}
 \captionof{listing}{File header con le funzioni per la gestione delle comunicazioni seriali}
 \label{lst:serial_h}
 \inputminted{c++}{../programmi/firmware/lib/serial/serial.h}
@@ -211,14 +212,14 @@ nell'implementazione del controllore PID.
 
 \newpage
 
-\section{Files del modulo per la gestione del controllore PID}
+\section{File del modulo per la gestione del controllore PID}
 \captionof{listing}{File header con le funzioni per la gestione del controllore PID}
 \label{lst:pid_h}
 \inputminted{c++}{../programmi/firmware/lib/pid/pid.h}
 
-\captionof{listing}{File sorgente con le funzioni per la gestione del controllore PID}
-\label{lst:pid_cpp}
-\inputminted{c++}{../programmi/firmware/lib/pid/pid.cpp}
+%\captionof{listing}{File sorgente con le funzioni per la gestione del controllore PID}
+%\label{lst:pid_cpp}
+%\inputminted{c++}{../programmi/firmware/lib/pid/pid.cpp}
 
 \newpage
 
@@ -229,25 +230,33 @@ nell'implementazione del controllore PID.
 
 
 \chapter{Programmi in MATLAB}
-\section{Lettura dei dati dalla porta seriale}
-\captionof{listing}{Funzione MATLAB per la lettura dei dati dalla porta seriale, salvataggio dei dati in un file csv e
-aggiornamento dei grafici in tempo reale costuiti con i dati ricevuti}
+\section{Gestione della comunicazione seriale}
+\captionof{listing}[Funzione MATLAB per la gestione della comunicazione seriale]{Funzione MATLAB che si occupa della lettura
+dei messaggi dalla porta seriale, del relativo parsing e salvataggio in un file csv e aggiornare i grafici di andamento delle
+variabili in tempo reale.}
 \label{lst:serial_read}
 \inputminted[tabsize=4]{matlab}{../matlab/serial_read.m}
 
 \newpage
 
-\section{Stampa dei grafici dei dati nei files csv}
-\captionof{listing}{Funzione MATLAB per la stampa dei grafici utilizzando i dati contenuti in un file csv}
-\label{lst:csv_read}
-\inputminted[tabsize=4]{matlab}{../matlab/csv_read.m}
+\section{Visualizzazione dei grafici dei dati csv}
+\captionof{listing}[Funzione MATLAB per visualizzare i grafici dei dati csv]{Funzione MATLAB per la stampa dei grafici
+dell'andamento delle grandezze fisiche in funzione del tempo, utilizzando i dati raccolti nei file csv.}
+\label{lst:plot_csv}
+\inputminted[tabsize=4]{matlab}{../matlab/plot_csv.m}
 
 \newpage
 
-\section{Calcolo delle prestazioni della risposta del PID}
-\captionof{listing}{Funzione MATLAB per l'analisi delle prestazioni della risposta al gradino del controllore PID e la
-stampa del grafico della risposta}
-\label{lst:plot_info}
-\inputminted[tabsize=4]{matlab}{../matlab/plot_info.m}
+\section{Analisi dei dati acquisiti durante i test}
+\captionof{listing}[Funzione MATLAB per l'analisi dati del primo test]{Funzione MATLAB per il calcolo del periodo di warm-up
+a partire dai dati raccolti nei file csv durante il primo test previsto dalla normativa.}
+\label{lst:test1_analysis}
+\inputminted[tabsize=4]{matlab}{../matlab/test1_analysis.m}
+
+\captionof{listing}[Funzione MATLAB per l'analisi dati del secondo test]{Funzione MATLAB per il calcolo delle metriche di
+prestazione (overshoot, settling time ed errori a regime) con i dati raccolti nei file csv durante il secondo test previsto
+dalla normativa.}
+\label{lst:test2_analysis}
+\inputminted[tabsize=4]{matlab}{../matlab/test2_analysis.m}
 
 \newpage

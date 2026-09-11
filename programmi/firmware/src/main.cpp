@@ -52,12 +52,15 @@ void set_manual_ctrl();
  */
 void set_auto_ctrl();
 
+void temp_hyst_ctrl();
+void rh_hyst_ctrl();
 
 // ----------------------------------------------------------------------------
 // ------------------------------ setup function ------------------------------
 // ----------------------------------------------------------------------------
 
-void setup() {
+void setup()
+{
   // inizializzazione seriale e I2C
   Serial.begin(115200);
 
@@ -154,7 +157,6 @@ void setup() {
   // del controllore PID
   timers.start_pwm = millis() - PWM_PERIOD + SHT20_READ_PERIOD;
 }
-
 
 // ----------------------------------------------------------------------------
 // ------------------------------ loop function -------------------------------
@@ -296,6 +298,10 @@ void loop() {
     status.temp_setpoint = new_temp_setpoint; // aggiornamento setpoint precedente
     serial_new_temp_setpoint(); // stampa su serial monitor
 
+    // aggiornamento riscaldatore tramite controllo ad isteresi della temperatura
+    #if TEMP_CTRL == HYST
+      temp_hyst_ctrl();
+    #endif
   }
 
   // controllo timer per lettura potenziometro umidità
@@ -328,6 +334,11 @@ void loop() {
   if (status.rh_setpoint != new_rh_setpoint && millis() - timers.rh_setpoint >= SP_UPDATE_DELAY) {
     status.rh_setpoint = new_rh_setpoint; // aggiornamento setpoint precedente
     serial_new_rh_setpoint(); // stampa su serial monitor
+
+    // aggiornamento umidificatore tramite controllo ad isteresi
+    #if RH_CTRL == HYST
+      rh_hyst_ctrl();
+    #endif
   }
 
 
@@ -414,38 +425,20 @@ void loop() {
 
     // 3. controllo degli attuatori se in modalità automatica
     if (!status.manual_ctrl) {
-      // controllo ad isteresi ON/OFF della temperatura
-      #if TEMP_CTRL == HYST
-        if (!status.heat_relay && status.temp_setpoint - status.temp_sht20 > TEMP_HYS_THLD) {
-          heat_turn_on();
-          serial_auto_heat_on();
-        }
-        else if (status.heat_relay && status.temp_sht20 - status.temp_setpoint > TEMP_HYS_THLD) {
-          heat_turn_off();
-          serial_auto_heat_off();
-        }
-      #endif
-
-      // controllo tramite PID della temperatura
-      #if TEMP_CTRL == PID
+      #if TEMP_CTRL == HYST // controllo ad isteresi ON/OFF della temperatura
+        temp_hyst_ctrl();
+      #elif TEMP_CTRL == PID // controllo tramite PID della temperatura
         pid_add_data<TEMP>(temp_pid, status.temp_setpoint - status.temp_sht20, status.temp_sht20);
+      #else
+        heat_turn_off(); // spegnimento riscaldatore se non è attivo alcun controllore
       #endif
 
-      // controllo ad isteresi ON/OFF dell'umidità
-      #if RH_CTRL == HYST
-        if (!status.rh_relay && !status.refill_led && status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) > RH_HYS_THLD) {
-          rh_turn_on();
-          serial_auto_rh_on();
-        }
-        else if (status.rh_relay && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) - status.rh_setpoint > RH_HYS_THLD) {
-          rh_turn_off();
-          serial_auto_rh_off();
-        }
-      #endif
-
-      // controllo tramite PID dell'umidità
-      #if RH_CTRL == PID
+      #if RH_CTRL == HYST // controllo ad isteresi ON/OFF dell'umidità
+        rh_hyst_ctrl();
+      #elif RH_CTRL == PID // controllo tramite PID dell'umidità
         pid_add_data<RH>(rh_pid, status.rh_setpoint - rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint), status.rh_sht20);
+      #else
+        rh_turn_off(); // spegnimento umidificatore se non è attivo alcun controllore
       #endif
     }
 
@@ -621,7 +614,6 @@ void loop() {
      status.refill_led = true;         // aggiornamento stato led di refill
   }
 
-
   // --------------------------------------------------------------------------
   // ------------ aggiornamento display lcd con stato incubatrice -------------
   // --------------------------------------------------------------------------
@@ -685,4 +677,42 @@ void set_auto_ctrl() {
 
   // reset timer pwm
   timers.start_pwm = millis() - PWM_PERIOD;
+}
+
+// gestione del controllo ad isteresi ON/OFF della temperatura
+void temp_hyst_ctrl() {
+  // controllo automatico non attivo, nessuna azione eseguita
+  if (status.manual_ctrl)
+    return;
+
+  // se il riscaldatore è spento e la temperatura supera la soglia di accensione
+  if (!status.heat_relay && status.temp_sht20 < status.temp_setpoint - TEMP_HYS_THLD) {
+    heat_turn_on();
+    serial_auto_heat_on();
+  }
+
+  // se il riscaldatore è acceso e la temperatura scende sotto la soglia di spegnimento
+  else if (status.heat_relay && status.temp_sht20 > status.temp_setpoint + TEMP_HYS_THLD) {
+    heat_turn_off();
+    serial_auto_heat_off();
+  }
+}
+
+// gestione del controllo ad isteresi ON/OFF dell'umidità
+void rh_hyst_ctrl() {
+  // controllo automatico non attivo, nessuna azione eseguita
+  if (status.manual_ctrl)
+    return;
+
+  // se l'umidificatore è spento e l'umidità supera la soglia di accensione
+  if (!status.rh_relay && !status.refill_led && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) < status.rh_setpoint - RH_HYS_THLD) {
+    rh_turn_on();
+    serial_auto_rh_on();
+  }
+
+  // se l'umidificatore è acceso e l'umidità scende sotto la soglia di spegnimento
+  else if (status.rh_relay && rh_at_temp_setpoint(status.rh_sht20, status.temp_sht20, status.temp_setpoint) > status.rh_setpoint + RH_HYS_THLD) {
+    rh_turn_off();
+    serial_auto_rh_off();
+  }
 }

@@ -1,6 +1,6 @@
 \begin{MintedVerbatim}[commandchars=\\\{\}]
 \PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
-\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} csv\PYGZus{}read.m \PYGZhy{} Lettura dei dati da un file CSV \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} plot\PYGZus{}csv.m \PYGZhy{} Stampa del grafico a partire da dati CSV \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c}{\PYGZpc{}}
 \PYG{c}{\PYGZpc{} La seguente funzione legge i dati da un file CSV generato dalla funzione}
@@ -11,7 +11,7 @@
 \PYG{c}{\PYGZpc{}  \PYGZhy{} filename:}
 \PYG{c}{\PYGZpc{}    nome del file CSV da leggere (obbligatorio)}
 \PYG{c}{\PYGZpc{}}
-\PYG{c}{\PYGZpc{}  \PYGZhy{} showPlot:}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} plotType:}
 \PYG{c}{\PYGZpc{}    permette di scegliere che parametri visualizzare nel grafico in base al}
 \PYG{c}{\PYGZpc{}    valore passato come parametro:}
 \PYG{c}{\PYGZpc{}     \PYGZhy{} 0 = nessun grafico}
@@ -20,17 +20,17 @@
 \PYG{c}{\PYGZpc{}     \PYGZhy{} 3 = entrambi i grafici per la temperatura e l\PYGZsq{}umidità (default)}
 \PYG{c}{\PYGZpc{}}
 
-\PYG{k}{function}\PYG{+w}{ }\PYG{n+nf}{csv\PYGZus{}read}\PYG{p}{(}filename, showPlot\PYG{p}{)}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}csv}\PYG{p}{(}filename, plotType\PYG{p}{)}
 \PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} parsing dei parametri e assegnazione dei valori di default \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 
 \PYG{+w}{	}\PYG{c}{\PYGZpc{} nome del file CSV da leggere (obbligatorio)}
 \PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{nargin}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{)}
-\PYG{+w}{		}\PYG{n+nb}{error}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Uso corretto: csv\PYGZus{}read \PYGZlt{}nome\PYGZus{}file.csv\PYGZgt{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{error}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Uso corretto: plot \PYGZlt{}nome\PYGZus{}file.csv\PYGZgt{} [plotType]\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{	}\PYG{k}{end}
 
 \PYG{+w}{	}\PYG{c}{\PYGZpc{} tipo di grafico da visualizzare (default = 3 \PYGZhy{} entrambi i grafici)}
-\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{nargin}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{showPlot}\PYG{p}{)}
-\PYG{+w}{		}\PYG{n}{showPlot}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{;}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{nargin}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{plotType}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{plotType}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{;}
 \PYG{+w}{	}\PYG{k}{end}
 
 \PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} configurazione file CSV \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
@@ -60,13 +60,13 @@
 \PYG{+w}{	}\PYG{n+nb}{time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Time\PYGZus{}Seconds}\PYG{p}{;}
 
 \PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} setup dei grafici \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
-\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} crea una finestra grafica per stampare il grafico}
 \PYG{+w}{		}\PYG{n+nb}{figure}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Name\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Analisi Dati CSV Arduino\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}w\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Units\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}centimeters\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Position\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{40}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{7}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{16}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{21}\PYG{p}{]);}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} crea il layout con 2 o 4 righe in base ai grafici da mostrare}
-\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
 \PYG{+w}{			}\PYG{n}{t\PYGZus{}layout}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{tiledlayout}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}TileSpacing\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}compact\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Padding\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}compact\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{		}\PYG{k}{else}
 \PYG{+w}{			}\PYG{n}{t\PYGZus{}layout}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{tiledlayout}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}TileSpacing\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}compact\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Padding\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}compact\PYGZsq{}}\PYG{p}{);}
@@ -79,21 +79,20 @@
 \PYG{+w}{		}\PYG{n}{c\PYGZus{}Out}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.4660}\PYG{+w}{ }\PYG{l+m+mf}{0.6740}\PYG{+w}{ }\PYG{l+m+mf}{0.1880}\PYG{p}{];}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafici per le misurazioni di temperatura \PYGZhy{}\PYGZhy{}\PYGZhy{}}
-\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico con i dati di temperatura e setpoint \PYGZhy{}\PYGZhy{}\PYGZhy{}}
-\PYG{+w}{			}\PYG{c}{\PYGZpc{} impostazioni di base}
 \PYG{+w}{			}\PYG{n}{ax1}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n}{grid}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{hold}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} set dei dati da mostrare (temperatura e setpoint)}
 \PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Temperature}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}r\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Misurazione\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Setpoint\PYGZus{}Temperature}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}r\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Setpoint\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}min\PYGZus{}thld}\PYG{p}{))}
-\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}min\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}r:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}T\PYGZus{}\PYGZob{}min\PYGZhy{}thld\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}min\PYGZus{}thld\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}min\PYGZus{}thld}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}min\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}r:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}THLD\PYGZus{}\PYGZob{}min\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}max\PYGZus{}thld}\PYG{p}{))}
-\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}max\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}r:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}T\PYGZus{}\PYGZob{}max\PYGZhy{}thld\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}max\PYGZus{}thld\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}max\PYGZus{}thld}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}max\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}r:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}THLD\PYGZus{}\PYGZob{}max\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} preferenze di visualizzazione}
@@ -102,33 +101,32 @@
 \PYG{+w}{			}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{XTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{50}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} impostazioni della griglia}
 \PYG{+w}{			}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{YMinorGrid}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}on\PYGZsq{}}\PYG{p}{;}
 
-\PYG{+w}{			}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico con i dati del PID (P, I, D, Output) e PWM \PYGZhy{}\PYGZhy{}\PYGZhy{}}
-\PYG{+w}{			}\PYG{c}{\PYGZpc{} impostazioni di base}
+\PYG{+w}{			}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico con i dati di PID, PWM e output della temperatura \PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{+w}{			}\PYG{n}{ax2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n}{grid}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{hold}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} set di dati da mostrare (segnali pid e output)}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}p}\PYG{p}{))}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}p\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}p}\PYG{p}{))}
 \PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}p}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}P}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}P\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}i}\PYG{p}{))}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}i\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}i}\PYG{p}{))}
 \PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}I}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}I\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}d}\PYG{p}{))}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}d\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}d}\PYG{p}{))}
 \PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}d}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}D}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}D\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}out}\PYG{p}{))}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}out\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}out}\PYG{p}{))}
 \PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}Out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Out\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PWM}\PYG{p}{))}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PWM\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PWM}\PYG{p}{))}
 \PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PWM}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Duty cycle\PYGZus{}\PYGZob{}PWM\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
-\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}output}\PYG{p}{))}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}output\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}output}\PYG{p}{))}
 \PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}output}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Output\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{k}{end}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} preferenze di visualizzazione}
-\PYG{+w}{			}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Controllo (Duty cycle/PID)\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} etichetta asse y}
+\PYG{+w}{			}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Output controllore\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} etichetta asse y}
 \PYG{+w}{			}\PYG{n+nb}{legend}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Location\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}northeast\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} legenda}
 \PYG{+w}{			}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{XTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{50}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{YMinorGrid}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}on\PYGZsq{}}\PYG{p}{;}
@@ -138,40 +136,64 @@
 \PYG{+w}{		}\PYG{k}{end}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafici per le misurazioni di umidità \PYGZhy{}\PYGZhy{}\PYGZhy{}}
-\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} impostazioni di base}
-\PYG{+w}{			}\PYG{n}{ax2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{title}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Controllo Umidità\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{n}{ax3}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n}{grid}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{hold}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}
 
 \PYG{+w}{			}\PYG{c}{\PYGZpc{} set di dati per l\PYGZsq{}asse sinistro (umidità)}
-\PYG{+w}{			}\PYG{n+nb}{yyaxis}\PYG{+w}{ }\PYG{n}{left}\PYG{p}{;}
-\PYG{+w}{			}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Umidità (\PYGZpc{})\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Humidity}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}b\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Misurazione\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Setpoint\PYGZus{}Humidity}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}b\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Setpoint\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}min\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}b:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}RH\PYGZus{}\PYGZob{}min\PYGZhy{}thld\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}max\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}b:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}RH\PYGZus{}\PYGZob{}max\PYGZhy{}thld\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}min\PYGZus{}thld\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}min\PYGZus{}thld}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}min\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}b:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}THLD\PYGZus{}\PYGZob{}min\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}max\PYGZus{}thld\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}max\PYGZus{}thld}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}max\PYGZus{}thld}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}b:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}THLD\PYGZus{}\PYGZob{}max\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
 
-\PYG{+w}{			}\PYG{c}{\PYGZpc{} set di dati per l\PYGZsq{}asse destro (segnali di controllo)}
-\PYG{+w}{			}\PYG{n+nb}{yyaxis}\PYG{+w}{ }\PYG{n}{right}\PYG{p}{;}
-\PYG{+w}{			}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Segnali (PWM/PID)\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PWM}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}PWM\PYGZus{}\PYGZob{}RH\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}output}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Output\PYGZus{}\PYGZob{}RH\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}p}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}P}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}P\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}I}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}I\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}d}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}D}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}D\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
-\PYG{+w}{			}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}Out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Out\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{c}{\PYGZpc{} preferenze di visualizzazione}
+\PYG{+w}{			}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Umidità (\PYGZpc{})\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} etichetta asse y}
+\PYG{+w}{			}\PYG{n+nb}{legend}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Location\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}southeast\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} legenda}
+\PYG{+w}{			}\PYG{n}{ax3}\PYG{p}{.}\PYG{n}{XTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{50}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} impostazioni della griglia}
+\PYG{+w}{			}\PYG{n}{ax3}\PYG{p}{.}\PYG{n}{YMinorGrid}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}on\PYGZsq{}}\PYG{p}{;}
 
-\PYG{+w}{			}\PYG{c}{\PYGZpc{} aggiunge la legenda al grafico}
-\PYG{+w}{			}\PYG{n+nb}{legend}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Location\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}westoutside\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico con i dati di PID, PWM e output dell\PYGZsq{}umidità \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{			}\PYG{n}{ax4}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{);}
+\PYG{+w}{			}\PYG{n}{grid}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{hold}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}
 
-\PYG{+w}{			}\PYG{c}{\PYGZpc{} adatta automaticamente l\PYGZsq{}asse x al numero di punti visualizzati}
-\PYG{+w}{			}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{XLimMode}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}auto\PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{			}\PYG{c}{\PYGZpc{} set di dati da mostrare (segnali pid e output)}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}PID\PYGZus{}p\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}p}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}p}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}P}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}P\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}PID\PYGZus{}i\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}i}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}I}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}I\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}PID\PYGZus{}d\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}d}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}d}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}D}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}D\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}PID\PYGZus{}out\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}out}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PID\PYGZus{}out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}Out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Out\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}PWM\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PWM}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}PWM}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Duty cycle\PYGZus{}\PYGZob{}PWM\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+\PYG{+w}{			}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}RH\PYGZus{}output\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}output}\PYG{p}{))}
+\PYG{+w}{				}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{RH\PYGZus{}output}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Output\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{			}\PYG{k}{end}
+
+\PYG{+w}{			}\PYG{c}{\PYGZpc{} preferenze di visualizzazione}
+\PYG{+w}{			}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Output controllore\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} etichetta asse y}
+\PYG{+w}{			}\PYG{n+nb}{legend}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Location\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}northeast\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} legenda}
+\PYG{+w}{			}\PYG{n}{ax4}\PYG{p}{.}\PYG{n}{XTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{50}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{);}
+\PYG{+w}{			}\PYG{n}{ax4}\PYG{p}{.}\PYG{n}{YMinorGrid}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}on\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{			}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} linking degli assi x \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{			}\PYG{n+nb}{linkaxes}\PYG{p}{([}\PYG{n}{ax3}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ax4}\PYG{p}{],}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}x\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{		}\PYG{k}{end}
 
 \PYG{+w}{		}\PYG{c}{\PYGZpc{} sincronizza gli assi x dei due grafici se entrambi sono stati creati}
-\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{showPlot}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{plotType}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{3}
 \PYG{+w}{			}\PYG{n+nb}{linkaxes}\PYG{p}{([}\PYG{n}{ax1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ax2}\PYG{p}{],}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}x\PYGZsq{}}\PYG{p}{);}
 \PYG{+w}{		}\PYG{k}{end}
 

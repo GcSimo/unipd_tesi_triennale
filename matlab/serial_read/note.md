@@ -600,3 +600,24 @@
 - test pid con kp = 55, ki = 0.35, kd = 1200
 - buono *
 - introduzione del disturbo da 430 a 480 circa
+
+## set prove 7
+### data_20260911_104633.csv
+- test1 warmup time con isteresi
+- ok
+
+### data_20260911_111446_.csv
+- test2 prestazioni con isteresi
+- ok
+
+### data_20260911_125418.csv
+- test2 prestazioni con pid
+- interrotto per standby del computer
+
+### data_20260911_135444.csv
+- test2 prestazioni con pid
+- ok
+
+### data_20260911_161359.csv
+- test1 warmup time con pid
+- ok

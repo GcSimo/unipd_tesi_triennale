@@ -1,10 +1,10 @@
 /**
- * @file pid.h
+ * @file controller.h
  * @author Giacomo Simonetto
- * @brief Implementazione dei controllori PID.
+ * @brief Implementazione dei controllori ad isteresi e PID.
  *
- * Dichiarazione delle funzioni per la gestione dei controllori PID per la
- * temperatura e l'umidità dell'incubatrice neonatale.
+ * Dichiarazione delle funzioni per la gestione dei controllori ad isteresi
+ * e PID per la temperatura e l'umidità dell'incubatrice neonatale.
  */
 
 #ifndef PID_H

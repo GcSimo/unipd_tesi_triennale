@@ -29,44 +29,52 @@ void serial_datalog() {
   Serial.print(status.manual_ctrl ? F("MAN") : F("AUTO"));
   Serial.print(F(" | Error_Code: "));
   Serial.print(status.error_code);
-  #if TEMP_CTRL == PID
-    Serial.print(F(" | T_PID_p: "));
-    Serial.print(temp_pid.proportional);
-    Serial.print(F(" | T_PID_i: "));
-    Serial.print(temp_pid.integral);
-    Serial.print(F(" | T_PID_d: "));
-    Serial.print(-temp_pid.derivative);
-    Serial.print(F(" | T_PID_out: "));
-    Serial.print(temp_pid.output);
-    Serial.print(F(" | T_PWM_norm: "));
-    Serial.print((float)(status.temp_pwm_value) * (PID_MAX_OUTPUT - PID_MIN_OUTPUT) / PWM_PERIOD + PID_MIN_OUTPUT);
-  #elif TEMP_CTRL == HYST
+  if (status.manual_ctrl) {
     Serial.print(F(" | T_output: "));
     Serial.print(status.heat_relay ? 1 : 0);
-    Serial.print(F(" | T_min_thld: "));
-    Serial.print(data_to_string(status.temp_setpoint - TEMP_HYS_THLD));
-    Serial.print(F(" | T_max_thld: "));
-    Serial.print(data_to_string(status.temp_setpoint + TEMP_HYS_THLD));
-  #endif
-  #if RH_CTRL == PID
-    Serial.print(F(" | RH_PID_p: "));
-    Serial.print(rh_pid.proportional);
-    Serial.print(F(" | RH_PID_i: "));
-    Serial.print(rh_pid.integral);
-    Serial.print(F(" | RH_PID_d: "));
-    Serial.print(rh_pid.derivative);
-    Serial.print(F(" | RH_PID_out: "));
-    Serial.print(rh_pid.output);
-    Serial.print(F(" | RH_PWM_norm: "));
-    Serial.print((float)(status.rh_pwm_value) * (PID_MAX_OUTPUT - PID_MIN_OUTPUT) / PWM_PERIOD + PID_MIN_OUTPUT);
-  #elif RH_CTRL == HYST
     Serial.print(F(" | RH_output: "));
     Serial.print(status.rh_relay ? 1 : 0);
-    Serial.print(F(" | RH_min_thld: "));
-    Serial.print(data_to_string(status.rh_setpoint - RH_HYS_THLD));
-    Serial.print(F(" | RH_max_thld: "));
-    Serial.print(data_to_string(status.rh_setpoint + RH_HYS_THLD));
-  #endif
+  }
+  else {
+    #if TEMP_CTRL == PID
+      Serial.print(F(" | T_PID_p: "));
+      Serial.print(temp_pid.proportional);
+      Serial.print(F(" | T_PID_i: "));
+      Serial.print(temp_pid.integral);
+      Serial.print(F(" | T_PID_d: "));
+      Serial.print(-temp_pid.derivative);
+      Serial.print(F(" | T_PID_out: "));
+      Serial.print(temp_pid.output);
+      Serial.print(F(" | T_PWM_norm: "));
+      Serial.print((float)(status.temp_pwm_value) * (PID_MAX_OUTPUT - PID_MIN_OUTPUT) / PWM_PERIOD + PID_MIN_OUTPUT);
+    #elif TEMP_CTRL == HYST
+      Serial.print(F(" | T_output: "));
+      Serial.print(status.heat_relay ? 1 : 0);
+      Serial.print(F(" | T_min_thld: "));
+      Serial.print(data_to_string(status.temp_setpoint - TEMP_HYS_THLD));
+      Serial.print(F(" | T_max_thld: "));
+      Serial.print(data_to_string(status.temp_setpoint + TEMP_HYS_THLD));
+    #endif
+    #if RH_CTRL == PID
+      Serial.print(F(" | RH_PID_p: "));
+      Serial.print(rh_pid.proportional);
+      Serial.print(F(" | RH_PID_i: "));
+      Serial.print(rh_pid.integral);
+      Serial.print(F(" | RH_PID_d: "));
+      Serial.print(rh_pid.derivative);
+      Serial.print(F(" | RH_PID_out: "));
+      Serial.print(rh_pid.output);
+      Serial.print(F(" | RH_PWM_norm: "));
+      Serial.print((float)(status.rh_pwm_value) * (PID_MAX_OUTPUT - PID_MIN_OUTPUT) / PWM_PERIOD + PID_MIN_OUTPUT);
+    #elif RH_CTRL == HYST
+      Serial.print(F(" | RH_output: "));
+      Serial.print(status.rh_relay ? 1 : 0);
+      Serial.print(F(" | RH_min_thld: "));
+      Serial.print(data_to_string(status.rh_setpoint - RH_HYS_THLD));
+      Serial.print(F(" | RH_max_thld: "));
+      Serial.print(data_to_string(status.rh_setpoint + RH_HYS_THLD));
+    #endif
+  }
   Serial.println();
 }
 

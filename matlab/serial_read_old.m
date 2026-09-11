@@ -1,4 +1,4 @@
-function serial_read_1(portName, baudRate, filename)
+function serial_read_old(portName, baudRate, filename)
 	if nargin < 1 || isempty(portName)
 		portName = "/dev/cu.usbserial-110"; % Modifica con la tua porta (es. "/dev/ttyUSB0" su Linux/Mac)
 	end

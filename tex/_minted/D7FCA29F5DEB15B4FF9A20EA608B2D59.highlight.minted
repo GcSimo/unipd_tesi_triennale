@@ -53,12 +53,15 @@
 \PYG{c+cm}{ */}
 \PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}auto\PYGZus{}ctrl}\PYG{p}{();}
 
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{temp\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{();}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{();}
 
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} setup function \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 
-\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{setup}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{setup}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
 \PYG{+w}{  }\PYG{c+c1}{// inizializzazione seriale e I2C}
 \PYG{+w}{  }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(}\PYG{l+m+mi}{115200}\PYG{p}{);}
 
@@ -155,7 +158,6 @@
 \PYG{+w}{  }\PYG{c+c1}{// del controllore PID}
 \PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{start\PYGZus{}pwm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{PWM\PYGZus{}PERIOD}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{SHT20\PYGZus{}READ\PYGZus{}PERIOD}\PYG{p}{;}
 \PYG{p}{\PYGZcb{}}
-
 
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 \PYG{c+c1}{// \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} loop function \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
@@ -297,6 +299,10 @@
 \PYG{+w}{    }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento setpoint precedente}
 \PYG{+w}{    }\PYG{n}{serial\PYGZus{}new\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// stampa su serial monitor}
 
+\PYG{+w}{    }\PYG{c+c1}{// aggiornamento riscaldatore tramite controllo ad isteresi della temperatura}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{}if TEMP\PYGZus{}CTRL == HYST}
+\PYG{+w}{      }\PYG{n}{temp\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{();}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{}endif}
 \PYG{+w}{  }\PYG{p}{\PYGZcb{}}
 
 \PYG{+w}{  }\PYG{c+c1}{// controllo timer per lettura potenziometro umidità}
@@ -329,6 +335,11 @@
 \PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{SP\PYGZus{}UPDATE\PYGZus{}DELAY}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// aggiornamento setpoint precedente}
 \PYG{+w}{    }\PYG{n}{serial\PYGZus{}new\PYGZus{}rh\PYGZus{}setpoint}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// stampa su serial monitor}
+
+\PYG{+w}{    }\PYG{c+c1}{// aggiornamento umidificatore tramite controllo ad isteresi}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{}if RH\PYGZus{}CTRL == HYST}
+\PYG{+w}{      }\PYG{n}{rh\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{();}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{}endif}
 \PYG{+w}{  }\PYG{p}{\PYGZcb{}}
 
 
@@ -415,37 +426,15 @@
 
 \PYG{+w}{    }\PYG{c+c1}{// 3. controllo degli attuatori se in modalità automatica}
 \PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{      }\PYG{c+c1}{// controllo ad isteresi ON/OFF della temperatura}
-\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}if TEMP\PYGZus{}CTRL == HYST}
-\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{TEMP\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{          }\PYG{n}{heat\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
-\PYG{+w}{          }\PYG{n}{serial\PYGZus{}auto\PYGZus{}heat\PYGZus{}on}\PYG{p}{();}
-\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
-\PYG{+w}{        }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{TEMP\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{          }\PYG{n}{heat\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
-\PYG{+w}{          }\PYG{n}{serial\PYGZus{}auto\PYGZus{}heat\PYGZus{}off}\PYG{p}{();}
-\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
-\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}endif}
-
-\PYG{+w}{      }\PYG{c+c1}{// controllo tramite PID della temperatura}
-\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}if TEMP\PYGZus{}CTRL == PID}
+\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}if TEMP\PYGZus{}CTRL == HYST }\PYG{c+c1}{// controllo ad isteresi ON/OFF della temperatura}
+\PYG{+w}{        }\PYG{n}{temp\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{();}
+\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}elif TEMP\PYGZus{}CTRL == PID }\PYG{c+c1}{// controllo tramite PID della temperatura}
 \PYG{+w}{        }\PYG{n}{pid\PYGZus{}add\PYGZus{}data}\PYG{o}{\PYGZlt{}}\PYG{n}{TEMP}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{n}{temp\PYGZus{}pid}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{);}
 \PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}endif}
 
-\PYG{+w}{      }\PYG{c+c1}{// controllo ad isteresi ON/OFF dell\PYGZsq{}umidità}
-\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}if RH\PYGZus{}CTRL == HYST}
-\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{refill\PYGZus{}led}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{rh\PYGZus{}at\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{          }\PYG{n}{rh\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
-\PYG{+w}{          }\PYG{n}{serial\PYGZus{}auto\PYGZus{}rh\PYGZus{}on}\PYG{p}{();}
-\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
-\PYG{+w}{        }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{rh\PYGZus{}at\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{          }\PYG{n}{rh\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
-\PYG{+w}{          }\PYG{n}{serial\PYGZus{}auto\PYGZus{}rh\PYGZus{}off}\PYG{p}{();}
-\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
-\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}endif}
-
-\PYG{+w}{      }\PYG{c+c1}{// controllo tramite PID dell\PYGZsq{}umidità}
-\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}if RH\PYGZus{}CTRL == PID}
+\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}if RH\PYGZus{}CTRL == HYST }\PYG{c+c1}{// controllo ad isteresi ON/OFF dell\PYGZsq{}umidità}
+\PYG{+w}{        }\PYG{n}{rh\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{();}
+\PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}elif RH\PYGZus{}CTRL == PID }\PYG{c+c1}{// controllo tramite PID dell\PYGZsq{}umidità}
 \PYG{+w}{        }\PYG{n}{pid\PYGZus{}add\PYGZus{}data}\PYG{o}{\PYGZlt{}}\PYG{n}{RH}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{n}{rh\PYGZus{}pid}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{rh\PYGZus{}at\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{);}
 \PYG{+w}{      }\PYG{c+cp}{\PYGZsh{}endif}
 \PYG{+w}{    }\PYG{p}{\PYGZcb{}}
@@ -686,5 +675,43 @@
 
 \PYG{+w}{  }\PYG{c+c1}{// reset timer pwm}
 \PYG{+w}{  }\PYG{n}{timers}\PYG{p}{.}\PYG{n}{start\PYGZus{}pwm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{millis}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{PWM\PYGZus{}PERIOD}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// gestione del controllo ad isteresi ON/OFF della temperatura}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{temp\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// controllo automatico non attivo, nessuna azione eseguita}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// se il riscaldatore è spento e la temperatura supera la soglia di accensione}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{TEMP\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{heat\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{serial\PYGZus{}auto\PYGZus{}heat\PYGZus{}on}\PYG{p}{();}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// se il riscaldatore è acceso e la temperatura scende sotto la soglia di spegnimento}
+\PYG{+w}{  }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{heat\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{TEMP\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{heat\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{serial\PYGZus{}auto\PYGZus{}heat\PYGZus{}off}\PYG{p}{();}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// gestione del controllo ad isteresi ON/OFF dell\PYGZsq{}umidità}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{rh\PYGZus{}hyst\PYGZus{}ctrl}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{c+c1}{// controllo automatico non attivo, nessuna azione eseguita}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{manual\PYGZus{}ctrl}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+c1}{// se l\PYGZsq{}umidificatore è spento e l\PYGZsq{}umidità supera la soglia di accensione}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{status}\PYG{p}{.}\PYG{n}{refill\PYGZus{}led}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{rh\PYGZus{}at\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{rh\PYGZus{}turn\PYGZus{}on}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{serial\PYGZus{}auto\PYGZus{}rh\PYGZus{}on}\PYG{p}{();}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{// se l\PYGZsq{}umidificatore è acceso e l\PYGZsq{}umidità scende sotto la soglia di spegnimento}
+\PYG{+w}{  }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}relay}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{rh\PYGZus{}at\PYGZus{}temp\PYGZus{}setpoint}\PYG{p}{(}\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}sht20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{temp\PYGZus{}setpoint}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{.}\PYG{n}{rh\PYGZus{}setpoint}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{RH\PYGZus{}HYS\PYGZus{}THLD}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{rh\PYGZus{}turn\PYGZus{}off}\PYG{p}{();}
+\PYG{+w}{    }\PYG{n}{serial\PYGZus{}auto\PYGZus{}rh\PYGZus{}off}\PYG{p}{();}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
 \PYG{p}{\PYGZcb{}}
 \end{MintedVerbatim}

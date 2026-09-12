@@ -76,7 +76,7 @@ norma ``IEC 60601-2-19:2020'' con l'integrazione dell'emendamento A1:2023.
 		% --- ASSI CARTESIANI ---
 		% asse Y
 		\draw[->, thick] (0, \Yamb) -- (0, \Yend);
-		\node at (-2.2, \Yend-0.15) {Temperatura\\dell'incubatrice};
+		\node at (-2.1, \Yend-0.15) {Temperatura\\dell'incubatrice};
 
 		% asse X
 		\draw[->, thick] (0, \Yamb) -- (\Xend+1, \Yamb);
@@ -151,7 +151,7 @@ norma ``IEC 60601-2-19:2020'' con l'integrazione dell'emendamento A1:2023.
 		\draw (16.25, \Ythirtysix + \Amp) -- (16.75, \Ythirtysix + \Amp);
 		\draw (16.5, \Ythirtysix - \Amp) -- (16.5, \Ythirtysix + \Amp);
 		\draw[->] (16.5, \Ythirtysix + \Amp + 0.5) -- (16.5, \Ythirtysix + \Amp);
-		\node[right] at (17, \Ythirtysix) {Variazione di\\temperatura\\$\pm$0.5°C};
+		\node[right] at (17, \Ythirtysix) {Variazione di\\temperatura\\(max $\pm$0.5°C)};
 
 		% temperatura media
 		\node[right] (avg) at (11, 2.5) {Temperatura media\\dell'incubatrice};
@@ -376,7 +376,7 @@ necessita di una sovraelongazione elevata e prolungata nel tempo per riportare l
 Questo fenomeno è noto come windup dell'integrale. Per evitare di incorrere in tale problema, è stato implementato un sistema
 di anti-windup definito come \textit{integral-clamping} che consiste nel bloccare l'accumulatore dell'integrale quando l'output
 del controllore PID raggiunge il valore massimo o minimo consentito e l'errore corrente ha lo stesso segno dell'errore accumulato
-nell'integrale. \cite{advanced_pid_control}
+nell'integrale. \cite{advanced_pid_control} \cite{brettbeauregard_windup}
 
 \subsubsection{Calcolo della componente derivativa tramite regressione lineare sulle misurazioni}
 Il calcolo della componente derivativa, secondo la formula riportata sopra (\autoref{eq:pid_der}), consiste nel prodotto tra il guadagno
@@ -387,6 +387,7 @@ problemi di instabilità del sistema. Questo fenomeno è noto come \textit{deriv
 sostituita con la derivata della temperatura misurata. In questo modo, le modifiche del setpoint risultano ininfluenti sul valore calcolato.
 Inoltre, dalla seguente dimostrazione matematica, si osserva che la derivata della misurazione coincide con la derivata dell'errore se il
 setpoint è costante, come avviene nella maggior parte dei casi di funzionamento del controllore PID. \cite{advanced_pid_control}
+\cite{brettbeauregard_derivative_kick}
 \begin{equation}
 	\frac{d}{dt} e(t) = \frac{d}{dt} \left(y_\text{sp}(t) - y(t) \right) = \frac{d}{dt} y_\text{sp}(t) - \frac{d}{dt} y(t) = 0 - \frac{d}{dt} y(t) = - \frac{d}{dt} y(t)
 	%\frac{d e(t)}{dt} = \frac{d}{dt} \left(y_\text{sp}(t) - y(t) \right) = \frac{d y_\text{sp}(t)}{dt} - \frac{d y(t)}{dt} = 0 - \frac{d y(t)}{dt} = - \frac{d y(t)}{dt}

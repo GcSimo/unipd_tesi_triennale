@@ -192,13 +192,13 @@ function test2_analysis(filename, start_time, end_time)
 	%% ----------------------- generazione del grafico ------------------------
 
 	% crea una finestra grafica per stampare il grafico
-	figure('Name', sprintf('Analisi test settling time, overshoot, steady-state error - %s', filename), 'Color', 'w', 'Position', [1200, 100, 560, 840]);
+	figure('Name', sprintf('Analisi test settling time, overshoot, steady-state error - %s', filename), 'Color', 'w', 'Position', [1200, 100, 1211, 504]);
 
 	% crea il layout a due righe per i grafici
-	t_layout = tiledlayout(5, 1, 'TileSpacing', 'loose', 'Padding', 'compact');
+	t_layout = tiledlayout(20, 1, 'TileSpacing', 'loose', 'Padding', 'compact');
 
 	% --- grafico con i dati di temperatura e setpoint ---
-	ax1 = nexttile(t_layout, [3, 1]);
+	ax1 = nexttile(t_layout, [15, 1]);
 	grid on; hold on;
 
 	% Definizione dei colori (esadecimali)
@@ -218,9 +218,9 @@ function test2_analysis(filename, start_time, end_time)
 	% --- settling time ---
 	% traccia le bande di assestamento di 0.5°C sopra e sotto il setpoint
 	yline(setpoint2 + 0.5, 'Color', col_band, 'LineStyle', ':', 'LineWidth', 1.8, 'DisplayName', 'Limiti di temperatura (\pm0.5°C)');
-	text(time(1) + 0.30 * (time(end) - time(1)), setpoint2 + 0.5, sprintf('Limite di temperatura superiore: %.2f °C', setpoint2 + 0.5), 'Color', col_band, 'VerticalAlignment', 'top', 'HorizontalAlignment', 'center');
+	text(time(1) + 0.5 * (time(end) - time(1)), setpoint2 + 0.5, sprintf('Limite di temperatura superiore: %.2f °C', setpoint2 + 0.5), 'Color', col_band, 'VerticalAlignment', 'top', 'HorizontalAlignment', 'center');
 	yline(setpoint2 - 0.5, 'Color', col_band, 'LineStyle', ':', 'LineWidth', 1.8, 'HandleVisibility', 'off');
-	text(time(1) + 0.30 * (time(end) - time(1)), setpoint2 - 0.5, sprintf('Limite di temperatura inferiore: %.2f °C', setpoint2 - 0.5), 'Color', col_band, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+	text(time(1) + 0.5 * (time(end) - time(1)), setpoint2 - 0.5, sprintf('Limite di temperatura inferiore: %.2f °C', setpoint2 - 0.5), 'Color', col_band, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
 
 	% mostra la fine del tempo di assestamento sul grafico
 	if ~isnan(settling_time)
@@ -231,8 +231,8 @@ function test2_analysis(filename, start_time, end_time)
 		plot([t_settling_abs, t_settling_abs], ylim, 'Color', col_settling, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Istante di fine del tempo di assestamento');
 
 		x_offset = (time(end) - time(1)) * 0.005;
-		text(time(setpoint_change_idx) + x_offset, temp(1) + 0.40 * (temp(end) - temp(1)), sprintf(' Istante di inizio del tempo\n di assestamento:\n %.2f secondi', time(setpoint_change_idx)), 'Color', col_settling, 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left', 'BackgroundColor', 'w', 'Margin', 1);
-		text(t_settling_abs + x_offset, temp(1) + 0.70 * (temp(end) - temp(1)), sprintf(' Istante di fine del tempo\n di assestamento:\n %.2f secondi', time(setpoint_change_idx + settling_idx - 1)), 'Color', col_settling, 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left', 'BackgroundColor', 'w', 'Margin', 1);
+		text(time(setpoint_change_idx) + x_offset, temp(1) + 0.70 * (temp(end) - temp(1)), sprintf(' Istante di inizio del tempo\n di assestamento:\n %.2f secondi', time(setpoint_change_idx)), 'Color', col_settling, 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left'); %'BackgroundColor', 'w', 'Margin', 1);
+		text(t_settling_abs + x_offset, temp(1) + 0.70 * (temp(end) - temp(1)), sprintf(' Istante di fine del tempo\n di assestamento:\n %.2f secondi', time(setpoint_change_idx + settling_idx - 1)), 'Color', col_settling, 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left'); %'BackgroundColor', 'w', 'Margin', 1);
 	end
 
 	% --- overshoot ---
@@ -249,24 +249,25 @@ function test2_analysis(filename, start_time, end_time)
 	if ~isnan(ss_error_pos)
 		yline(setpoint2 + ss_error_pos, 'Color', col_err, 'LineStyle', ':', 'LineWidth', 1.8, 'DisplayName', 'Errore massimo a regime');
 		plot(time(setpoint_change_idx + cross_idx + ss_error_pos_idx - 2), setpoint2 + ss_error_pos, 'Color', col_peak, 'Marker', 'o', 'MarkerSize', 8, 'MarkerFaceColor', col_peak, 'HandleVisibility', 'off');
-		text(time(end) - 0.22 * (time(end) - time(1)), setpoint2 + ss_error_pos, sprintf('Errore massimo positivo a regime: +%.2f °C', ss_error_pos), 'Color', col_err, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+		text(time(1) + 0.75 * (time(end) - time(1)), setpoint2 + ss_error_pos, sprintf('Errore massimo positivo a regime: +%.2f °C', ss_error_pos), 'Color', col_err, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
 	end
-	% individua l'errore massimo negativo a regime
+	%% individua l'errore massimo negativo a regime
 	if ~isnan(ss_error_neg)
 		yline(setpoint2 + ss_error_neg, 'Color', col_err, 'LineStyle', ':', 'LineWidth', 1.8, 'HandleVisibility', 'off');
 		plot(time(setpoint_change_idx + cross_idx + ss_error_neg_idx - 2), setpoint2 + ss_error_neg, 'Color', col_peak, 'Marker', 'o', 'MarkerSize', 8, 'MarkerFaceColor', col_peak, 'HandleVisibility', 'off');
-		text(time(end) - 0.22 * (time(end) - time(1)), setpoint2 + ss_error_neg, sprintf('Errore massimo negativo a regime: -%.2f °C', abs(ss_error_neg)), 'Color', col_err, 'VerticalAlignment', 'top', 'HorizontalAlignment', 'center');
+		text(time(1) + 0.75 * (time(end) - time(1)), setpoint2 + ss_error_neg, sprintf('Errore massimo negativo a regime: -%.2f °C', abs(ss_error_neg)), 'Color', col_err, 'VerticalAlignment', 'top', 'HorizontalAlignment', 'center');
 	end
 
 	% --- estetica e legenda ---
 	ylabel('Temperatura (°C)');
 	legend('Location', 'southeast');
+	ylim(ax1, [31.7, 36.6]);
 	ax1.YTick = floor(min(temp)) : 0.5 : ceil(max(max(temp), setpoint2 + 0.5));
-	ax1.XTick = 0 : 200 : max(time);
+	ax1.XTick = 0 : 50 : max(time);
 	ax1.XMinorGrid = 'on';
 
 	% --- grafico con i dati di PID, PWM e output della temperatura ---
-	ax2 = nexttile(t_layout, [2, 1]);
+	ax2 = nexttile(t_layout, [5, 1]);
 	grid on; hold on;
 
 	% colori personalizzati per i dati del PID
@@ -298,7 +299,7 @@ function test2_analysis(filename, start_time, end_time)
 	% preferenze di visualizzazione
 	ylabel('Output controllore'); % etichetta asse y
 	legend('Location', 'northeast'); % legenda
-	ax2.XTick = 0 : 200 : max(time);
+	ax2.XTick = 0 : 50 : max(time);
 	ax2.XMinorGrid = 'on';
 
 	% --- linking degli assi x ---

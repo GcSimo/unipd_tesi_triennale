@@ -81,12 +81,6 @@
 	fontsize=\normalsize
 }
 
-%\usepackage{listings} % per il codice
-%\usepackage{xcolor} % per colorazione della sintassi con listings
-
-%\usepackage[output-decimal-marker={,}]{siunitx} % per le unità di misura
-%\usepackage{svg}                                % per inserire file SVG
-
 \usepackage[backend=biber,style=ieee]{biblatex} % per la bibliografia
 \usepackage{csquotes} % per le citazioni
 \addbibresource{bibliografia.bib}
@@ -111,42 +105,6 @@
 % percorso delle immagini da inserire
 \graphicspath{{./}}
 
-% definizione colori per il codice con listings
-%\definecolor{codegreen}{rgb}{0,0.6,0}
-%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-%\definecolor{codepurple}{rgb}{0.58,0,0.82}
-%\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-% definizione stile del codice con listings
-%\lstdefinestyle{mystyle}{
-%	language=C++,
-%	morekeywords={string,C_style_cast,noexcept,alignof,std},
-%	emph={bool,int,char,double,float,unsigned,string,vector},
-%	backgroundcolor=\color{backcolour},    % sfondo
-%	commentstyle=\color{codegreen},        % commenti
-%	keywordstyle=\color{magenta},          % keywords
-%	identifierstyle=\color{blue},          % variabili
-%	stringstyle=\color{codepurple},        % stringhe
-%	directivestyle={\color{purple}},       % direttive
-%	emphstyle={\color{magenta}},           % tipi
-%	numberstyle=\tiny\color{codegray},     % numeri
-%	basicstyle=\ttfamily\footnotesize,
-%	breakatwhitespace=false,
-%	breaklines=true,
-%	captionpos=b,
-%	keepspaces=true,
-%	numbers=left,
-%	numbersep=5pt,
-%	showspaces=false,
-%	showstringspaces=false,
-%	showtabs=false,
-%	tabsize=4
-%}
-
-% utilizzo stile del codice con listings
-%\lstset{style=mystyle}
-%\lstset{literate={~} {{\raisebox{0.4ex}{\texttildelow}}}{1}}
-
 
 \title{Sviluppo firmware per la gestione del sistema di riscaldamento di un prototipo di incubatrice neonatale}
 \author{Simonetto Giacomo}
@@ -162,52 +120,52 @@
 	\input{capitoli/0_frontespizio}
 	\cleardoublepage
 
-%	\input{capitoli/1_dedica}
-%	\cleardoublepage
+	\input{capitoli/1_dedica}
+	\cleardoublepage
 
 	\pagestyle{plain} % comincia a mostrare il numero di pagina
-%	\phantomsection
-%	\addcontentsline{toc}{chapter}{Abstract}
-%	\include{capitoli/2_abstract}
-%	\cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Abstract}
+	\include{capitoli/2_abstract}
+	\cleardoublepage
 
 	\tableofcontents
 	\cleardoublepage
 
-%	\phantomsection
-%	\addcontentsline{toc}{chapter}{\listfigurename}
-%	\listoffigures
-%	\cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listfigurename}
+	\listoffigures
+	\cleardoublepage
 
-%	\phantomsection
-%	\addcontentsline{toc}{chapter}{\listtablename}
-%	\listoftables
-%	\cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listtablename}
+	\listoftables
+	\cleardoublepage
 
-%	\phantomsection
-%	\addcontentsline{toc}{chapter}{Elenco dei codici}
-%	\listoflistings
-%	\cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Elenco dei codici}
+	\listoflistings
+	\cleardoublepage
 
 	\pagenumbering{arabic}
 
-%	\input{capitoli/3_introduzione}
-%	\cleardoublepage
+	\input{capitoli/3_introduzione}
+	\cleardoublepage
 
-%	\input{capitoli/4_hardware}
-%	\cleardoublepage
+	\input{capitoli/4_hardware}
+	\cleardoublepage
 
-%	\input{capitoli/5_firmware}
-%	\cleardoublepage
+	\input{capitoli/5_firmware}
+	\cleardoublepage
 
-%	\input{capitoli/6_controllore}
-%	\cleardoublepage
+	\input{capitoli/6_controllore}
+	\cleardoublepage
 
 	\input{capitoli/7_conclusioni}
 	\cleardoublepage
 
-%	\input{capitoli/8_appendice}
-%	\cleardoublepage
+	\input{capitoli/8_appendice}
+	\cleardoublepage
 
 	\printbibliography[heading=bibintoc]
 \end{document}

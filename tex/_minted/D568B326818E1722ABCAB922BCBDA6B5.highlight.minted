@@ -1,0 +1,310 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} test2\PYGZus{}analysis.m \PYGZhy{} calcola le prestazioni del controllore \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{} Questa funzione calcola i vari parametri di performance del controllore}
+\PYG{c}{\PYGZpc{} analizzando i dati acquisiti in un file CSV dalla funzione serial\PYGZus{}read.m}
+\PYG{c}{\PYGZpc{} durante l\PYGZsq{}esecuzione del test di performance del controllore.}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{} Il test di performance prevede di partire da una condizione stazionaria del}
+\PYG{c}{\PYGZpc{} sistema con setpoint iniziale a 32°C e, successivamente, aumentare il setpoint}
+\PYG{c}{\PYGZpc{} a 36°C, osservando la risposta del sistema.}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{} I parametri analizzati sono i seguenti:}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} settling time:}
+\PYG{c}{\PYGZpc{}    tempo necessario affinché la variabile di processo si stabilizzi entro}
+\PYG{c}{\PYGZpc{}    il range di ±0.5°C rispetto al nuovo setpoint}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} overshoot:}
+\PYG{c}{\PYGZpc{}    massimo valore raggiunto dalla temperatura rispetto al nuovo setpoint,}
+\PYG{c}{\PYGZpc{}    espresso come differenza di temperatura in °C}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} steady\PYGZhy{}state errors:}
+\PYG{c}{\PYGZpc{}    errori massimi (positivo e negativo) della temperatura rispetto al nuovo}
+\PYG{c}{\PYGZpc{}    setpoint durante il regime stazionario, espressi come differenza di}
+\PYG{c}{\PYGZpc{}    temperatura in °C}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{} La funzione accetta i seguenti parametri da riga di comando:}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} filename:}
+\PYG{c}{\PYGZpc{}    nome del file CSV da leggere (obbligatorio)}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} start\PYGZus{}time:}
+\PYG{c}{\PYGZpc{}    indice di inizio per l\PYGZsq{}analisi dei dati (opzionale, default = 1)}
+\PYG{c}{\PYGZpc{}}
+\PYG{c}{\PYGZpc{}  \PYGZhy{} end\PYGZus{}time:}
+\PYG{c}{\PYGZpc{}    indice di fine per l\PYGZsq{}analisi dei dati (opzionale, default = ultimo)}
+\PYG{c}{\PYGZpc{}}
+
+\PYG{k}{function}\PYG{+w}{ }\PYG{n+nf}{test2\PYGZus{}analysis}\PYG{p}{(}filename, start\PYGZus{}time, end\PYGZus{}time\PYG{p}{)}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} parsing dei parametri e assegnazione dei valori di default \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} nome del file CSV da leggere (obbligatorio)}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{nargin}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n+nb}{error}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Uso corretto: csv\PYGZus{}read \PYGZlt{}nome\PYGZus{}file.csv\PYGZgt{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} indice di inizio per l\PYGZsq{}analisi dei dati (default = 1)}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{nargin}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{start\PYGZus{}time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} indice di fine per l\PYGZsq{}analisi dei dati (default = ultimo dato)}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{nargin}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{end\PYGZus{}time}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{end\PYGZus{}time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[];}
+\PYG{+w}{	}\PYG{k}{end}
+
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} configurazione file CSV \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} converte il nome del file in stringa (nel caso fosse un char array)}
+\PYG{+w}{	}\PYG{n}{filename}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{char}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} aggiunge in automatico .csv se viene omesso dall\PYGZsq{}utente}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isfile}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{endsWith}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}.csv\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}IgnoreCase\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{)}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{isfile}\PYG{p}{([}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}.csv\PYGZsq{}}\PYG{p}{])}
+\PYG{+w}{			}\PYG{n}{filename}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}.csv\PYGZsq{}}\PYG{p}{];}
+\PYG{+w}{		}\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} controlla l\PYGZsq{}esistenza del file}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isfile}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n+nb}{error}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Errore: Il file \PYGZdq{}\PYGZpc{}s\PYGZdq{} non è stato trovato nella cartella corrente.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} importa i dati dal CSV usando le intestazioni delle colonne}
+\PYG{+w}{	}\PYG{n}{opts}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{detectImportOptions}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{opts}\PYG{p}{.}\PYG{n}{VariableNamingRule}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}preserve\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} legge i dati presenti come tabella}
+\PYG{+w}{	}\PYG{n}{data}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{readtable}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{opts}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} estrae il vettore con i tempi, le temperature e i setpoint iniziale e finale}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{end\PYGZus{}time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{height}\PYG{p}{(}\PYG{n}{data}\PYG{p}{);}\PYG{+w}{ }\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{n+nb}{time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Time\PYGZus{}Seconds}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{temp}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Temperature}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{setpoint}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Setpoint\PYGZus{}Temperature}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{setpoint1}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{setpoint}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{setpoint}\PYG{p}{(}\PYG{k}{end}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} fa partire il tempo da 0 per una migliore leggibilità del grafico}
+\PYG{+w}{	}\PYG{n+nb}{time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} calcola l\PYGZsq{}istante in cui il setpoint cambia da 32°C a 36°C}
+\PYG{+w}{	}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{find}\PYG{p}{(}\PYG{n}{setpoint}\PYG{+w}{ }\PYG{o}{\PYGZti{}=}\PYG{+w}{ }\PYG{n}{setpoint1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} verifica che il setpoint iniziale sia regolato correttamente}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{setpoint1}\PYG{+w}{ }\PYG{o}{\PYGZti{}=}\PYG{+w}{ }\PYG{l+m+mi}{32}
+\PYG{+w}{		}\PYG{n+nb}{warning}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Attenzione: Il setpoint iniziale non è stato regolato correttamente. I risultati dell\PYGZsq{}\PYGZsq{}analisi potrebbero non essere accurati.\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} verifica che il setpoint finale sia regolato correttamente}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{\PYGZti{}=}\PYG{+w}{ }\PYG{l+m+mi}{36}
+\PYG{+w}{		}\PYG{n+nb}{warning}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Attenzione: Il setpoint finale non è stato regolato correttamente. I risultati dell\PYGZsq{}\PYGZsq{}analisi potrebbero non essere accurati.\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} verifica l\PYGZsq{}effettivo cambiamento del setpoint}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n+nb}{error}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Errore: Non è stato rilevato alcun cambiamento del setpoint nel file CSV. Assicurarsi che il test sia stato eseguito correttamente.\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} calcolo delle metriche PID \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} seleziona i dati dal momento del cambio di setpoint in poi e azzera}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} l\PYGZsq{}asse temporale a partire da quell\PYGZsq{}istante}
+\PYG{+w}{	}\PYG{n}{t\PYGZus{}post\PYGZus{}change}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{:}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{temp}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{:}\PYG{k}{end}\PYG{p}{);}
+
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} calcolo del settling time (con finestra mobile di 1 min) \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} calcola il numero di campioni necessari per coprire 1 minuto}
+\PYG{+w}{	}\PYG{n}{t\PYGZus{}stabilita}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{60}\PYG{p}{;}
+\PYG{+w}{	}\PYG{n}{campioni\PYGZus{}stabilita}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{ceil}\PYG{p}{(}\PYG{n}{t\PYGZus{}stabilita}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n+nb}{mean}\PYG{p}{(}\PYG{n+nb}{diff}\PYG{p}{(}\PYG{n}{t\PYGZus{}post\PYGZus{}change}\PYG{p}{)));}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} crea un array logico: 1 se la temp è nel range, 0 se è fuori}
+\PYG{+w}{	}\PYG{n}{in\PYGZus{}bounds}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} usa \PYGZsq{}movsum\PYGZsq{} guardando \PYGZdq{}in avanti\PYGZdq{}: somma i valori logici in finestre}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} di dimensione pari al numero di campioni \PYGZsq{}campioni\PYGZus{}stabilità\PYGZsq{}; se la}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} somma è esattamente uguale a \PYGZsq{}campioni\PYGZus{}stabilità\PYGZsq{}, significa che tutti}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} i campioni in quella finestra valgono 1 (cioè sono nel range)}
+\PYG{+w}{	}\PYG{n}{somma\PYGZus{}finestra}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{movsum}\PYG{p}{(}\PYG{n}{in\PYGZus{}bounds}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{campioni\PYGZus{}stabilita}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} trova il primo indice in cui l\PYGZsq{}intera finestra successiva è nel range}
+\PYG{+w}{	}\PYG{n}{settling\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{find}\PYG{p}{(}\PYG{n}{somma\PYGZus{}finestra}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{campioni\PYGZus{}stabilita}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{settling\PYGZus{}idx}\PYG{p}{)}
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} non è mai rimasto nel range per 1 minuto consecutivo}
+\PYG{+w}{		}\PYG{n}{settling\PYGZus{}time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}
+\PYG{+w}{	}\PYG{k}{else}
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} il settling time è l\PYGZsq{}istante in cui inizia questo periodo di stabilità}
+\PYG{+w}{		}\PYG{n}{settling\PYGZus{}time}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{t\PYGZus{}post\PYGZus{}change}\PYG{p}{(}\PYG{n}{settling\PYGZus{}idx}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} calcolo dell\PYGZsq{}overshoot \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} individua la temperatura massima raggiunta dal cambio di setpoint}
+\PYG{+w}{	}\PYG{p}{[}\PYG{n}{max\PYGZus{}temp\PYGZus{}post}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{peak\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} calcola l\PYGZsq{}overshoot come differenza tra la temperatura massima e il nuovo setpoint,}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} viene impostato a 0 se la differenza è negativa (se non c\PYGZsq{}è overshoot)}
+\PYG{+w}{	}\PYG{n}{overshoot}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{max\PYGZus{}temp\PYGZus{}post}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{p}{);}
+
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} calcolo degli steady\PYGZhy{}state errors \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} individua il primo istante in cui la temperatura raggiunge o supera il nuovo setpoint}
+\PYG{+w}{	}\PYG{n}{cross\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{find}\PYG{p}{(}\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{isempty}\PYG{p}{(}\PYG{n}{cross\PYGZus{}idx}\PYG{p}{)}
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} in caso di instabilità, non è possibile calcolare gli errori a regime}
+\PYG{+w}{		}\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}
+\PYG{+w}{		}\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}
+\PYG{+w}{		}\PYG{n}{ss\PYGZus{}error\PYGZus{}pos\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}
+\PYG{+w}{		}\PYG{n}{ss\PYGZus{}error\PYGZus{}neg\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}
+\PYG{+w}{	}\PYG{k}{else}
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} estrapola solo la porzione di temperature dopo che il sistema si è stabilizzato}
+\PYG{+w}{		}\PYG{n}{steady\PYGZus{}state\PYGZus{}temp}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{p}{(}\PYG{n}{cross\PYGZus{}idx}\PYG{p}{:}\PYG{k}{end}\PYG{p}{);}
+
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} calcola gli errori rispetto al nuovo setpoint}
+\PYG{+w}{		}\PYG{n}{errors}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{steady\PYGZus{}state\PYGZus{}temp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{p}{;}
+
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} individua l\PYGZsq{}errore massimo positivo e negativo}
+\PYG{+w}{		}\PYG{p}{[}\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{,}\PYG{n}{ss\PYGZus{}error\PYGZus{}pos\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{errors}\PYG{p}{);}
+\PYG{+w}{		}\PYG{p}{[}\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{,}\PYG{n}{ss\PYGZus{}error\PYGZus{}neg\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{errors}\PYG{p}{);}
+
+\PYG{+w}{		}\PYG{c}{\PYGZpc{} pulizia dei dati (se il max errore è negativo, lo poniamo a 0 per chiarezza)}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}\PYG{+w}{ }\PYG{k}{end}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg\PYGZus{}idx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}\PYG{+w}{ }\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} stampa dei risultati dell\PYGZsq{}analisi}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{}\PYGZhy{}\PYGZhy{} file analizzato: \PYGZpc{}s \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{} setpoint iniziale: ........ \PYGZpc{}.2f °C \PYGZhy{} (exp. 32°C)\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{setpoint1}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{} setpoint finale: .......... \PYGZpc{}.2f °C \PYGZhy{} (exp. 36°C)\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{} settling time: ............ \PYGZpc{}.2f sec \PYGZhy{} (exp. \PYGZlt{} 900 sec)\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{settling\PYGZus{}time}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{} overshoot: ................ +\PYGZpc{}.2f °C \PYGZhy{} (exp. \PYGZlt{} 2°C)\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{overshoot}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{} pos. steady\PYGZhy{}state error: .. +\PYGZpc{}.2f °C \PYGZhy{} (exp. \PYGZlt{} 0.5°C)\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} \PYGZhy{} neg. steady\PYGZhy{}state error: .. \PYGZpc{}.2f °C \PYGZhy{} (exp. \PYGZgt{} \PYGZhy{}0.5°C)\PYGZbs{}n\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{);}
+
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{}\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} generazione del grafico \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} crea una finestra grafica per stampare il grafico}
+\PYG{+w}{	}\PYG{n+nb}{figure}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Name\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Analisi test settling time, overshoot, steady\PYGZhy{}state error \PYGZhy{} \PYGZpc{}s\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}w\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Position\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{1200}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{560}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{840}\PYG{p}{]);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} crea il layout a due righe per i grafici}
+\PYG{+w}{	}\PYG{n}{t\PYGZus{}layout}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{tiledlayout}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}TileSpacing\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}loose\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Padding\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}compact\PYGZsq{}}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico con i dati di temperatura e setpoint \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{n}{ax1}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]);}
+\PYG{+w}{	}\PYG{n}{grid}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{hold}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} Definizione dei colori (esadecimali)}
+\PYG{+w}{	}\PYG{n}{col\PYGZus{}segnale}\PYG{+w}{  }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZsh{}ff0000\PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{	}\PYG{n}{col\PYGZus{}setpoint}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.8500}\PYG{+w}{ }\PYG{l+m+mf}{0.3250}\PYG{+w}{ }\PYG{l+m+mf}{0.0980}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{col\PYGZus{}settling}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.9290}\PYG{+w}{ }\PYG{l+m+mf}{0.6940}\PYG{+w}{ }\PYG{l+m+mf}{0.1250}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{col\PYGZus{}peak}\PYG{+w}{     }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.4940}\PYG{+w}{ }\PYG{l+m+mf}{0.1840}\PYG{+w}{ }\PYG{l+m+mf}{0.5560}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{col\PYGZus{}band}\PYG{+w}{     }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.4660}\PYG{+w}{ }\PYG{l+m+mf}{0.6740}\PYG{+w}{ }\PYG{l+m+mf}{0.1880}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{col\PYGZus{}err}\PYG{+w}{	     }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.4940}\PYG{+w}{ }\PYG{l+m+mf}{0.1840}\PYG{+w}{ }\PYG{l+m+mf}{0.5560}\PYG{p}{];}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} traccia la risposta del sistema}
+\PYG{+w}{	}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{temp}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}segnale}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Misurazione\PYGZsq{}}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} traccia il setpoint come linea tratteggiata nera}
+\PYG{+w}{	}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{setpoint}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}setpoint}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Setpoint\PYGZsq{}}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} settling time \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} traccia le bande di assestamento di 0.5°C sopra e sotto il setpoint}
+\PYG{+w}{	}\PYG{n+nb}{yline}\PYG{p}{(}\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}band}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Limiti di temperatura (\PYGZbs{}pm0.5°C)\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.30}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Limite di temperatura superiore: \PYGZpc{}.2f °C\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}band}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}top\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}center\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{yline}\PYG{p}{(}\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}band}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HandleVisibility\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}off\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.30}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Limite di temperatura inferiore: \PYGZpc{}.2f °C\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}band}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}bottom\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}center\PYGZsq{}}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} mostra la fine del tempo di assestamento sul grafico}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{settling\PYGZus{}time}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{t\PYGZus{}settling\PYGZus{}abs}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{settling\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{y\PYGZus{}settling\PYGZus{}abs}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{p}{(}\PYG{n}{settling\PYGZus{}idx}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n}{t\PYGZus{}settling\PYGZus{}abs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y\PYGZus{}settling\PYGZus{}abs}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}settling}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Marker\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}s\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerSize\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerFaceColor\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}settling}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HandleVisibility\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}off\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{([}\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{)],}\PYG{+w}{ }\PYG{n+nb}{ylim}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}settling}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Istante di inizio del tempo di assestamento\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{([}\PYG{n}{t\PYGZus{}settling\PYGZus{}abs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{t\PYGZus{}settling\PYGZus{}abs}\PYG{p}{],}\PYG{+w}{ }\PYG{n+nb}{ylim}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}settling}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Istante di fine del tempo di assestamento\PYGZsq{}}\PYG{p}{);}
+
+\PYG{+w}{		}\PYG{n}{x\PYGZus{}offset}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mf}{0.005}\PYG{p}{;}
+\PYG{+w}{		}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{x\PYGZus{}offset}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{temp}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.40}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{temp}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{temp}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} Istante di inizio del tempo\PYGZbs{}n di assestamento:\PYGZbs{}n \PYGZpc{}.2f secondi\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{p}{)),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}settling}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}middle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}left\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}BackgroundColor\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}w\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Margin\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n}{t\PYGZus{}settling\PYGZus{}abs}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{x\PYGZus{}offset}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{temp}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.70}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{temp}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{temp}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{} Istante di fine del tempo\PYGZbs{}n di assestamento:\PYGZbs{}n \PYGZpc{}.2f secondi\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{settling\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}settling}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}middle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}left\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}BackgroundColor\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}w\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Margin\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} overshoot \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} individua il picco massimo della temperatura dopo il cambio di setpoint}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{max\PYGZus{}temp\PYGZus{}post}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{t\PYGZus{}peak}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{peak\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{y\PYGZus{}peak}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{temp\PYGZus{}post\PYGZus{}change}\PYG{p}{(}\PYG{n}{peak\PYGZus{}idx}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n}{t\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Marker\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}o\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerSize\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerFaceColor\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HandleVisibility\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}off\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n}{t\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}  Overshoot: \PYGZpc{}.02f°C\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{overshoot}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}left\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}bottom\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} steady\PYGZhy{}state errors \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} individua l\PYGZsq{}errore massimo positivo a regime}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n+nb}{yline}\PYG{p}{(}\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}err}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Errore massimo a regime\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{cross\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Marker\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}o\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerSize\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerFaceColor\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HandleVisibility\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}off\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.22}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Errore massimo positivo a regime: +\PYGZpc{}.2f °C\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}pos}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}err}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}bottom\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}center\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} individua l\PYGZsq{}errore massimo negativo a regime}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n+nb}{yline}\PYG{p}{(}\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}err}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineStyle\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}:\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HandleVisibility\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}off\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{n}{setpoint\PYGZus{}change\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{cross\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Marker\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}o\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerSize\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}MarkerFaceColor\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}peak}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HandleVisibility\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}off\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n+nb}{text}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.22}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Errore massimo negativo a regime: \PYGZhy{}\PYGZpc{}.2f °C\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{ss\PYGZus{}error\PYGZus{}neg}\PYG{p}{)),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{col\PYGZus{}err}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}VerticalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}top\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}HorizontalAlignment\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}center\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} estetica e legenda \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Temperatura (°C)\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{legend}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Location\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}southeast\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{YTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{floor}\PYG{p}{(}\PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{ceil}\PYG{p}{(}\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{setpoint2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{));}
+\PYG{+w}{	}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{XTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{200}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{ax1}\PYG{p}{.}\PYG{n}{XMinorGrid}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}on\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} grafico con i dati di PID, PWM e output della temperatura \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{n}{ax2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{nexttile}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]);}
+\PYG{+w}{	}\PYG{n}{grid}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{hold}\PYG{+w}{ }\PYG{l+s}{on}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} colori personalizzati per i dati del PID}
+\PYG{+w}{	}\PYG{n}{c\PYGZus{}P}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.8500}\PYG{+w}{ }\PYG{l+m+mf}{0.3250}\PYG{+w}{ }\PYG{l+m+mf}{0.0980}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{c\PYGZus{}I}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.9290}\PYG{+w}{ }\PYG{l+m+mf}{0.6940}\PYG{+w}{ }\PYG{l+m+mf}{0.1250}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{c\PYGZus{}D}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.4940}\PYG{+w}{ }\PYG{l+m+mf}{0.1840}\PYG{+w}{ }\PYG{l+m+mf}{0.5560}\PYG{p}{];}
+\PYG{+w}{	}\PYG{n}{c\PYGZus{}Out}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{0.4660}\PYG{+w}{ }\PYG{l+m+mf}{0.6740}\PYG{+w}{ }\PYG{l+m+mf}{0.1880}\PYG{p}{];}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} set di dati da mostrare (segnali pid e output)}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}p\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}p}\PYG{p}{))}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}p}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}P}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}P\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}i\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}i}\PYG{p}{))}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}i}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}I}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}I\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}d\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}d}\PYG{p}{))}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}d}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}D}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}D\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PID\PYGZus{}out\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}out}\PYG{p}{))}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PID\PYGZus{}out}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}\PYGZhy{}.\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Color\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{c\PYGZus{}Out}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Out\PYGZus{}\PYGZob{}PID\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}PWM\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PWM}\PYG{p}{))}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}PWM}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Duty cycle\PYGZus{}\PYGZob{}PWM\PYGZcb{}\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{n+nb}{ismember}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}T\PYGZus{}output\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{Properties}\PYG{p}{.}\PYG{n}{VariableNames}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{all}\PYG{p}{(}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}output}\PYG{p}{))}
+\PYG{+w}{		}\PYG{n+nb}{plot}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{T\PYGZus{}output}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{:}\PYG{n}{end\PYGZus{}time}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}k\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}LineWidth\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}DisplayName\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Output\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{end}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} preferenze di visualizzazione}
+\PYG{+w}{	}\PYG{n+nb}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Output controllore\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} etichetta asse y}
+\PYG{+w}{	}\PYG{n+nb}{legend}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Location\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}northeast\PYGZsq{}}\PYG{p}{);}\PYG{+w}{ }\PYG{c}{\PYGZpc{} legenda}
+\PYG{+w}{	}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{XTick}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{200}\PYG{+w}{ }\PYG{p}{:}\PYG{+w}{ }\PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{time}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{ax2}\PYG{p}{.}\PYG{n}{XMinorGrid}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}on\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{} linking degli assi x \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{	}\PYG{n+nb}{linkaxes}\PYG{p}{([}\PYG{n}{ax1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ax2}\PYG{p}{],}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}x\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n+nb}{xlim}\PYG{p}{(}\PYG{n}{ax1}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{time}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nb}{time}\PYG{p}{(}\PYG{k}{end}\PYG{p}{)]);}
+\PYG{+w}{	}\PYG{n+nb}{xlabel}\PYG{p}{(}\PYG{n}{t\PYGZus{}layout}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}Tempo (secondi)\PYGZsq{}}\PYG{p}{);}
+\PYG{k}{end}
+\end{MintedVerbatim}

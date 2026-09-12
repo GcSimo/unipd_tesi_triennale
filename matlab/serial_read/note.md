@@ -1,9 +1,8 @@
 # note sui test effettuati
 
 ## setup
-- sensore a 20cm dalle pareti laterali, 17cm dalla parete dove passano i cavi e 7.5cm dal fondo della camera
-- codice serial_read_2.m
-
+- sensore a 20cm dalle pareti lunghe, 37cm dalle pareti corte e 10cm dalla base della camera
+- codice serial_read.m
 
 ## set prove 1
 ### data_20260827_161338.csv
@@ -606,7 +605,7 @@
 - test1 warmup time con isteresi
 - ok
 
-### data_20260911_111446_.csv
+### data_20260911_111446.csv
 - test2 prestazioni con isteresi
 - ok
 
@@ -621,3 +620,10 @@
 ### data_20260911_161359.csv
 - test1 warmup time con pid
 - ok
+
+
+## stampa grafici per presentazione tesi
+- ``test1_analysis("test1_hyst.csv", 20, 900)``
+- ``test1_analysis("test1_pid.csv", 20, 1000)``
+- ``test2_analysis("test2_hyst.csv", 30,4000)``
+- ``test2_analysis("test2_pid.csv",1600,5800)``

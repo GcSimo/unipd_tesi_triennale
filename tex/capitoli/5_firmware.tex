@@ -232,7 +232,7 @@ comprensione. Per maggiori dettagli si rimanda al file \verb|config.h| in append
 	\item parametri per il controllo dei potenziometri e del setpoint
 	\item parametri per la gestione degli errori
 	\item parametri per la temporizzazione dei vari processi del firmware
-	\item parametri per la gestione del segnale pwm
+	\item parametri per la gestione del segnale PWM
 	\item parametri per la gestione dei controllori
 \end{itemize}
 
@@ -283,21 +283,21 @@ e/o l'umidificatore sono accesi. Per automatizzare questa gestione, le rispettiv
 e dell'umidificatore si occupano anche di accendere la ventola di omogeneizzazione. Non è richiesta, quindi, una funzione
 dedicata per l'accensione della ventola.
 
-A seguito di alcune prove sperimentali, si è osservato che quando un attuatore viene controllato tramite un segnale pwm,
+A seguito di alcune prove sperimentali, si è osservato che quando un attuatore viene controllato tramite un segnale PWM,
 non ha senso accendere e spegnere la ventola di omogeneizzazione per assecondare il ciclo di lavoro dell'attuatore. Risulta
-più conveniente tenere la ventola sempre accesa finché almeno un attuatore è controllato da un segnale pwm non nullo. A
+più conveniente tenere la ventola sempre accesa finché almeno un attuatore è controllato da un segnale PWM non nullo. A
 seguito di questa osservazione, per poter spegnere la ventola devono verificarsi tutte le seguenti condizioni:
 \begin{itemize}
 	\item il riscaldatore è spento;
 	\item l'umidificatore è spento;
-	\item il riscaldatore è controllato in modalità automatica da un segnale pwm nullo, oppure è attivo il controllo
+	\item il riscaldatore è controllato in modalità automatica da un segnale PWM nullo, oppure è attivo il controllo
 	manuale degli attuatori;
-	\item l'umidificatore è controllato in modalità automatica da un segnale pwm nullo, oppure è attivo il controllo
+	\item l'umidificatore è controllato in modalità automatica da un segnale PWM nullo, oppure è attivo il controllo
 	manuale degli attuatori.
 \end{itemize}
 Tale condizione è stata implementata nella funzione di spegnimento della ventola di omogeneizzazione (\verb|actuators.cpp|,
 \autoref{lst:actuators_cpp}), che viene richiamata ogni volta che il riscaldatore o l'umidificatore vengono spenti, ad ogni
-aggiornamento del segnale pwm e ogni volta che il sistema passa alla modalità di controllo manuale degli attuatori.
+aggiornamento del segnale PWM e ogni volta che il sistema passa alla modalità di controllo manuale degli attuatori.
 
 \subsection{Gestione del refill dell'acqua per il sistema di umidificazione}
 L'acqua a disposizione per il sistema di umidificazione è contenuta in una piccola vaschetta di capienza massima di 1.5 litri.

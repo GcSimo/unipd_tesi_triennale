@@ -1,28 +1,27 @@
 \chapter{Conclusioni}
 \section{Discussione critica dei risultati ottenuti}
 \subsubsection{Analisi dell'hardware}
-La configurazione dell'hardware progettata e realizzata si è rivelata adeguata per soddisfare le richieste del firmware e dei test
-effettuati. Inoltre, la progettazione modulare dei vari blocchi del circuito permetterà di modificare e aggiornare facilmente la
-configurazione del prototipo in base alle esigenze future.
+La configurazione dell'hardware progettata e realizzata si è rivelata adeguata per soddisfare le richieste del firmware e
+dei test effettuati. Inoltre, la progettazione modulare dei vari blocchi del circuito permetterà di modificare e aggiornare
+facilmente la configurazione del prototipo in base alle esigenze future.
 
 Sono state riscontrate alcune criticità, tra cui la presenza di fluttuazioni sulla tensione di alimentazione del sensore SHT20
-in corrispondenza dell'accensione e dello spegnimento del riscaldatore. Queste provocano piccole variazioni periodiche della
-temperatura misurata dell'ordine dei centesimi di grado che non danno troppi disturbi al sistema di controllo, ma che rimangono
-comunque osservabili.
+in corrispondenza delle commutazioni dei relè. Queste provocano piccole variazioni periodiche della temperatura nell'ordine dei
+centesimi di grado che non danno grossi problemi al sistema di controllo, ma che rimangono comunque osservabili.
+
+Un altro problema è rappresentato dai continui cicli di commutazione dei relè che potrebbero portare a un rapido
+deterioramento delle componenti meccaniche interne. Per ridurre questa criticità sono stati adottati alcuni accorgimenti
+nell'implementazione del firmware, come l'utilizzo di un PWM a bassa frequenza e dei controlli sul tempo minimo e massimo
+del duty cycle.
 
 \subsubsection{Analisi del firmware}
 Il firmware sviluppato si è rivelato adeguato e performante per la gestione di tutte le componenti del prototipo di incubatrice
 neonatale. La suddivisione modulare del codice permetterà di effettuare facilmente modifiche e aggiornamenti futuri, e l'ampio
 numero di commenti ne facilita la comprensione e la manutenzione.
 
-Sono state condotte alcune analisi di performance del firmware
-
-Sono state condotte alcune analisi sulla reattività del firmware, in particolare è stata misurata la durata media e massima di
-un ciclo di esecuzione della funzione \verb|loop()|. Il tempo medio rappresenta il ritardo medio con cui il firmware reagisce
-agli eventi. Tale valore è stato calcolato come il rapporto tra il tempo totale di esecuzione del firmware (escluso il tempo di
-setup) e il numero di esecuzioni di \verb|loop()| eseguiti ed il dato considerato rappresenta il valore asintotico osservato dopo
-un periodo di tempo sufficientemente lungo. I risultati ottenuti sono riportati nella seguente tabella, suddivisi per il tipo di
-configurazione dei controllori.
+Sono state condotte alcune analisi delle prestazioni del firmware, in particolare sono stati misurati il tempo di esecuzione medio
+della funzione \verb|loop()| per valutare la reattività del sistema e la memoria occupata dal firmware. I risultati sono riportati
+nella successiva tabella.
 
 \begin{table}[htbp]
 	\centering
@@ -38,28 +37,62 @@ configurazione dei controllori.
 		controllo manuale & \textasciitilde 98 \(\mu\)sec & - & - \\
 	\end{tabular}
 	\caption[Indici di prestazione del firmware]{Indici di prestazione del firmware per diverse configurazioni dei controllori.}
-	\label{tab:loop_time}
+	\label{tab:firmware_performance}
 \end{table}
 
-Si osserva che nella configurazione
+I bassissimi tempi medi di esecuzione mostrano che il sistema è estremamente reattivo. Questo garantisce maggiore stabilità
+e precisione nei compiti in cui la temporizzazione è critica, come per la gestione del segnale PWM o per la lettura dei dati
+dal sensore SHT20. Insieme alla bassa occupazione di memoria RAM e FLASH, questi risultati permettono di avere ampio margine
+per eventuali futuri aggiornamenti o implementazioni di nuove funzionalità.
 
-La durata massima di un ciclo di loop() rappresenta invece il ritardo massimo che il firmware può avere in condizioni di carico
-estremo e poco verosimile. Il valore ottenuto è di 248,312 millisecondi ed è stato osservato mentre si agiva contemporaneamente sui due potenziometri e sui tre switch, in modo da generare il maggior numero di eventi possibili.
+È stato misurato anche un tempo massimo di esecuzione pari a 248.312 millisecondi ottenuto in condizioni di carico estremo, poco
+verosimili, in cui si agiva contemporaneamente sui due potenziometri e su tutti e tre gli switch. Rimane comunque un tempo
+relativamente basso se confrontato con le dinamiche termiche del sistema e con la reattività di un operatore umano.
 
-\begin{itemize}
-	\item sviluppo del codice firmware, durata media e massima di un loop
-	\item taratura dei parametri e conoscenza dei limiti del controllore PID
-	\item miglioramenti del pid rispetto al controllore ad isteresi
-\end{itemize}
+\subsubsection{Analisi dell'implementazione e della taratura dei controllori}
+Implementare il controllore PID su un microcontrollore è stato utile per comprenderne bene le dinamiche ed il processo di
+funzionamento. In particolare ha permesso di approfondire i limiti del modello teorico e le strategie pratiche da adottare
+per mitigare le non idealità, come la saturazione del segnale, il fenomeno del windup integrale e il derivative kick.
+
+Inoltre osservare come le tre componenti del PID interagiscono tra loro e sperimentare la risposta ottenuta con diverse
+configurazioni dei parametri ha permesso di sviluppare una buona conoscenza critica del controllore PID e dei suoi limiti.
+In particolare, è stato osservato il ruolo dominante della componente integrale nella velocità di raggiungimento del setpoint
+e in eventuali overshoot causati da un accumulo eccessivo di errore integrale.
+
+Analizzando le prestazioni dei due controllori ad isteresi e PID, si osserva che entrambi sono in grado di soddisfare le
+richieste della normativa IEC 60601-2-19. Il controllore PID, però, offre un controllo molto più preciso e stabile, con
+oscillazioni molto più contenute. Richiede, però, un processo di taratura e un'implementazione più complessi e laboriosi.
+
+\newpage
 
 \section{Possibili sviluppi futuri}
-\begin{itemize}
-	\item implementazione di un sistema di controllo dell'umidità (o controllo multivariabile)
-	\item valutare se implementare il pid per farlo lavorare su interi e non float, stando attenti agli overflow
-	\item utilizzare mosfet al posto dei relè e aggiungere un sistema di smorzamento dell'output alla riattivazione
-	del pid
-	\item modellare il sistema per implementare un controllore dal punto di vista teorico con simulazioni e poi
-	testare i parametri ottimali sul prototipo reale
-	\item integrare un'azione di feedforward (considerando l'inerzia termica) e attivare il pid solo a regime
-	\item campo di prova per implementare e testare altri tipi di controllore (ad esempio fuzzy, predittivo, ecc.)
-\end{itemize}
+Nonostante i numerosi risultati positivi ottenuti, si identificano alcune aree in cui il prototipo di incubatrice neonatale
+può essere ulteriormente migliorato o che possono offrire opportunità di ricerca e approfondimento. Si seguito sono
+riportate in forma di elenco, seguite da una breve descrizione dei vantaggi apportati.
+
+\subsubsection{Implementazione un sistema di controllo dell'umidità}
+Questo permetterebbe di completare il sistema di controllo ambientale dell'incubatrice in modo da garantire un ambiente
+ottimale per il neonato. Siccome temperatura ed umidità sono strettamente correlate, potrebbe essere necessario implementare
+un sistema di controllo multivariabile per gestire entrambe le variabili in modo ottimale. \cite{woldeamanuel2024}
+
+\subsubsection{Sostituzione i relè con dei mosfet logic level}
+Questo permetterebbe di eliminare le continue commutazioni dei relè che a lungo andare potrebbero danneggiare le componenti
+meccaniche, che attualmente sono uno dei punti di debolezza del prototipo. Inoltre l'assenza di continue commutazioni
+consentirebbe di ridurre le fluttuazioni della tensione di alimentazione e rendere più stabile la misurazione della
+temperatura. Infine l'utilizzo dei mosfet permetterebbe di aumentare la frequenza del PWM riuscendo a ottenere un
+sistema di controllo più preciso, stabile e reattivo.
+
+\subsubsection{Costruzione di un modello del sistema per la taratura dei parametri dei PID}
+L'individuazione dei parametri attraverso un processo empirico non garantisce l'ottenimento dei parametri ottimali in
+assoluto. Per poter ottenere parametri più precisi e testare più facilmente diverse configurazioni, sarebbe utile avere
+a disposizione un modello matematico o software del prototipo di incubatrice neonatale. Una volta verificata la correlazione
+con il prototipo reale, risulta estremamente più facile e veloce testare diverse configurazioni dei parametri e utilizzare
+apposti strumenti per l'individuazione dei parametri ottimali.
+
+\subsubsection{Utilizzare strategie di controllo multiple ed integrare un'azione di feedforward}
+Dai test sperimentali è emersa la debolezza del controllore PID nel garantire contemporaneamente una rapida fase di
+riscaldamento con basso overshoot e una buona immunità alle perturbazioni, individuando nell'integrale la componente
+più influente. Implementare altre strategie di controllo potrebbe portare a un sistema più robusto e performante.
+Alcuni esempi potrebbero essere l'utilizzo di diverse strategie di controllo per la fase di raggiungimento del setpoint
+e per la fase di mantenimento. Inoltre si potrebbe implementare un sistema di controllo ibrido, utilizzando un'azione
+di feedforward come componente principale e usando il PID solo per compensare le perturbazioni e imprecisioni del sistema.

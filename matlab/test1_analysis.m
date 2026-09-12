@@ -71,25 +71,23 @@ function test1_analysis(filename, start_time, end_time)
 	data = readtable(filename, opts);
 
 	% estrae il vettore con i tempi, le temperature, l'output e il setpoint finale
-	time = data.Time_Seconds;
-	temp = data.Temperature;
-	setpoint = data.Setpoint_Temperature(end);
+
+	% estrae il vettore con i tempi, le temperature e il setpoint
+	if isempty(end_time), end_time = height(data); end
+
+	time = data.Time_Seconds(start_time:end_time);
+	temp = data.Temperature(start_time:end_time);
+	setpoint = data.Setpoint_Temperature(end_time);
+
+	% fa partire il tempo da 0 per una migliore leggibilità del grafico
+	time = time - time(1);
+
+	% estrae il vettore con l'output del controllore (PWM o output)
 	output = [];
 	if ismember('T_PWM', data.Properties.VariableNames) && ~all(isnan(data.T_PWM))
-		output = data.T_PWM;
+		output = data.T_PWM(start_time:end_time);
 	elseif ismember('T_output', data.Properties.VariableNames) && ~all(isnan(data.T_output))
-		output = data.T_Output;
-	end
-
-	% applica i limiti di tempo se specificati
-	if ~isempty(end_time)
-		time = time(start_time:end_time);
-		temp = temp(start_time:end_time);
-		output = output(start_time:end_time);
-	else
-		time = time(start_time:end);
-		temp = temp(start_time:end);
-		output = output(start_time:end);
+		output = data.T_output(start_time:end_time);
 	end
 
 	% calcola la temperatura iniziale e l'istante in cui inizia il warm-up
@@ -132,9 +130,13 @@ function test1_analysis(filename, start_time, end_time)
 	%% ----------------------- generazione del grafico ------------------------
 
 	% crea una finestra grafica per stampare il grafico
-	figure('Name', sprintf('Analisi test warm-up - %s', filename), 'Color', 'w', 'Units', 'centimeters', 'Position', [40, 7, 16, 10]);
+	figure('Name', sprintf('Analisi test warm-up - %s', filename), 'Color', 'w', 'Position', [950, 100, 560, 840]);
 
-	% impostazioni di base
+	% crea il layout a due righe per i grafici
+	t_layout = tiledlayout(5, 1, 'TileSpacing', 'loose', 'Padding', 'compact');
+
+	% --- grafico con i dati di temperatura e setpoint ---
+	ax1 = nexttile(t_layout, [3, 1]);
 	grid on; hold on;
 
 	% Definizione dei colori (esadecimali)
@@ -152,22 +154,69 @@ function test1_analysis(filename, start_time, end_time)
 	% traccia le bande di inizio e fine del periodo warm-up
 	warmup_lower_band = start_temperature;
 	warmup_upper_band = warmup_threshold;
-	yline(warmup_lower_band, 'Color', col_band1, 'LineStyle', '--', 'LineWidth', 1, 'HandleVisibility', 'off');
-	yline(warmup_upper_band, 'Color', col_band2, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'Banda di warm-up');
+	yline(warmup_lower_band, 'Color', col_band1, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'Temperatura di inizio warm-up');
+	text(time(1) + 0.30 * (time(end) - time(1)), warmup_lower_band, sprintf('Temperatura di inizio warm-up: %.2f °C', warmup_lower_band), 'Color', col_band1, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+	yline(warmup_upper_band, 'Color', col_band2, 'LineStyle', '--', 'LineWidth', 1, 'DisplayName', 'Temperatura di fine warm-up');
+	text(time(1) + 0.30 * (time(end) - time(1)), warmup_upper_band, sprintf('Temperatura di fine warm-up: %.2f °C', warmup_upper_band), 'Color', col_band2, 'VerticalAlignment', 'top', 'HorizontalAlignment', 'center');
 
 	% mostra inizio tempo di salita sul grafico
 	plot(time(start_warmup_idx), temp(start_warmup_idx), 'Color', col_band1, 'Marker', 'd', 'MarkerSize', 8, 'MarkerFaceColor', col_band1, 'HandleVisibility', 'off');
-	xline(time(start_warmup_idx), 'Color', col_band1, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Inizio Warm-up', 'LabelVerticalAlignment', 'bottom');
+	xline(time(start_warmup_idx), 'Color', col_band1, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Tempo di inizio warm-up');
+	text(time(start_warmup_idx), temp(1) + 0.70 * (temp(end) - temp(1)), sprintf('  Istante di inizio warm-up:\n  %.2f secondi', time(start_warmup_idx)), 'Color', col_band1, 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left');
 	%text(time(start_warmup_idx), temp(start_warmup_idx), sprintf('  Start warm-up time: %.2fs', time(start_warmup_idx)), 'Color', col_band1, 'HorizontalAlignment', 'left', 'VerticalAlignment', 'middle');
 
 	% mostra fine tempo di salita sul grafico
 	plot(time(end_warmup_idx), temp(end_warmup_idx), 'Color', col_band2, 'Marker', 'd', 'MarkerSize', 8, 'MarkerFaceColor', col_band2, 'HandleVisibility', 'off');
-	xline(time(end_warmup_idx), 'Color', col_band2, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Fine Warm-up', 'LabelVerticalAlignment', 'bottom');
+	xline(time(end_warmup_idx), 'Color', col_band2, 'LineStyle', '-.', 'LineWidth', 1, 'DisplayName', 'Tempo di fine warm-up');
+	text(time(end_warmup_idx), temp(1) + 0.70 * (temp(end) - temp(1)), sprintf('  Istante di fine warm-up:\n  %.2f secondi', time(end_warmup_idx)), 'Color', col_band2, 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left');
 	%text(time(end_warmup_idx), temp(end_warmup_idx), sprintf('  End Warm-up time: %.2fs', time(end_warmup_idx)), 'Color', col_band2, 'HorizontalAlignment', 'left', 'VerticalAlignment', 'middle');
 
 	% --- estetica e legenda ---
-	xlabel('Tempo (secondi)');
 	ylabel('Temperatura (°C)');
 	legend('Location', 'southeast');
-	hold off;
+	ax1.YTick = floor(min(temp)) : 1 : ceil(max(temp));
+	ax1.XTick = 0 : 50 : max(time);
+	ax1.XMinorGrid = 'on';
+
+	% --- grafico con i dati di PID, PWM e output della temperatura ---
+	ax2 = nexttile(t_layout, [2, 1]);
+	grid on; hold on;
+
+	% colori personalizzati per i dati del PID
+	c_P = [0.8500 0.3250 0.0980];
+	c_I = [0.9290 0.6940 0.1250];
+	c_D = [0.4940 0.1840 0.5560];
+	c_Out = [0.4660 0.6740 0.1880];
+
+	% set di dati da mostrare (segnali pid e output)
+	if ismember('T_PID_p', data.Properties.VariableNames) && ~all(isnan(data.T_PID_p))
+		plot(time, data.T_PID_p(start_time:end_time), '--', 'Color', c_P, 'LineWidth', 1, 'DisplayName', 'P_{PID}');
+	end
+	if ismember('T_PID_i', data.Properties.VariableNames) && ~all(isnan(data.T_PID_i))
+		plot(time, data.T_PID_i(start_time:end_time), '--', 'Color', c_I, 'LineWidth', 1, 'DisplayName', 'I_{PID}');
+	end
+	if ismember('T_PID_d', data.Properties.VariableNames) && ~all(isnan(data.T_PID_d))
+		plot(time, data.T_PID_d(start_time:end_time), '--', 'Color', c_D, 'LineWidth', 1, 'DisplayName', 'D_{PID}');
+	end
+	if ismember('T_PID_out', data.Properties.VariableNames) && ~all(isnan(data.T_PID_out))
+		plot(time, data.T_PID_out(start_time:end_time), '-.', 'Color', c_Out, 'LineWidth', 1, 'DisplayName', 'Out_{PID}');
+	end
+	if ismember('T_PWM', data.Properties.VariableNames) && ~all(isnan(data.T_PWM))
+		plot(time, data.T_PWM(start_time:end_time), 'k-', 'LineWidth', 1.5, 'DisplayName', 'Duty cycle_{PWM}');
+	end
+	if ismember('T_output', data.Properties.VariableNames) && ~all(isnan(data.T_output))
+		plot(time, data.T_output(start_time:end_time), 'k-', 'LineWidth', 1.5, 'DisplayName', 'Output');
+	end
+
+	% preferenze di visualizzazione
+	ylabel('Output controllore'); % etichetta asse y
+	legend('Location', 'northeast'); % legenda
+	ax2.XTick = 0 : 50 : max(time);
+	ax2.XMinorGrid = 'on';
+
+	% --- linking degli assi x ---
+	linkaxes([ax1, ax2], 'x');
+	xlim(ax1, [time(1), time(end)]);
+	xlabel(t_layout, 'Tempo (secondi)');
+
 end

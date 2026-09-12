@@ -34,14 +34,14 @@
   - [x] foto solo stepdown in uso accanto ad uno nuovo
   - [x] foto interno del pannello frontale (lato pannello e lato incubatrice)
   - [x] misurare corrente assorbita dallo step down -> 1: 35 mA / 2: 66mA / 3: 96mA / 4: 117 mA / 5: 139 mA
-- [ ] modificare titolo della tesi per eliminare controllo di umidità
-- [ ] durata ciclo di loop dalle misurazioni effettuate
-- [ ] eventuali test come sono descritti dalla normativa:
+- [x] durata ciclo di loop dalle misurazioni effettuate
+- [x] eventuali test come sono descritti dalla normativa:
   - [x] spostare il sensore di temperatura
   - [x] foto del sensore nella nuova posizione
   - [x] annotarsi la temperatura esterna della stanza
   - [x] test di warm-up
   - [x] test di stabilità da 32 a 36°C
+- [ ] modificare titolo della tesi per eliminare controllo di umidità
 
 ## hardware:
 - [x] correggere connessioni relay e switch

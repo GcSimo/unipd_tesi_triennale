@@ -229,28 +229,47 @@ dopo la lettura delle misurazioni dal sensore e dopo l'aggiornamento del setpoin
 relativa implementazione nel programma principale \verb|main.cpp| (\autoref{lst:main_cpp}).
 
 \subsection{Test di funzionamento con grafico e prestazioni}
-Nelle pagine seguenti sono riportati i grafici dei due test richiesti dalla normativa, eseguiti con il controllore ad isteresi.
+Di seguito sono riportati i valori delle metriche di prestazione del controllore ad isteresi, richieste dalla normativa.
+I risultati sono stati calcolati con i dati acquisiti durante i test, elaborati tramite le funzioni MATLAB. Sono riportati
+anche nei grafici nelle pagine successive.
 
-%A pagina seguente è riportato il grafico del raggiungimento e mantenimento del setpoint di temperatura impostato a 36°C,
-%partendo dallo stato iniziale di 32°C e sfruttando il controllore ad isteresi. Si può notare che i requisiti imposti dalla
-%normativa sono soddisfatti, in quanto:
-%\begin{itemize}
-%	\item il tempo di assestamento è di --- secondi, inferiore a 15 minuti;
-%	\item l'overshoot massimo è di --- °C, inferiore a 2°C;
-%	\item la temperatura compie oscillazioni comprese nel range di 36 \(\pm\) 0.5°C.
-%\end{itemize}
-%
-%Il controllore ad isteresi, però, ha continue ed infinite oscillazioni della temperatura attorno al setpoint, che si
-%vorrebbero eliminare per garantire una migliore stabilità nel controllo. Per fare ciò è necessario implementare altri
-%tipi di controllore più complessi e performanti, come ad esempio il controllore PID.
-%
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_isteresi.pdf}
-%	\caption[Grafico del setpoint del controllore ad isteresi]{Grafico del raggiungimento e mantenimento del setpoint
-%	di temperatura ottenuto con il controllore ad isteresi.}
-%	\label{fig:isteresi}
-%\end{figure}
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{c | c | c}
+		\textbf{metrica} & \textbf{valore misurato} & \textbf{valore richiesto} \\
+		\toprule
+		periodo di warm-up & 621.96 secondi & - \\
+		\midrule
+		tempo di assestamento & 171.26 secondi & < 900 sec \\
+		\midrule
+		overshoot (durante il regime di stabilità) & +0.24°C & < 2°C \\
+		\midrule
+		errore massimo a regime & +0.24°C & < 0.5°C \\
+		\midrule
+		errore minimo a regime & -0.30°C & > -0.5°C \\
+	\end{tabular}
+	\caption[Metriche di prestazione del controllore ad isteresi]{Metriche di prestazione del controllore ad isteresi.}
+	\label{tab:isteresi_performance}
+\end{table}
+
+Complessivamente, il controllore ad isteresi soddisfa i requisiti della normativa, ma presenta continue oscillazioni
+attorno al setpoint che non garantiscono una vera e propria stabilità.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{immagini/3_test1_hyst.pdf}
+	\caption[Grafico del primo test con controllore ad isteresi]{Grafico dell'andamento della temperatura durante il primo
+	test richiesto dalla normativa, eseguito con il controllore ad isteresi.}
+	\label{fig:test1_isteresi}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{immagini/3_test2_hyst.pdf}
+	\caption[Grafico del secondo test con controllore ad isteresi]{Grafico dell'andamento della temperatura durante il secondo
+	test richiesto dalla normativa, eseguito con il controllore ad isteresi.}
+	\label{fig:test2_isteresi}
+\end{figure}
 
 \newpage
 
@@ -329,7 +348,6 @@ Per svolgere correttamente i due compiti indipendenti, a livello implementativo 
 \verb|pid_add_data()| e \verb|pid_update_output()| rispettivamente per salvare i dati nei buffer e per aggiornare
 l'output del controllore PID.
 
-
 \subsubsection{Aggiornamento dello stato}
 L'aggiornamento dello stato del controllore PID consiste nell'applicare la formula matematica riportata sopra (\autoref{eq:pid_output})
 utilizzando i dati contenuti nei buffer. A causa delle non idealità del sistemi reali, è necessario applicare alcune azioni
@@ -386,39 +404,119 @@ più vecchia alla più recente. Per maggiori dettagli si rimanda alla dimostrazi
 (\autoref{chap:derivata_regressione_lineare}).
 
 Per i test effettuati, è stato utilizzato \(N=20\) campioni, in modo da considerare un intervallo di tempo superiore al periodo del
-segnale pwm per compensare alle variazioni periodiche della temperatura dovute all'accensione e allo spegnimento ripetuto del riscaldatore.
+segnale PWM per compensare alle variazioni periodiche della temperatura dovute all'accensione e allo spegnimento ripetuto del riscaldatore.
 
 \subsection{Test di funzionamento con grafico e prestazioni}
+\subsubsection{Taratura dei parametri del PID}
+I parametri del controllore PID sono stati tarati in modo empirico, osservando la risposta al gradino del sistema per
+diverse configurazioni e aggiustando progressivamente i parametri. L'obiettivo è stato quello di ottenere una crescita
+rapida della temperatura senza provocare sovraelongazioni eccessive a regime. Non si garantisce che i parametri individuati
+siano quelli ottimali, ma sono comunque accettabili per il funzionamento del sistema.
 
+Di seguito vengono riportate le configurazioni di parametri PID con una risposta al gradino rapida senza sovraelongazioni.
+La configurazione finale scelta per i test è la prima della lista.
 
-parametri ottimali individuati:
-\begin{itemize}
-	\item kp = 55, ki = 0.35, kd = 1200
-	\item kp = 55, ki = 0.40, kd = 1000
-	\item kp = 60, ki = 0.4, kd = 1500
-\end{itemize}
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{c | c | c | c}
+		\textbf{configurazione} & \(k_p\) & \(k_i\) & \(k_d\) \\
+		\toprule
+		1 (preferita) & 55 & 0.35 & 1200 \\
+		\midrule
+		2 & 55 & 0.40 & 1000 \\
+		\midrule
+		3 & 60 & 0.40 & 1500 \\
+		\midrule
+		4 & 40 & 0.4 & 500
+	\end{tabular}
+	\caption[Configurazioni del controllore PID]{Configurazioni dei guadagni del controllore PID testate.}
+	\label{tab:configurazioni_pid}
+\end{table}
 
-prestazioni richieste:
-\begin{itemize}
-	\item rise time
-	\item settling time
-	\item overshoot
-\end{itemize}
+La componente derivativa ha un guadagno molto elevato rispetto alle altre due componenti. Questo è dovuto al fatto che
+la velocità di variazione della temperatura è molto lenta, nell'ordine di 0.03°C/secondo. Per avere un contributo
+significativo della componente derivativa in grado di compensare l'inerzia termica del sistema, si necessita, quindi, di un
+guadagno elevato.
 
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_pid_1_1.pdf}
-%	\caption[Grafico del setpoint del controllore PID]{Grafico del raggiungimento e mantenimento del setpoint di temperatura
-%	ottenuto con il controllore PID con parametri Kp=55, Ki=0.35, Kd=1200.}
-%	\label{fig:pid_gradino}
-%\end{figure}
+\subsubsection{Analisi delle prestazioni}
+Di seguito sono riportati i valori delle metriche di prestazione del controllore PID richieste dalla normativa. I risultati
+sono stati calcolati con i dati acquisiti durante i test, elaborati tramite le funzioni MATLAB. Sono riportati
+anche nei grafici nelle pagine successive.
 
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=0.9\textwidth, trim={2.5cm 4cm 2.5cm 4cm}, clip]{immagini/3_pid_1_2.pdf}
-%	\caption[Grafico della perturbazione del controllore PID]{Grafico del ripristino del setpoint di temperatura dopo un
-%	disturbo esterno, ottenuto con il controllore PID con parametri Kp=55, Ki=0.35, Kd=1200.}
-%	\label{fig:pid_perturbazione}
-%\end{figure}
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{c | c | c}
+		\textbf{metrica} & \textbf{valore misurato} & \textbf{valore richiesto} \\
+		\toprule
+		periodo di warm-up & 598.93 secondi & - \\
+		\midrule
+		tempo di assestamento & 220.35 secondi & < 900 sec \\
+		\midrule
+		overshoot (durante il regime di stabilità) & +0.10°C & < 2°C \\
+		\midrule
+		errore massimo a regime & +0.10°C & < 0.5°C \\
+		\midrule
+		errore minimo a regime & -0.06°C & > -0.5°C \\
+	\end{tabular}
+	\caption[Metriche di prestazione del controllore PID]{Metriche di prestazione del controllore PID.}
+	\label{tab:pid_performance}
+\end{table}
+
+Si nota che il controllore PID soddisfa pienamente i requisiti della normativa, producendo una risposta stabile e con
+oscillazioni molto contenute attorno al setpoint, dovute principalmente alle fluttuazioni della tensione di alimentazione
+del sensore. Dal secondo grafico si nota che l'errore accumulato nel contributo integrale durante la risposta al gradino
+risulta più elevato rispetto al valore di regime e ci si aspetterebbe una sovraelongazione che, però, è stata smorzata
+dalle componenti proporzionale e derivativa.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{immagini/3_test1_pid.pdf}
+	\caption[Grafico del primo test con controllore PID]{Grafico dell'andamento della temperatura durante il primo
+	test richiesto dalla normativa, eseguito con il controllore PID.}
+	\label{fig:test1_pid}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{immagini/3_test2_pid.pdf}
+	\caption[Grafico del secondo test con controllore PID]{Grafico dell'andamento della temperatura durante il secondo
+	test richiesto dalla normativa, eseguito con il controllore PID.}
+	\label{fig:test2_pid}
+\end{figure}
 
 \section{Confronto tra controllore ad isteresi e PID}
+Per prima cosa si riportano i valori delle metriche di prestazione dei due controllori, così da poterli confrontare facilmente.
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{c | c | c | c}
+		\textbf{metrica} & \textbf{isteresi} & \textbf{PID} & \textbf{normativa} \\
+		\toprule
+		periodo di warm-up & 621.96 secondi & 598.93 secondi & - \\
+		\midrule
+		tempo di assestamento & 171.26 secondi & 220.35 secondi & < 900 sec \\
+		\midrule
+		overshoot \footnotesize (durante il regime di stabilità) & +0.24°C & +0.10°C & < 2°C \\
+		\midrule
+		errore massimo a regime & +0.24°C & +0.10°C & < 0.5°C \\
+		\midrule
+		errore minimo a regime & -0.30°C & -0.06°C & > -0.5°C \\
+	\end{tabular}
+	\caption[Metriche di prestazione dei controllori]{Metriche di prestazione di entrambi i controllori.}
+	\label{tab:ctrl_performance}
+\end{table}
+
+Entrambi i controllori soddisfano i requisiti della normativa, ma il controllore PID risulta più stabile e con oscillazioni
+molto più contenute attorno al setpoint. Questo è dovuto al fatto che il PID è in grado di modulare l'output in maniera più
+fine e precisa.
+
+Il PID risulta avere un tempo di assestamento più lungo rispetto al controllore ad isteresi. Ciò è dovuto al fatto che il
+PID riduce l'output in maniera graduale man mano che la temperatura si avvicina al setpoint, mentre il controllore ad isteresi
+mantiene sempre l'output al massimo.
+
+I tempi di warm-up dei due controllori sono simili e perfettamente compatibili tra di loro. La differenza potrebbe essere
+dovuta a fattori esterni, come variazioni della temperatura ambientale o della potenza erogata dal riscaldatore.
+
+In conclusione, il controllore ad isteresi è un buon punto di partenza per un controllo semplice e rapido, con un buon
+rapporto tra prestazioni e complessità di implementazione, ma non garantisce una stabilità ottimale a regime. Il controllore
+PID, invece, risulta essere più adatto per il controllo della temperatura se si vuole garantire una maggiore stabilità
+e precisione nel raggiungimento e nel mantenimento del setpoint.

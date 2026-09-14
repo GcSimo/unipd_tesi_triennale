@@ -197,14 +197,27 @@ Le variabili globali sono dichiarate nel file \verb|config.h| (\autoref{lst:conf
 rispettivo file \verb|config.cpp| (\autoref{lst:config_cpp}). Sono organizzate in oggetti (per il display lcd ed il sensore
 SHT20) o in struct. Di seguito si riportano le variabili globali con una breve descrizione del loro impiego, per una maggiore
 comprensione si rimanda ai rispettivi files riportati in appendice.
+% --- codice con minted ---
+%\begin{itemize}
+%	\item \mintinline{c++}|sht20 sensor|: oggetto di tipo \verb|sht20| dichiarato nel file \verb|sht20.h|, utilizzato per la
+%	gestione del sensore di temperatura e umidità SHT20;
+%	\item \mintinline{c++}|LiquidCrystal_I2C lcd|: oggetto di tipo \verb|LiquidCrystal_I2C| dichiarato nella libreria esterna
+%	\verb|LiquidCrystal_I2C.h|, utilizzato per la gestione del display lcd;
+%	\item \mintinline{c++}|struct status status|: struct con le informazioni sullo stato del sistema;
+%	\item \mintinline{c++}|struct timers timers|: struct con i timer per la temporizzazione dei vari processi;
+%	\item \mintinline{c++}|struct pid<TEMP> temp_pid| ~ e ~ \mintinline{c++}|struct pid<RH> rh_pid|: struct definite tramite
+%	template per la gestione dei controllori PID per la temperatura e l'umidità.
+%\end{itemize}
+
+% --- codice con verbatim ---
 \begin{itemize}
-	\item \mintinline{c++}|sht20 sensor|: oggetto di tipo \verb|sht20| dichiarato nel file \verb|sht20.h|, utilizzato per la
+	\item \verb|sht20 sensor|: oggetto di tipo \verb|sht20| dichiarato nel file \verb|sht20.h|, utilizzato per la
 	gestione del sensore di temperatura e umidità SHT20;
-	\item \mintinline{c++}|LiquidCrystal_I2C lcd|: oggetto di tipo \verb|LiquidCrystal_I2C| dichiarato nella libreria esterna
+	\item \verb|LiquidCrystal_I2C lcd|: oggetto di tipo \verb|LiquidCrystal_I2C| dichiarato nella libreria esterna
 	\verb|LiquidCrystal_I2C.h|, utilizzato per la gestione del display lcd;
-	\item \mintinline{c++}|struct status status|: struct con le informazioni sullo stato del sistema;
-	\item \mintinline{c++}|struct timers timers|: struct con i timer per la temporizzazione dei vari processi;
-	\item \mintinline{c++}|struct pid<TEMP> temp_pid| ~ e ~ \mintinline{c++}|struct pid<RH> rh_pid|: struct definite tramite
+	\item \verb|struct status status|: struct con le informazioni sullo stato del sistema;
+	\item \verb|struct timers timers|: struct con i timer per la temporizzazione dei vari processi;
+	\item \verb|struct pid<TEMP> temp_pid| ~ e ~ \verb|struct pid<RH> rh_pid|: struct definite tramite
 	template per la gestione dei controllori PID per la temperatura e l'umidità.
 \end{itemize}
 
@@ -223,7 +236,7 @@ una sottrazione tra due unsigned da come risultato un unsigned che va in overflo
 
 \subsubsection{Parametri di configurazione}
 I parametri del programma, sono definiti come costanti nel file \verb|config.h| (\autoref{lst:config_h})
-attraverso le direttive \mintinline{c++}|#define|. Di seguito si riporta una classificazione dei parametri per facilitarne la
+attraverso le direttive \verb|#define|. Di seguito si riporta una classificazione dei parametri per facilitarne la
 comprensione. Per maggiori dettagli si rimanda al file \verb|config.h| in appendice.
 \begin{itemize}
 	\item configurazione dei pin del microcontrollore per la gestione delle periferiche;
@@ -238,13 +251,24 @@ comprensione. Per maggiori dettagli si rimanda al file \verb|config.h| in append
 
 \subsubsection{Funzioni di utilità}
 Le funzioni di utilità sono definite nel file \verb|utils.h| (\autoref{lst:utils_h}) e implementate nel
-file \verb|utils.cpp| (\autoref{lst:utils_cpp}). Di seguito si riportano le firme e una breve descrizione
+rispettivo file \verb|utils.cpp| (\autoref{lst:utils_cpp}). Di seguito si riportano le firme e una breve descrizione
 del loro compito. Per una maggiore comprensione si rimanda alla relativa implementazione in appendice.
+% --- codice con minted ---
+%\begin{itemize}
+%	\item \mintinline{c++}|char *data_to_string(int16_t value);| \label{data_to_string} \\
+%	converte un valore di temperatura o umidità in una stringa di caratteri opportunamente formattata per la visualizzazione
+%	su display lcd o per l'invio tramite comunicazione seriale;
+%	\item \mintinline{c++}|int16_t rh_at_temp_setpoint(int16_t rh1, int16_t t1, int16_t t2);| \\
+%	calcola l'umidità relativa che si avrebbe al un determinato setpoint di temperatura, utilizzando i valori di umidità
+%	e temperatura corrente.
+%\end{itemize}
+
+% --- codice con verbatim ---
 \begin{itemize}
-	\item \mintinline{c++}|char *data_to_string(int16_t value);| \label{data_to_string} \\
+	\item \verb|char *data_to_string(int16_t value);| \label{data_to_string} \\
 	converte un valore di temperatura o umidità in una stringa di caratteri opportunamente formattata per la visualizzazione
 	su display lcd o per l'invio tramite comunicazione seriale;
-	\item \mintinline{c++}|int16_t rh_at_temp_setpoint(int16_t rh1, int16_t t1, int16_t t2);| \\
+	\item \verb|int16_t rh_at_temp_setpoint(int16_t rh1, int16_t t1, int16_t t2);| \\
 	calcola l'umidità relativa che si avrebbe al un determinato setpoint di temperatura, utilizzando i valori di umidità
 	e temperatura corrente.
 \end{itemize}
@@ -322,7 +346,7 @@ incubatrici neonatali destinate al mercato, ma è accettabile per un prototipo o
 \section{Gestione del pannello frontale}
 \subsection{Lettura degli switch}
 La lettura degli switch del pannello frontale viene gestita direttamente nel programma principale (\verb|main.cpp|,
-\autoref{lst:main_cpp}). Per evitare di avere continue invocazioni della funzione \verb|digitalRead()| ad ogni ciclo
+\autoref{lst:main_cpp}). Per evitare di avere continue invocazioni di \verb|digitalRead()| ad ogni ciclo
 del loop principale, sono stati inseriti tre timer (uno per ogni switch) che abilitano la lettura dello switch solo
 ogni 50 millisecondi. Questo ritardo risulta abbastanza lungo per evitare di sovraccaricare troppo il microcontrollore
 e sufficientemente breve per garantire una buona reattività del sistema agli input dell'utente.
@@ -486,3 +510,108 @@ La funzione \verb|sht20::update()| deve essere invocata ad ogni ciclo del loop p
 indica se sono disponibili nuove misurazioni di temperatura e umidità. In caso affermativo, le misurazioni vanno recuperate
 con due apposite funzioni \verb|sht20::get_temperature()| e \verb|sht20::get_humidity()|. Per maggiori dettagli si rimanda
 all'implementazione nei file \verb|sht20.h| (\autoref{lst:sht20_h}) e \verb|sht20.cpp| (\autoref{lst:sht20_cpp}).
+
+\newpage
+
+\section{Flowchart approssimativo del programma principale}
+
+\begin{figure}[!h]
+	\centering
+	\begin{tikzpicture}[
+			node distance=0.5cm and 0.7cm,
+			startstop/.style={rectangle, rounded corners, minimum width=3cm, minimum height=1cm, align=center, draw=black, fill=blue!15, font=\sffamily\footnotesize\bfseries},
+			process1/.style={rectangle, minimum width=2cm, minimum height=0.6cm, align=center, draw=black, fill=orange!15, text width=6cm, font=\sffamily\footnotesize},
+			process2/.style={rectangle, minimum width=2cm, minimum height=0.6cm, align=center, draw=black, fill=orange!15, text width=5.5cm, font=\sffamily\footnotesize},
+			decision/.style={diamond, minimum width=6cm, minimum height=1cm, align=center, draw=black, fill=green!15, aspect=4, text width=4.5cm, font=\sffamily\footnotesize},
+			dec_label/.style={font=\sffamily\footnotesize, anchor=south},
+			arrow/.style={thick,->,>=stealth},
+			line/.style={thick}
+		]
+
+		% --- PARTE DI SETUP ---
+		\node (start) [startstop] at (0,0) {Inizio};
+		\node (setup) [process1, below=of start] {\verb|setup()|: inizializzazione del sistema};
+
+		% --- PARTE DI LOOP PERIODICO ---
+		% Blocco tempo
+		\node (loop) [coordinate, below=of setup] {};
+
+		% --- TASK 1: GESTIONE SWITCH ---
+		\node (dec_sw) [decision, below=of loop] {\verb|millis() - t_sw >= T_sw|};
+		\node (task_sw) [process2, right=of dec_sw] {lettura dello stato degli switch con eventuale accensione o spegnimento degli attuatori e passaggio alla modalità manuale};
+		\node (reset_sw) [process2, below=of task_sw] {\verb|t_sw = millis()|};
+		\coordinate (conv_sw) at (dec_sw |- reset_sw);
+
+		% --- TASK 2: AGGIORNAMENTO SETPOINT ---
+		\node (dec_pot) [decision, below=of conv_sw] {\verb|millis() - t_pot >= T_pot|};
+		\node (task_pot) [process2, right=of dec_pot] {lettura dei potenziometri e aggiornamento dei setpoint};
+		\node (reset_pot) [process2, below=of task_pot] {\verb|t_pot = millis()|};
+		\coordinate (conv_pot) at (dec_pot |- reset_pot);
+
+		% --- TASK 3: GESTIONE SENSORE SHT20 ---
+		\node (sht_update) [process1, below=of conv_pot] {aggiornamento stato del sensore SHT20};
+		\node (dec_sht) [decision, below=of sht_update] {nuove misurazioni disponibili?};
+		\node (task_sht) [process2, right=of dec_sht] {lettura dei dati, aggiornamento stato degli attuatori controllati ad isteresi o memorizzazione dei dati nei buffer dei PID};
+		\node (log_sht) [process2, below=of task_sht] {log dei dati su computer via comunicazione seriale};
+		\coordinate (conv_sht) at (dec_sht |- log_sht);
+
+		% --- TASK 4: AGGIORNAMENTO PID e DUTY CYCLE ---
+		\node (dec_pwm) [decision, below=of conv_sht] {\verb|millis() - t_pwm >= T_pwm|};
+		\node (task_pwm) [process2, right=of dec_pwm] {calcolo dell'output del PID con aggiornamento del duty cycle PWM};
+		\node (reset_pwm) [process2, below=of task_pwm] {\verb|t_pwm += T_pwm|};
+		\coordinate (conv_pwm) at (dec_pwm |- reset_pwm);
+
+		% --- PARTE DI LOOP NON PERIODICO (eseguito ogni ciclo) ---
+		\node (pwm_update) [process1, below=of conv_pwm] {accensione/spegnimento degli attuatori in base al duty cycle calcolato};
+		\node (alarms) [process1, below=of pwm_update] {controllo errori e allarmi};
+		\node (refill) [process1, below=of alarms] {verifica necessità di refill};
+		\node (lcd) [process1, below=of refill] {aggiornamento del display LCD};
+
+		% --- COLLEGAMENTI ---
+		% Setup a Loop
+		\draw [arrow] (start) -- (setup);
+		\draw [line] (setup) -- (loop);
+
+		% Loop principale
+		\draw [arrow] (loop) -- (dec_sw);
+
+		% Task Switch
+		\draw [arrow] (dec_sw) -- node[dec_label] {Sì} (task_sw);
+		\draw [arrow] (task_sw) -- (reset_sw);
+		\draw [line] (dec_sw.west) -| node[dec_label, xshift=0.3cm] {No} ++(-0.5,0) |- (conv_sw);
+		\draw [line] (reset_sw) -- (conv_sw);
+		\draw [arrow] (conv_sw) -- (dec_pot);
+
+		% Task Potenziometri
+		\draw [arrow] (dec_pot) -- node[dec_label] {Sì} (task_pot);
+		\draw [arrow] (task_pot) -- (reset_pot);
+		\draw [line] (dec_pot.west) -| node[dec_label, xshift=0.3cm] {No} ++(-0.5,0) |- (conv_pot);
+		\draw [line] (reset_pot) -- (conv_pot);
+		\draw [arrow] (conv_pot) -- (sht_update);
+
+		% Task SHT20
+		\draw [arrow] (sht_update) -- (dec_sht);
+		\draw [arrow] (dec_sht) -- node[dec_label] {Sì} (task_sht);
+		\draw [arrow] (task_sht) -- (log_sht);
+		\draw [line] (dec_sht.west) -| node[dec_label, xshift=0.3cm] {No} ++(-0.5,0) |- (conv_sht);
+		\draw [line] (log_sht) -- (conv_sht);
+		\draw [arrow] (conv_sht) -- (dec_pwm);
+
+		% Task PWM
+		\draw [arrow] (dec_pwm) -- node[dec_label] {Sì} (task_pwm);
+		\draw [arrow] (task_pwm) -- (reset_pwm);
+		\draw [line] (dec_pwm.west) -| node[dec_label, xshift=0.3cm] {No} ++(-0.5,0) |- (conv_pwm);
+		\draw [line] (reset_pwm) -- (conv_pwm);
+		\draw [arrow] (conv_pwm) -- (pwm_update);
+
+		% Blocchi non periodici
+		\draw [arrow] (pwm_update) -- (alarms);
+		\draw [arrow] (alarms) -- (refill);
+		\draw [arrow] (refill) -- (lcd);
+
+		% Ritorno del Loop
+		\draw [arrow] (lcd.west) -| ++(-1.5,0) |- (loop.west) node[near start, left, xshift=-0.3cm,rotate=90, font=\sffamily\footnotesize] {\textbf{Main Loop}};
+	\end{tikzpicture}
+	\caption{Flowchart del programma principale.}
+	\label{fig:flowchart}
+\end{figure}

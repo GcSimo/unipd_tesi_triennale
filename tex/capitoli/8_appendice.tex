@@ -129,134 +129,522 @@ nell'implementazione del controllore PID.
 	&= \frac{12}{T_s \cdot N(N^2-1)} \cdot \sum_{i=0}^{N-1} i \cdot y_i - \frac{6}{T_s \cdot N(N+1)} \cdot \sum_{i=0}^{N-1} y_i
 \end{align}
 
+
+% -------------------------------------------------------------------------------------------------
+% ------------- codice con verbatim se è richiesto il formato PDF/A-1a (accessibile) --------------
+% -------------------------------------------------------------------------------------------------
+%
+% Per utilizzare correttamente il sistema di tagging dei listing richiesto dallo standard
+% PDF/A-1a (accessibile) non è possibile utilizzare il comando \captionof{}{} al di fuori
+% di ambienti flottanti. Per questo motivo, si riporta di seguito il procedimento da seguire
+% in 5 fasi principali:
+%
+%  1. incremento del contatore dei listing
+%     \noindent\refstepcounter{lstlisting}
+%
+%  2. creazione della reference per il listing
+%	  \label{lst:label_del_listing}
+%
+%  3. stampa della didascalia del listing
+%     \noindent\text{Codice \thelstlisting: Didascalia del listing}
+%
+%  4. aggiunta del listing all'indice dei listing
+%     \addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Didascalia del listing}
+%
+%  5. importazione del file di codice con verbatim aggiungendo le linee orizzontali sopra e sotto il codice
+%     per una migliore leggibilità e con dimensione del font ridotta
+%     \noindent\rule{\textwidth}{0.4pt}
+%     {\scriptsize \verbatiminput{percorso_del_file}}
+%     \noindent\rule{\textwidth}{0.4pt}
+%
+
+%\chapter{Codice del firmware}
+%\section{File di configurazione per PlatformIO in VSCode}
+%
+%% etichetta file di configurazione dell'ambiente PlatformIO in VSCode
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:platformio_ini}
+%\noindent\text{Codice \thelstlisting: File di configurazione dell'ambiente PlatformIO in VSCode}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File di configurazione dell'ambiente PlatformIO in VSCode}
+%
+%% codice del file di configurazione dell'ambiente PlatformIO in VSCode
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/platformio.ini}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\section{File di configurazione del firmware}
+%
+%% etichetta file header con i parametri di configurazione
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:config_h}
+%\noindent\text{Codice \thelstlisting: File header con i parametri di configurazione}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con i parametri di configurazione}
+%
+%% codice del file header con i parametri di configurazione
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/config/config.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con i parametri di configurazione
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:config_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con i parametri di configurazione}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con i parametri di configurazione}
+%
+%% codice del file sorgente con i parametri di configurazione
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/config/config.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo con le funzioni di utilità}
+%
+%% etichetta file header con le funzioni di utilità
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:utils_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni di utilità}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni di utilità}
+%
+%% codice del file header con le funzioni di utilità
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/utils/utils.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con le funzioni di utilità
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:utils_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con le funzioni di utilità}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con le funzioni di utilità}
+%
+%% codice del file sorgente con le funzioni di utilità
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/utils/utils.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo per la gestione degli errori}
+%
+%% etichetta file header con le funzioni per la gestione degli errori
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:error_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni per la gestione degli errori}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni per la gestione degli errori}
+%
+%% codice del file header con le funzioni per la gestione degli errori
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/error/error.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con le funzioni per la gestione degli errori
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:error_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con le funzioni per la gestione degli errori}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con le funzioni per la gestione degli errori}
+%
+%% codice del file sorgente con le funzioni per la gestione degli errori
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/error/error.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo per il controllo attuatori}
+%
+%% etichetta file header con le funzioni per il controllo degli attuatori
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:actuators_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni per il controllo degli attuatori}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni per il controllo degli attuatori}
+%
+%% codice del file header con le funzioni per il controllo degli attuatori
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/actuators/actuators.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con le funzioni per il controllo degli attuatori
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:actuators_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con le funzioni per il controllo degli attuatori}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con le funzioni per il controllo degli attuatori}
+%
+%% codice del file sorgente con le funzioni per il controllo degli attuatori
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/actuators/actuators.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo per la gestione del display lcd}
+%
+%% etichetta file header con le funzioni per la gestione del display lcd
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:lcd_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni per la gestione del display lcd}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni per la gestione del display lcd}
+%
+%% codice del file header con le funzioni per la gestione del display lcd
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/lcd/lcd.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con le funzioni per la gestione del display lcd
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:lcd_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con le funzioni per la gestione del display lcd}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con le funzioni per la gestione del display lcd}
+%
+%% codice del file sorgente con le funzioni per la gestione del display lcd
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/lcd/lcd.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo per la gestione del sensore di temperatura e umidità SHT20}
+%
+%% etichetta file header con le funzioni per la gestione del sensore SHT20
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:sht20_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni per la gestione del sensore SHT20}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni per la gestione del sensore SHT20}
+%
+%% codice del file header con le funzioni per la gestione del sensore SHT20
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/sht20/sht20.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con le funzioni per la gestione del sensore SHT20
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:sht20_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con le funzioni per la gestione del sensore SHT20}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con le funzioni per la gestione del sensore SHT20}
+%
+%% codice del file sorgente con le funzioni per la gestione del sensore SHT20
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/sht20/sht20.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo per la gestione delle comunicazioni seriali}
+%
+%% etichetta file header con le funzioni per la gestione delle comunicazioni seriali
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:serial_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni per la gestione delle comunicazioni seriali}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni per la gestione delle comunicazioni seriali}
+%
+%% codice del file header con le funzioni per la gestione delle comunicazioni seriali
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/serial/serial.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta file sorgente con le funzioni per la gestione delle comunicazioni seriali
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:serial_cpp}
+%\noindent\text{Codice \thelstlisting: File sorgente con le funzioni per la gestione delle comunicazioni seriali}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File sorgente con le funzioni per la gestione delle comunicazioni seriali}
+%
+%% codice del file sorgente con le funzioni per la gestione delle comunicazioni seriali
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/serial/serial.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File del modulo per la gestione del controllore PID}
+%
+%% etichetta file header con le funzioni per la gestione del controllore PID
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:pid_h}
+%\noindent\text{Codice \thelstlisting: File header con le funzioni per la gestione del controllore PID}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File header con le funzioni per la gestione del controllore PID}
+%
+%% codice del file header con le funzioni per la gestione del controllore PID
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/lib/pid/pid.h}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{File principale del firmware}
+%
+%% etichetta file principale del firmware
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:main_cpp}
+%\noindent\text{Codice \thelstlisting: File principale del firmware}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}File principale del firmware}
+%
+%% codice del file principale del firmware
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../programmi/firmware/src/main.cpp}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\chapter{Programmi in MATLAB}
+%\section{Gestione della comunicazione seriale}
+%
+%% etichetta funzione MATLAB per la gestione della comunicazione seriale
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:serial_read}
+%\noindent\text{Codice \thelstlisting: Funzione MATLAB che si occupa della lettura dei messaggi dalla porta seriale, del
+%relativo parsing e salvataggio in un file csv e aggiornare i grafici di andamento delle variabili in tempo reale.}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting} Funzione MATLAB per la gestione della comunicazione seriale}
+%
+%% codice della funzione MATLAB per la gestione della comunicazione seriale
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../matlab/serial_read.m}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{Visualizzazione dei grafici dei dati csv}
+%
+%% etichetta funzione MATLAB per la visualizzazione dei grafici dei dati csv
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:plot_csv}
+%\noindent\text{Codice \thelstlisting: Funzione MATLAB per la stampa dei grafici dell'andamento delle grandezze fisiche in
+%funzione del tempo, utilizzando i dati raccolti nei file csv.}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Funzione MATLAB per visualizzare i grafici dei dati csv}
+%
+%% codice della funzione MATLAB per la visualizzazione dei grafici dei dati csv
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../matlab/plot_csv.m}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%\newpage
+%
+%\section{Analisi dei dati acquisiti durante i test}
+%
+%% etichetta funzione MATLAB per l'analisi dati del primo test
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:test1_analysis}
+%\noindent\text{Codice \thelstlisting: Funzione MATLAB per il calcolo del periodo di warm-up a partire dai dati raccolti nei
+%file csv durante il primo test previsto dalla normativa.}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Funzione MATLAB per l'analisi dati del primo test}
+%
+%% codice della funzione MATLAB per l'analisi dati del primo test
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../matlab/test1_analysis.m}}
+%\noindent\rule{\textwidth}{0.4pt}
+%
+%% etichetta funzione MATLAB per l'analisi dati del secondo test
+%\noindent\refstepcounter{lstlisting}
+%\label{lst:test2_analysis}
+%\noindent\text{Codice \thelstlisting: Funzione MATLAB per il calcolo delle metriche di prestazione (overshoot, settling time
+%ed errori a regime) con i dati raccolti nei file csv durante il secondo test previsto dalla normativa.}
+%\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Funzione MATLAB per l'analisi dati del secondo test}
+%
+%% codice della funzione MATLAB per l'analisi dati del secondo test
+%\noindent\rule{\textwidth}{0.4pt}
+%{\tiny \verbatiminput{../matlab/test2_analysis.m}}
+%\noindent\rule{\textwidth}{0.4pt}
+
+
+% -------------------------------------------------------------------------------------------------
+% ---------------- codice con minted se è sufficiente il formato PDF/A-2b (basic) -----------------
+% -------------------------------------------------------------------------------------------------
+
 \chapter{Codice del firmware}
 \section{File di configurazione per PlatformIO in VSCode}
-\captionof{listing}{File di configurazione dell'ambiente PlatformIO in VSCode}
+
+% etichetta file di configurazione dell'ambiente PlatformIO in VSCode
+\noindent\refstepcounter{listing}
 \label{lst:platformio_ini}
+\noindent\text{Codice \thelisting: File di configurazione dell'ambiente PlatformIO in VSCode}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File di configurazione dell'ambiente PlatformIO in VSCode}
 \inputminted{ini}{../programmi/firmware/platformio.ini}
 
 \section{File di configurazione del firmware}
-\captionof{listing}{File header con i parametri di configurazione}
+
+% etichetta file header con i parametri di configurazione
+\noindent\refstepcounter{listing}
 \label{lst:config_h}
+\noindent\text{Codice \thelisting: File header con i parametri di configurazione}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con i parametri di configurazione}
 \inputminted{c++}{../programmi/firmware/lib/config/config.h}
 
-\captionof{listing}{File sorgente con i parametri di configurazione}
+% etichetta file sorgente con i parametri di configurazione
+\noindent\refstepcounter{listing}
 \label{lst:config_cpp}
+\noindent\text{Codice \thelisting: File sorgente con i parametri di configurazione}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con i parametri di configurazione}
 \inputminted{c++}{../programmi/firmware/lib/config/config.cpp}
 
 \newpage
 
 \section{File del modulo con le funzioni di utilità}
-\captionof{listing}{File header con le funzioni di utilità}
+
+% etichetta file header con le funzioni di utilità
+\noindent\refstepcounter{listing}
 \label{lst:utils_h}
+\noindent\text{Codice \thelisting: File header con le funzioni di utilità}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni di utilità}
 \inputminted{c++}{../programmi/firmware/lib/utils/utils.h}
 
-\captionof{listing}{File sorgente con le funzioni di utilità}
+% etichetta file sorgente con le funzioni di utilità
+\noindent\refstepcounter{listing}
 \label{lst:utils_cpp}
+\noindent\text{Codice \thelisting: File sorgente con le funzioni di utilità}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con le funzioni di utilità}
 \inputminted{c++}{../programmi/firmware/lib/utils/utils.cpp}
 
 \newpage
 
 \section{File del modulo per la gestione degli errori}
-\captionof{listing}{File header con le funzioni per la gestione degli errori}
+
+% etichetta file header con le funzioni per la gestione degli errori
+\noindent\refstepcounter{listing}
 \label{lst:error_h}
+\noindent\text{Codice \thelisting: File header con le funzioni per la gestione degli errori}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni per la gestione degli errori}
 \inputminted{c++}{../programmi/firmware/lib/error/error.h}
 
-\captionof{listing}{File sorgente con le funzioni per la gestione degli errori}
+% etichetta file sorgente con le funzioni per la gestione degli errori
+\noindent\refstepcounter{listing}
 \label{lst:error_cpp}
+\noindent\text{Codice \thelisting: File sorgente con le funzioni per la gestione degli errori}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con le funzioni per la gestione degli errori}
 \inputminted{c++}{../programmi/firmware/lib/error/error.cpp}
 
 \newpage
 
 \section{File del modulo per il controllo attuatori}
-\captionof{listing}{File header con le funzioni per il controllo degli attuatori}
+
+% etichetta file header con le funzioni per il controllo degli attuatori
+\noindent\refstepcounter{listing}
 \label{lst:actuators_h}
+\noindent\text{Codice \thelisting: File header con le funzioni per il controllo degli attuatori}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni per il controllo degli attuatori}
 \inputminted{c++}{../programmi/firmware/lib/actuators/actuators.h}
 
-\captionof{listing}{File sorgente con le funzioni per il controllo degli attuatori}
+% etichetta file sorgente con le funzioni per il controllo degli attuatori
+\noindent\refstepcounter{listing}
 \label{lst:actuators_cpp}
+\noindent\text{Codice \thelisting: File sorgente con le funzioni per il controllo degli attuatori}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con le funzioni per il controllo degli attuatori}
 \inputminted{c++}{../programmi/firmware/lib/actuators/actuators.cpp}
 
 \newpage
 
 \section{File del modulo per la gestione del display lcd}
-\captionof{listing}{File header con le funzioni per la gestione del display lcd}
+
+% etichetta file header con le funzioni per la gestione del display lcd
+\noindent\refstepcounter{listing}
 \label{lst:lcd_h}
+\noindent\text{Codice \thelisting: File header con le funzioni per la gestione del display lcd}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni per la gestione del display lcd}
 \inputminted{c++}{../programmi/firmware/lib/lcd/lcd.h}
 
-\captionof{listing}{File sorgente con le funzioni per la gestione del display lcd}
+% etichetta file sorgente con le funzioni per la gestione del display lcd
+\noindent\refstepcounter{listing}
 \label{lst:lcd_cpp}
+\noindent\text{Codice \thelisting: File sorgente con le funzioni per la gestione del display lcd}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con le funzioni per la gestione del display lcd}
 \inputminted{c++}{../programmi/firmware/lib/lcd/lcd.cpp}
 
 \newpage
 
 \section{File del modulo per la gestione del sensore di temperatura e umidità SHT20}
-\captionof{listing}{File header con le funzioni per la gestione del sensore SHT20}
+
+% etichetta file header con le funzioni per la gestione del sensore SHT20
+\noindent\refstepcounter{listing}
 \label{lst:sht20_h}
+\noindent\text{Codice \thelisting: File header con le funzioni per la gestione del sensore SHT20}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni per la gestione del sensore SHT20}
 \inputminted{c++}{../programmi/firmware/lib/sht20/sht20.h}
 
-\captionof{listing}{File sorgente con le funzioni per la gestione del sensore SHT20}
+% etichetta file sorgente con le funzioni per la gestione del sensore SHT20
+\noindent\refstepcounter{listing}
 \label{lst:sht20_cpp}
+\noindent\text{Codice \thelisting: File sorgente con le funzioni per la gestione del sensore SHT20}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con le funzioni per la gestione del sensore SHT20}
 \inputminted{c++}{../programmi/firmware/lib/sht20/sht20.cpp}
 
 \newpage
 
 \section{File del modulo per la gestione delle comunicazioni seriali}
-\captionof{listing}{File header con le funzioni per la gestione delle comunicazioni seriali}
+
+% etichetta file header con le funzioni per la gestione delle comunicazioni seriali
+\noindent\refstepcounter{listing}
 \label{lst:serial_h}
+\noindent\text{Codice \thelisting: File header con le funzioni per la gestione delle comunicazioni seriali}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni per la gestione delle comunicazioni seriali}
 \inputminted{c++}{../programmi/firmware/lib/serial/serial.h}
 
-\captionof{listing}{File sorgente con le funzioni per la gestione delle comunicazioni seriali}
+% etichetta file sorgente con le funzioni per la gestione delle comunicazioni seriali
+\noindent\refstepcounter{listing}
 \label{lst:serial_cpp}
+\noindent\text{Codice \thelisting: File sorgente con le funzioni per la gestione delle comunicazioni seriali}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File sorgente con le funzioni per la gestione delle comunicazioni seriali}
 \inputminted{c++}{../programmi/firmware/lib/serial/serial.cpp}
 
 \newpage
 
 \section{File del modulo per la gestione del controllore PID}
-\captionof{listing}{File header con le funzioni per la gestione del controllore PID}
-\label{lst:pid_h}
-\inputminted{c++}{../programmi/firmware/lib/pid/pid.h}
 
-%\captionof{listing}{File sorgente con le funzioni per la gestione del controllore PID}
-%\label{lst:pid_cpp}
-%\inputminted{c++}{../programmi/firmware/lib/pid/pid.cpp}
+% etichetta file header con le funzioni per la gestione del controllore PID
+\noindent\refstepcounter{listing}
+\label{lst:pid_h}
+\noindent\text{Codice \thelisting: File header con le funzioni per la gestione del controllore PID}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File header con le funzioni per la gestione del controllore PID}
+\inputminted{c++}{../programmi/firmware/lib/pid/pid.h}
 
 \newpage
 
 \section{File principale del firmware}
-\captionof{listing}{File principale del firmware}
-\label{lst:main_cpp}
-\inputminted{c++}{../programmi/firmware/src/main.cpp}
 
+% etichetta file principale del firmware
+\noindent\refstepcounter{listing}
+\label{lst:main_cpp}
+\noindent\text{Codice \thelisting: File principale del firmware}
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}File principale del firmware}
+\inputminted{c++}{../programmi/firmware/src/main.cpp}
 
 \chapter{Programmi in MATLAB}
 \section{Gestione della comunicazione seriale}
-\captionof{listing}[Funzione MATLAB per la gestione della comunicazione seriale]{Funzione MATLAB che si occupa della lettura
-dei messaggi dalla porta seriale, del relativo parsing e salvataggio in un file csv e aggiornare i grafici di andamento delle
-variabili in tempo reale.}
+
+% etichetta funzione MATLAB per la gestione della comunicazione seriale
+\noindent\refstepcounter{listing}
 \label{lst:serial_read}
+\noindent
+Codice \thelisting: Funzione MATLAB che si occupa della lettura dei messaggi dalla porta seriale, del relativo parsing
+e salvataggio in un file csv e aggiornare i grafici di andamento delle variabili in tempo reale.
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting} Funzione MATLAB per la gestione della comunicazione seriale}
 \inputminted[tabsize=4]{matlab}{../matlab/serial_read.m}
 
 \newpage
 
 \section{Visualizzazione dei grafici dei dati csv}
-\captionof{listing}[Funzione MATLAB per visualizzare i grafici dei dati csv]{Funzione MATLAB per la stampa dei grafici
-dell'andamento delle grandezze fisiche in funzione del tempo, utilizzando i dati raccolti nei file csv.}
+
+% etichetta funzione MATLAB per la visualizzazione dei grafici dei dati csv
+\noindent\refstepcounter{listing}
 \label{lst:plot_csv}
+\noindent
+Codice \thelisting: Funzione MATLAB per la stampa dei grafici dell'andamento delle grandezze fisiche in funzione del tempo,
+utilizzando i dati raccolti nei file csv.
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Funzione MATLAB la visualizzazione dei grafici dei dati csv}
 \inputminted[tabsize=4]{matlab}{../matlab/plot_csv.m}
 
 \newpage
 
 \section{Analisi dei dati acquisiti durante i test}
-\captionof{listing}[Funzione MATLAB per l'analisi dati del primo test]{Funzione MATLAB per il calcolo del periodo di warm-up
-a partire dai dati raccolti nei file csv durante il primo test previsto dalla normativa.}
+
+% etichetta funzione MATLAB per l'analisi dati del primo test
+\noindent\refstepcounter{listing}
 \label{lst:test1_analysis}
+\noindent
+Codice \thelisting: Funzione MATLAB per il calcolo del periodo di warm-up a partire dai dati raccolti nei file csv durante
+il primo test previsto dalla normativa.
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Funzione MATLAB per l'analisi dati del primo test}
 \inputminted[tabsize=4]{matlab}{../matlab/test1_analysis.m}
 
-\captionof{listing}[Funzione MATLAB per l'analisi dati del secondo test]{Funzione MATLAB per il calcolo delle metriche di
-prestazione (overshoot, settling time ed errori a regime) con i dati raccolti nei file csv durante il secondo test previsto
-dalla normativa.}
+% etichetta funzione MATLAB per l'analisi dati del secondo test
+\noindent\refstepcounter{listing}
 \label{lst:test2_analysis}
+\noindent
+Codice \thelisting: Funzione MATLAB per il calcolo delle metriche di prestazione (overshoot, settling time ed errori a
+regime) con i dati raccolti nei file csv durante il secondo test previsto dalla normativa.
+\addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Funzione MATLAB per l'analisi dati del secondo test}
 \inputminted[tabsize=4]{matlab}{../matlab/test2_analysis.m}
-
-\newpage

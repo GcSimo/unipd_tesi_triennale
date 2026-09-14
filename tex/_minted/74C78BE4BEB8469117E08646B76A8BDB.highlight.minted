@@ -1,3 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{k+kt}{char}\PYG{+w}{ }\PYG{o}{*}\PYG{n+nf}{data\PYGZus{}to\PYGZus{}string}\PYG{p}{(}\PYG{k+kt}{int16\PYGZus{}t}\PYG{+w}{ }\PYG{n}{value}\PYG{p}{);}
-\end{MintedVerbatim}

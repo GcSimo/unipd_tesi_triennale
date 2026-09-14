@@ -15,23 +15,33 @@
 % - twoside: i margini interni ed esterni sono scambiati per le pagine "a sinistra" e "a destra"
 % - openright: i capitoli cominciano in pagine dispari ("a destra")
 
-\documentclass[12pt,a4paper,twoside,openright]{report}
-\usepackage[italian]{babel} % corretta sillabazione in inglese
-\usepackage[a-1a]{pdfx}     % formato richiesto dall'università
+% --- 0. TAGGING DOCUMENTI PDF/A ---
+\DocumentMetadata{
+	pdfstandard = a-2b,      % richiede esplicitamente il PDF/A-2a (livello accessibile)
+	lang        = it-IT,     % lingua principale del documento per gli screen reader
+	%testphase   = phase-III  % attiva il motore di tagging strutturale per accessibilità (sperimentale ma stabile)
+}
 
-\usepackage{amsmath} % per l'ambiente matematico
-\usepackage{amssymb} % per l'ambiente matematico
+% --- 1. PREAMBOLO ---
+\documentclass[12pt,a4paper,twoside,openright,italian]{report}
+
+% per gestione dei colori (usata in TikZ, Minted e PDFX)
+\usepackage[dvipsnames,rgb]{xcolor}
+
+% corretta sillabazione in italiano
+\usepackage{babel}
+
+
+% --- 2. ENCODING E FONT (Testo) ---
+% per utilizzare l'alternativa TeX Gyre Termes con comando pdflatex
+\usepackage{cmap}     % rende il testo del PDF ricercabile e copiabile
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}  % latin modern font for sans-serif and monospace (grafici e verb)
+\usepackage{tgtermes} % times new roman-like font for serif (testo principale)
 
 % se il sistema contiene il font times new roman
 %\usepackage{fontspec} % per font richiesti dall'università
 %\setmainfont{Times New Roman}
-
-% per utilizzare l'alternativa TeX Gyre Termes con comando pdflatex
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern} % latin modern font for sans-serif and monospace (grafici e verb)
-\usepackage{tgtermes} % times new roman-like font for serif (testo principale)
-\usepackage{newtxmath} % per l'ambiente matematico con font TeX Gyre Termes
 
 % per utilizzare il font times new roman con comando lualatex
 %\usepackage{fontspec}
@@ -39,54 +49,44 @@
 %\usepackage{unicode-math}
 %\setmathfont{TeX Gyre Termes Math}
 
-\usepackage{geometry} % per margini richiesti dall'università
+
+% --- 3. AMBIENTE MATEMATICO ---
+% per l'ambiente matematico
+\usepackage{amsmath}
+\usepackage{newtxmath} % per l'ambiente matematico con font TeX Gyre Termes
+
+
+% --- 4. LAYOUT E GEOMETRIA ---
+% per margini richiesti dall'università
+\usepackage{geometry}
 \geometry{a4paper,top=2cm, bottom=2cm, outer=2cm, inner=3cm, includeheadfoot}
 
-\usepackage{setspace} % per interlinea richiesta dall'università
+% per interlinea richiesta dall'università
+\usepackage{setspace}
 \onehalfspacing
 
-\usepackage{hyperref} % per link ipertestuali
-\providecommand*{\listingautorefname}{codice} % per autoref dei listing
+% per non spaziare i paragrafi per far arrivare il testo fino a fine pagina
+\raggedbottom
 
-\usepackage{enumitem} % per elenchi puntati
+
+% --- 5. GRAFICA, TABELLE E LISTE ---
+% immagini
+\usepackage{graphicx}
+\graphicspath{{./}}
+
+% disegni e schemi
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, arrows}
+
+% elenchi puntati
+\usepackage{enumitem}
+\setlist[itemize]{label=-, topsep=0pt, noitemsep}
+\setlist[enumerate]{topsep=0pt, noitemsep}
+
+% tabelle
 \usepackage{multirow} % per celle che si espandono su più righe
 \usepackage{tabularx} % per tabelle con larghezza flessibile
 \usepackage{booktabs} % per linee orizzontali tabelle
-\usepackage{graphicx} % per immagini
-
-\usepackage{caption} % per le didascalie
-\usepackage{subcaption} % per subfigure
-
-\usepackage{tikz} % per disegni e diagrammi
-\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc}
-
-% nei codici dei programmi non sono stati usati ambienti flottanti perché altrimenti non sarebbe stato possibile far
-% estendere il codice correttamente su più pagine. Inoltre se vengono inseriti caption fuori da ambienti flottanti,
-% come avviene nel codice, si generano dei warning di compilazione. Per evitare questi warning, si indica di non
-% associare le caption dei listing a un ambiente flottante (cosa che latex tenta di fare in automatico).
-\captionsetup[listing]{hypcap=false}
-
-\usepackage{minted} % per il codice con la colorazione della sintassi
-%\usemintedstyle{vs} % Stile simile a Visual Studio Code
-\setminted{
-	linenos=true,          % mostra i numeri di riga
-	frame=single,          % riquadro singolo attorno al codice
-	framesep=2mm,          % distanza tra il codice e il riquadro
-	baselinestretch=0.9,   % interlinea del codice (utile se il documento ha interlinea 1.5)
-	fontsize=\scriptsize,  % dimensione del font più piccola
-	breaklines             % wrap automatico delle righe lunghe
-}
-
-\setmintedinline{
-	fontsize=\normalsize
-}
-
-\usepackage[backend=biber,style=ieee]{biblatex} % per la bibliografia
-\usepackage{csquotes} % per le citazioni
-\addbibresource{bibliografia.bib}
-
-% per non spaziare i paragrafi tra di loro per far arrivare il testo fino a fine pagina
-\raggedbottom
 
 % per centrare testo nelle tabelleX
 \renewcommand\tabularxcolumn[1]{m{#1}}
@@ -94,25 +94,125 @@
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
 
-% per tradurre il nome dei listings e dell'elenco dei listings in italiano
-\renewcommand{\listingscaption}{Codice}
-\renewcommand{\listoflistingscaption}{Elenco dei codici}
 
-% per elenchi puntati
-\setlist[itemize]{label=-, topsep=0pt, noitemsep}
-\setlist[enumerate]{topsep=0pt, noitemsep}
+% --- 6. DIDASCALIE ---
+\usepackage{caption} % per le didascalie
+\usepackage{subcaption} % per subfigure
 
-% percorso delle immagini da inserire
-\graphicspath{{./}}
+% nei codici dei programmi non sono stati usati ambienti flottanti perché altrimenti non sarebbe stato possibile far
+% estendere il codice correttamente su più pagine. Inoltre se vengono inseriti caption fuori da ambienti flottanti,
+% come avviene nel codice, si generano dei warning di compilazione. Per evitare questi warning, si indica di non
+% associare le caption dei listing a un ambiente flottante (cosa che latex tenta di fare in automatico).
+%\captionsetup[listing]{hypcap=false}
 
 
+% --- 7. CODICE SORGENTE ---
+% codice tramite pacchetto verbatim per codice + listings per elenco dei codici
+%\usepackage{listings}
+%\usepackage{verbatim}
+
+% codice tramite pacchetto minted
+\usepackage{minted}
+% stile del codice sorgente formattato con minted
+\setminted{
+	linenos=true,          % mostra i numeri di riga
+	frame=single,          % riquadro singolo attorno al codice
+	framesep=2mm,          % distanza tra il codice e il riquadro
+	baselinestretch=0.9,   % interlinea del codice (utile se il documento ha interlinea 1.5)
+	fontsize=\tiny,  % dimensione del font più piccola
+	breaklines             % wrap automatico delle righe lunghe
+}
+% stile del codice inline formattato con minted
+\setmintedinline{
+	fontsize=\normalsize
+}
+
+%% codice tramite pacchetto listings
+%\usepackage{listings}
+%
+%% definizione dei colori
+%\definecolor{codegreen}{rgb}{0,0.6,0}
+%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+%\definecolor{codepurple}{rgb}{0.58,0,0.82}
+%\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+%
+%% configurazione dello stile
+%\lstdefinestyle{mystyle}{
+%	backgroundcolor=\color{backcolour},
+%	commentstyle=\color{codegreen},
+%	keywordstyle=\color{magenta},
+%	numberstyle=\tiny\color{codegray},
+%	stringstyle=\color{codepurple},
+%	basicstyle=\ttfamily\scriptsize,
+%	breakatwhitespace=false,
+%	breaklines=true,
+%	captionpos=t,
+%	keepspaces=true,
+%	numbers=left,
+%	numbersep=5pt,
+%	showspaces=false,
+%	showstringspaces=false,
+%	showtabs=false,
+%	tabsize=4,
+%	frame=single
+%}
+%
+%\lstset{style=mystyle}
+
+% per tradurre il nome dei listings e dell'elenco dei listings in italiano (minted)
+\addto\captionsitalian{%
+  \renewcommand{\listingscaption}{Codice}%
+  \renewcommand{\listoflistingscaption}{Elenco dei codici}%
+}
+
+% per tradurre il nome dei listings e dell'elenco dei listings in italiano (listings o verbatim)
+%\addto\captionsitalian{%
+%  \renewcommand{\lstlistingname}{Codice}%
+%  \renewcommand{\lstlistlistingname}{Elenco dei codici}%
+%}
+
+
+% --- 8. CITAZIONI E BIBLIOGRAFIA ---
+\usepackage{xurl} % per spezzare gli url della bibliografia in modo corretto
+\usepackage{csquotes} % per le citazioni
+\usepackage[backend=biber,style=ieee]{biblatex} % per la bibliografia
+\addbibresource{bibliografia.bib}
+
+% Forza BibLaTeX a spezzare gli URL su lettere maiuscole, minuscole e numeri
+\setcounter{biburlnumpenalty}{7000}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+
+
+% --- 9. STANDARD PDF/A E LINK IPERTESTUALI ---
+%\usepackage[a-1b]{pdfx} % per creare un documento PDF/A-1a
+\usepackage{hyperref} % per link ipertestuali
+
+% per autoref dei listing
+\providecommand*{\listingautorefname}{codice} % minted
+%\providecommand*{\lstlistingautorefname}{codice} % listings o verbatim
+
+% per metadati PDF/A richiesti dall'università
+\hypersetup{
+	colorlinks=true,       % Sostituisce i riquadri con il testo colorato
+    linkcolor=black,       % Colore dei riferimenti interni (capitoli, figure, equazioni)
+    citecolor=black,       % Colore delle citazioni bibliografiche
+    urlcolor=NavyBlue,     % Colore dei link web esterni
+	pdftitle={Sviluppo firmware per la gestione del sistema di riscaldamento di un prototipo di incubatrice neonatale},
+	pdfauthor={Giacomo Simonetto},
+	pdfsubject={Tesi triennale},
+	pdfkeywords={firmware, microcontrollore, incubatrice, temperatura, pid}
+}
+
+% --- 10. DATI PER FRONTESPIZIO ---
 \title{Sviluppo firmware per la gestione del sistema di riscaldamento di un prototipo di incubatrice neonatale}
 \author{Simonetto Giacomo}
 \date{22/09/2026}
 \newcommand{\supervisor}{Prof. Rampazzo Mirco}
-\newcommand{\assistantsupervisor}{Cognome Nome}
 \newcommand{\matricola}{2109923}
 
+
+% --- 11. DOCUMENTO ---
 \begin{document}
 	\pagenumbering{roman}
 	\pagestyle{empty} % per le prime pagine, non mostrare il numero di pagina
@@ -144,7 +244,8 @@
 
 	\phantomsection
 	\addcontentsline{toc}{chapter}{Elenco dei codici}
-	\listoflistings
+	\listoflistings % minted
+	%\lstlistoflistings % listings o verbatim
 	\cleardoublepage
 
 	\pagenumbering{arabic}
